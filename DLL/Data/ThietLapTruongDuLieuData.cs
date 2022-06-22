@@ -1153,6 +1153,17 @@ namespace DLL.Data
                     {
                         cloneBanHang.MaTruong = $"HHDV 37";
                         cloneBanHang.STT = 37;
+                        cloneBanHang.TenCot = nameof(hoaDonDienTuChiTiet.IsMatHangDuocGiam);
+                        cloneBanHang.TenTruong = "Mặt hàng giảm";
+                        cloneBanHang.TenTruongHienThi = "Mặt hàng giảm";
+                        cloneBanHang.DoRong = 130;
+                        data.Add(cloneBanHang);
+
+                        cloneBanHang = (ThietLapTruongDuLieu)item.Clone();
+                        cloneBanHang.ThietLapTruongDuLieuId = Guid.NewGuid().ToString();
+                        cloneBanHang.LoaiHoaDon = LoaiHoaDon.HoaDonBanHang;
+                        cloneBanHang.MaTruong = $"HHDV 38";
+                        cloneBanHang.STT = 38;
                         cloneBanHang.TenCot = nameof(hoaDonDienTuChiTiet.TyLePhanTramDoanhThu);
                         cloneBanHang.TenTruong = "Tỷ lệ % doanh thu";
                         cloneBanHang.TenTruongHienThi = "Tỷ lệ % doanh thu";
@@ -1161,8 +1172,8 @@ namespace DLL.Data
                     }
                     else if (cloneBanHang.TenCot == nameof(hoaDonDienTuChiTiet.TienThueGTGT))
                     {
-                        cloneBanHang.MaTruong = $"HHDV 38";
-                        cloneBanHang.STT = 38;
+                        cloneBanHang.MaTruong = $"HHDV 39";
+                        cloneBanHang.STT = 39;
                         cloneBanHang.TenCot = nameof(hoaDonDienTuChiTiet.TienGiam);
                         cloneBanHang.TenTruong = "Tiền giảm 20% mức tỷ lệ";
                         cloneBanHang.TenTruongHienThi = "Tiền giảm 20% mức tỷ lệ";
@@ -1171,8 +1182,8 @@ namespace DLL.Data
                     }
                     else if (cloneBanHang.TenCot == nameof(hoaDonDienTuChiTiet.TienThueGTGTQuyDoi))
                     {
-                        cloneBanHang.MaTruong = $"HHDV 39";
-                        cloneBanHang.STT = 39;
+                        cloneBanHang.MaTruong = $"HHDV 40";
+                        cloneBanHang.STT = 40;
                         cloneBanHang.TenCot = nameof(hoaDonDienTuChiTiet.TienGiamQuyDoi);
                         cloneBanHang.TenTruong = "Tiền giảm 20% mức tỷ lệ quy đổi";
                         cloneBanHang.TenTruongHienThi = "Tiền giảm 20% mức tỷ lệ quy đổi";
@@ -1183,6 +1194,23 @@ namespace DLL.Data
             }
 
             return data;
+        }
+
+        public string QueryInsertIsMatHangDuocGiam()
+        {
+            var hoaDonDienTuChiTiet = new HoaDonDienTuChiTiet();
+            const string IsMatHangDuocGiam = nameof(hoaDonDienTuChiTiet.IsMatHangDuocGiam);
+            const string TyLePhanTramDoanhThu = nameof(hoaDonDienTuChiTiet.TyLePhanTramDoanhThu);
+            const string TienGiam = nameof(hoaDonDienTuChiTiet.TienGiam);
+            const string TienGiamQuyDoi = nameof(hoaDonDienTuChiTiet.TienGiamQuyDoi);
+
+            var tienGiams = InitData()
+                .Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomHangHoaDichVu && (x.TenCot == IsMatHangDuocGiam || x.TenCot == TyLePhanTramDoanhThu || x.TenCot == TienGiam || x.TenCot == TienGiamQuyDoi))
+                .ToList();
+
+            var result = $"DELETE FROM ThietLapTruongDuLieus WHERE TenCot = '{TyLePhanTramDoanhThu}' OR TenCot = '{TienGiam}' OR TenCot = '{TienGiamQuyDoi}'";
+            result += Query(tienGiams);
+            return result;
         }
 
         public string QueryUpdateNhomBangKe()

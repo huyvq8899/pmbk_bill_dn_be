@@ -17,108 +17,108 @@ namespace Services.Helper.Params.HeThong
 
     public enum MaTruongDLHDExcel
     {
-        [Description("NV bán hàng")]
-        NVBANHANG,
-        [Description("Ngày hóa đơn")]
-        NGAYHOADON,
-        [Description("Người mua hàng")]
-        NM1,
-        [Description("Mã khách hàng")]
-        NM2,
-        [Description("Tên khách hàng")]
-        NM3,
-        [Description("Địa chỉ")]
-        NM4,
-        [Description("Mã số thuế")]
-        NM5,
-        [Description("Hình thức thanh toán")]
-        NM6,
-        [Description("Email")]
-        NM7,
-        [Description("Số điện thoại")]
-        NM8,
-        [Description("Tài khoản ngân hàng")]
-        NM9,
-        [Description("Tên ngân hàng")]
-        NM10,
+        [Description("NVBANHANG")]
+        NhanVienBanHangId,
+        [Description("NGAYHOADON")]
+        NgayHoaDon,
+        [Description("NM 1")] // người mua hàng
+        HoTenNguoiMuaHang,
+        [Description("NM 2")] // mã khách hàng
+        MaKhachHang,
+        [Description("NM 3")] // tên khách hàng
+        TenKhachHang,
+        [Description("NM 4")] // địa chỉ
+        DiaChi,
+        [Description("NM 5")] // mã số thuế
+        MaSoThue,
+        [Description("NM 6")] // hình thức thanh toán
+        HinhThucThanhToanId,
+        [Description("NM 7")] // email
+        EmailNguoiMuaHang,
+        [Description("NM 8")] // số điện thoại
+        SoDienThoaiNguoiMuaHang,
+        [Description("NM 9")] // tài khoản ngân hàng
+        SoTaiKhoanNganHang,
+        [Description("NM 10")] // tên ngân hàng
+        TenNganHang,
         /////////////////////////////////////
-        [Description("Loại tiền")]
-        LOAITIEN,
-        [Description("Tỷ giá")]
-        TYGIA,
-        [Description("Hình thức chiết khấu")]
-        HTCK,
+        [Description("LOAITIEN")]
+        LoaiTienId,
+        [Description("TYGIA")]
+        TyGia,
         /////////////////////////////////////
-        [Description("Mã hàng")]
-        HHDV2,
-        [Description("Tên hàng")]
-        HHDV3,
-        [Description("Tính chất")]
-        HHDV4,
-        [Description("Mã quy cách")]
-        HHDV5,
-        [Description("ĐVT")]
-        HHDV6,
-        [Description("Số lượng")]
-        HHDV7,
-        [Description("Đơn giá")]
-        HHDV9,
-        [Description("Thành tiền")]
-        HHDV11,
-        [Description("Thành tiền quy đổi")]
-        HHDV12,
-        [Description("Tỷ lệ chiết khấu")]
-        HHDV13,
-        [Description("Tiền chiết khấu")]
-        HHDV14,
-        [Description("Tiền chiết khấu quy đổi")]
-        HHDV15,
-        [Description("% Thuế GTGT")]
-        HHDV16,
-        [Description("Tiền thuế GTGT")]
-        HHDV17,
-        [Description("Tiền thuế GTGT quy đổi")]
-        HHDV18,
-        [Description("Số lô")]
-        HHDV19,
-        [Description("Hạn sử dụng")]
-        HHDV20,
-        [Description("Số khung")]
-        HHDV21,
-        [Description("Số máy")]
-        HHDV22,
-        [Description("Xuất bản phí")]
-        HHDV23,
-        [Description("Ghi chú")]
-        HHDV24,
-        [Description("Mã nhân viên")]
-        HHDV25,
-        [Description("Trường thông tin bổ sung 1")]
-        HHDV27,
-        [Description("Trường thông tin bổ sung 2")]
-        HHDV28,
-        [Description("Trường thông tin bổ sung 3")]
-        HHDV29,
-        [Description("Trường thông tin bổ sung 4")]
-        HHDV30,
-        [Description("Trường thông tin bổ sung 5")]
-        HHDV31,
-        [Description("Trường thông tin bổ sung 6")]
-        HHDV32,
-        [Description("Trường thông tin bổ sung 7")]
-        HHDV33,
-        [Description("Trường thông tin bổ sung 8")]
-        HHDV34,
-        [Description("Trường thông tin bổ sung 9")]
-        HHDV35,
-        [Description("Trường thông tin bổ sung 10")]
-        HHDV36,
-        [Description("Trường Tỷ lệ % trên doanh thu")]
-        HHDV37,
-        [Description("Trường Tiền giảm 20% mức tỷ lệ")]
-        HHDV38,
-        [Description("Trường Tiền giảm 20% mức tỷ lệ quy đổi")]
-        HHDV39
+        [Description("HHDV 2")] // mã hàng
+        MaHang,
+        [Description("HHDV 3")] // tên hàng
+        TenHang,
+        [Description("HHDV 4")] // tính chất
+        TinhChat,
+        [Description("HHDV 5")] // mã quy cách
+        MaQuyCach,
+        [Description("HHDV 6")] // ĐVT
+        DonViTinhId,
+        [Description("HHDV 7")] // số lượng
+        SoLuong,
+        [Description("HHDV 9")] // đơn giá
+        DonGia,
+        [Description("HHDV 11")] // thành tiền
+        ThanhTien,
+        [Description("HHDV 12")] // thành tiền quy đổi
+        ThanhTienQuyDoi,
+        [Description("HHDV 13")] // tỷ lệ ck
+        TyLeChietKhau,
+        [Description("HHDV 14")] // tiền chiết khấu
+        TienChietKhau,
+        [Description("HHDV 15")] // tiền chiết khấu quy đổi
+        TienChietKhauQuyDoi,
+        [Description("HHDV 16")] // % thuế gtgt
+        ThueGTGT,
+        [Description("HHDV 17")] // tiền thuế gtgt
+        TienThueGTGT,
+        [Description("HHDV 18")] // tiền thuế gtgt quy đổi
+        TienThueGTGTQuyDoi,
+        [Description("HHDV 19")] // số lô
+        SoLo,
+        [Description("HHDV 20")] // hạn sử dụng
+        HanSuDung,
+        [Description("HHDV 21")] // số khung
+        SoKhung,
+        [Description("HHDV 22")] // số máy
+        SoMay,
+        [Description("HHDV 23")] // xuất bản phí
+        XuatBanPhi,
+        [Description("HHDV 24")] // ghi chú
+        GhiChu,
+        [Description("HHDV 25")] // mã nhân viên
+        MaNhanVien,
+        [Description("HHDV 27")] // trường thông tin bổ sung 1
+        TruongMoRongChiTiet1,
+        [Description("HHDV 28")] // trường thông tin bổ sung 2
+        TruongMoRongChiTiet2,
+        [Description("HHDV 29")] // trường thông tin bổ sung 3
+        TruongMoRongChiTiet3,
+        [Description("HHDV 30")] // trường thông tin bổ sung 4
+        TruongMoRongChiTiet4,
+        [Description("HHDV 31")] // trường thông tin bổ sung 5
+        TruongMoRongChiTiet5,
+        [Description("HHDV 32")] // trường thông tin bổ sung 6
+        TruongMoRongChiTiet6,
+        [Description("HHDV 33")] // trường thông tin bổ sung 7
+        TruongMoRongChiTiet7,
+        [Description("HHDV 34")] // trường thông tin bổ sung 8
+        TruongMoRongChiTiet8,
+        [Description("HHDV 35")] // trường thông tin bổ sung 9
+        TruongMoRongChiTiet9,
+        [Description("HHDV 36")] // trường thông tin bổ sung 10
+        TruongMoRongChiTiet10,
+        [Description("HHDV 37")] // Mặt hàng giảm
+        IsMatHangDuocGiam,
+        [Description("HHDV 38")] // tỷ lệ % trên doanh thu
+        TyLePhanTramDoanhThu,
+        [Description("HHDV 39")] // tiền giảm 20% mức tỷ lệ
+        TienGiam,
+        [Description("HHDV 40")] // Tiền giảm 20% mức tỷ lệ quy đổi
+        TienGiamQuyDoi
     }
 
     public class TruongDLHDExcel
@@ -131,147 +131,144 @@ namespace Services.Helper.Params.HeThong
         {
             switch (ma)
             {
-                case MaTruongDLHDExcel.NVBANHANG:
-                case MaTruongDLHDExcel.NGAYHOADON:
-                case MaTruongDLHDExcel.NM2: // mã khách hàng
+                case MaTruongDLHDExcel.NhanVienBanHangId:
+                case MaTruongDLHDExcel.NgayHoaDon:
+                case MaTruongDLHDExcel.MaHang: // mã khách hàng
                     DoRong = 100;
                     DoRong = 100;
                     break;
-                case MaTruongDLHDExcel.NM1: // người mua hàng
-                case MaTruongDLHDExcel.NM3: // tên khách hàng
-                case MaTruongDLHDExcel.NM4: // địa chỉ
+                case MaTruongDLHDExcel.HoTenNguoiMuaHang: // người mua hàng
+                case MaTruongDLHDExcel.TenKhachHang: // tên khách hàng
+                case MaTruongDLHDExcel.DiaChi: // địa chỉ
                     DoRong = 200;
                     break;
-                case MaTruongDLHDExcel.NM5: // mã số thuế
+                case MaTruongDLHDExcel.MaSoThue: // mã số thuế
                     DoRong = 120;
                     break;
-                case MaTruongDLHDExcel.NM6: // hình thức thanh toán
+                case MaTruongDLHDExcel.HinhThucThanhToanId: // hình thức thanh toán
                     DoRong = 130;
                     break;
-                case MaTruongDLHDExcel.NM7: // email
+                case MaTruongDLHDExcel.EmailNguoiMuaHang: // email
                     DoRong = 200;
                     break;
-                case MaTruongDLHDExcel.NM8: // số điện thoại
+                case MaTruongDLHDExcel.SoDienThoaiNguoiMuaHang: // số điện thoại
                     DoRong = 150;
                     break;
-                case MaTruongDLHDExcel.NM9: // tài khoản ngân hàng
+                case MaTruongDLHDExcel.SoTaiKhoanNganHang: // tài khoản ngân hàng
                     DoRong = 150;
                     break;
-                case MaTruongDLHDExcel.NM10: // tên ngân hàng
+                case MaTruongDLHDExcel.TenNganHang: // tên ngân hàng
                     DoRong = 200;
                     break;
-                case MaTruongDLHDExcel.LOAITIEN:
+                case MaTruongDLHDExcel.LoaiTienId:
                     DoRong = 100;
                     break;
-                case MaTruongDLHDExcel.TYGIA:
+                case MaTruongDLHDExcel.TyGia:
                     DoRong = 100;
                     break;
-                case MaTruongDLHDExcel.HTCK:
-                    DoRong = 150;
-                    break;
-                case MaTruongDLHDExcel.HHDV2: // mã hàng
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV3: // tên hàng
+                case MaTruongDLHDExcel.TenHang: // tên hàng
                     DoRong = 200;
                     break;
-                case MaTruongDLHDExcel.HHDV4: // tính chất
+                case MaTruongDLHDExcel.TinhChat: // tính chất
                     DoRong = 100;
                     break;
-                case MaTruongDLHDExcel.HHDV5: // mã quy cách
+                case MaTruongDLHDExcel.MaQuyCach: // mã quy cách
                     DoRong = 100;
                     break;
-                case MaTruongDLHDExcel.HHDV6: // đvt
+                case MaTruongDLHDExcel.DonViTinhId: // đvt
                     DoRong = 100;
                     break;
-                case MaTruongDLHDExcel.HHDV7: // số lượng
+                case MaTruongDLHDExcel.SoLuong: // số lượng
                     DoRong = 100;
                     break;
-                case MaTruongDLHDExcel.HHDV9: // đơn giá
+                case MaTruongDLHDExcel.DonGia: // đơn giá
                     DoRong = 150;
                     break;
-                case MaTruongDLHDExcel.HHDV11: // thành tiền
+                case MaTruongDLHDExcel.ThanhTien: // thành tiền
                     DoRong = 150;
                     break;
-                case MaTruongDLHDExcel.HHDV12: // thành tiền quy đổi
+                case MaTruongDLHDExcel.ThanhTienQuyDoi: // thành tiền quy đổi
                     DoRong = 150;
                     break;
-                case MaTruongDLHDExcel.HHDV13: // tỷ lệ chiết khấu
+                case MaTruongDLHDExcel.TyLeChietKhau: // tỷ lệ chiết khấu
+                    DoRong = 130;
+                    break;
+                case MaTruongDLHDExcel.TienChietKhau: // tiền chiết khấu
+                    DoRong = 150;
+                    break;
+                case MaTruongDLHDExcel.TienChietKhauQuyDoi: // tiền chiết khấu quy đổi
+                    DoRong = 150;
+                    break;
+                case MaTruongDLHDExcel.ThueGTGT: // thuế gtgt
+                    DoRong = 130;
+                    break;
+                case MaTruongDLHDExcel.TienThueGTGT: // tiền thuế
+                    DoRong = 150;
+                    break;
+                case MaTruongDLHDExcel.TienThueGTGTQuyDoi: // tiền thuế gtgt
+                    DoRong = 150;
+                    break;
+                case MaTruongDLHDExcel.SoLo:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.HanSuDung:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.SoKhung:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.SoMay:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.XuatBanPhi:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.GhiChu:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.MaNhanVien:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.TruongMoRongChiTiet1:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.TruongMoRongChiTiet2:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.TruongMoRongChiTiet3:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.TruongMoRongChiTiet4:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.TruongMoRongChiTiet5:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.TruongMoRongChiTiet6:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.TruongMoRongChiTiet7:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.TruongMoRongChiTiet8:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.TruongMoRongChiTiet9:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.TruongMoRongChiTiet10:
+                    DoRong = 100;
+                    break;
+                case MaTruongDLHDExcel.IsMatHangDuocGiam: // mặt hàng giảm
                     DoRong = 120;
                     break;
-                case MaTruongDLHDExcel.HHDV14: // tiền chiết khấu
+                case MaTruongDLHDExcel.TyLePhanTramDoanhThu: // tỷ lệ % doanh thu
                     DoRong = 150;
                     break;
-                case MaTruongDLHDExcel.HHDV15: // tiền chiết khấu quy đổi
+                case MaTruongDLHDExcel.TienGiam: // tiền giảm
                     DoRong = 150;
                     break;
-                case MaTruongDLHDExcel.HHDV16: // thuế gtgt
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV17: // tiền thuế
-                    DoRong = 150;
-                    break;
-                case MaTruongDLHDExcel.HHDV18: // tiền thuế gtgt
-                    DoRong = 150;
-                    break;
-                case MaTruongDLHDExcel.HHDV19:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV20:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV21:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV22:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV23:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV24:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV25:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV27:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV28:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV29:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV30:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV31:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV32:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV33:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV34:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV35:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV36:
-                    DoRong = 100;
-                    break;
-                case MaTruongDLHDExcel.HHDV37: // tỷ lệ % doanh thu
-                    DoRong = 150;
-                    break;
-                case MaTruongDLHDExcel.HHDV38: // tiền giảm
-                    DoRong = 150;
-                    break;
-                case MaTruongDLHDExcel.HHDV39: // tiền giảm quy đổi
+                case MaTruongDLHDExcel.TienGiamQuyDoi: // tiền giảm quy đổi
                     DoRong = 150;
                     break;
                 default:

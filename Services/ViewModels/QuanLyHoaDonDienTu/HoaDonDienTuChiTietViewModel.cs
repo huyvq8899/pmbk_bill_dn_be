@@ -105,6 +105,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [Display(Name = "Tiền thuế GTGT")]
         public decimal? TienThueGTGTQuyDoi { get; set; }
 
+        [Display(Name = "Mặt hàng được giảm")]
+        public bool? IsMatHangDuocGiam { get; set; }
+
+        [IgnoreLogging]
+        public string StrMatHangDuocGiam { get; set; }
+
         [Currency]
         [Display(Name = "Tỷ lệ % doanh thu")]
         public decimal? TyLePhanTramDoanhThu { get; set; }

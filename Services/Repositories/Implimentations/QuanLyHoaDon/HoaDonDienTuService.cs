@@ -1348,6 +1348,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
                                                    TongTienThanhToan = hdct.TongTienThanhToan,
                                                    TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi,
+                                                   IsMatHangDuocGiam = hdct.IsMatHangDuocGiam,
                                                    TyLePhanTramDoanhThu = hdct.TyLePhanTramDoanhThu,
                                                    TienGiam = hdct.TienGiam ?? 0,
                                                    TienGiamQuyDoi = hdct.TienGiamQuyDoi ?? 0,
@@ -3629,6 +3630,74 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     #region Thuế chi tiết
+                    #region add tổng tiền chịu thuế 8%
+                    if (hd.IsGiamTheoNghiQuyet == true && hd.MauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauNhieuThueSuat)
+                    {
+                        var tblTongTien = table.Rows[table.Rows.Count - 1].Cells[0].Tables[0] as Table;
+                        TableRow rowTongTienChiuThue8 = null;
+                        int indexOfInsertChiuThue8 = -1;
+
+                        for (int i = 0; i < tblTongTien.Rows.Count; i++)
+                        {
+                            // tạo dòng tổng tiền chịu thuế 8%
+                            var findTag = tblTongTien[i, 1].Paragraphs[0].Text;
+                            if (findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienKhongKeKhaiThue.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)) ||
+                                findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienKhongChiuThueGTGT.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)) ||
+                                findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat0.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)) ||
+                                findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat5.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)) ||
+                                findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)) ||
+                                findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuatKhac.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)))
+                            {
+                                indexOfInsertChiuThue8 = i + 1;
+                                if (findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)) ||
+                                    findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuatKhac.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)))
+                                {
+                                    indexOfInsertChiuThue8 = i - 1;
+                                }
+                                rowTongTienChiuThue8 = tblTongTien.Rows[i].Clone();
+                            }
+
+                        }
+
+                        // replace giá trị tag về thuế 8%
+                        if (rowTongTienChiuThue8 != null && indexOfInsertChiuThue8 != -1)
+                        {
+                            for (int i = 0; i < rowTongTienChiuThue8.Cells.Count; i++)
+                            {
+                                bool flag = false;
+                                var par = rowTongTienChiuThue8.Cells[i].Paragraphs[0];
+                                foreach (DocumentObject obj in par.ChildObjects)
+                                {
+                                    if (obj.DocumentObjectType == DocumentObjectType.TextRange)
+                                    {
+                                        var textRange = obj as TextRange;
+                                        switch (i)
+                                        {
+                                            case 0:
+                                                textRange.Text = textRange.Text.Replace(textRange.Text, "Tổng tiền chịu thuế suất 8%:");
+                                                break;
+                                            case 1:
+                                                textRange.Text = textRange.Text.Replace(textRange.Text, LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue));
+                                                break;
+                                            case 2:
+                                                textRange.Text = textRange.Text.Replace(textRange.Text, LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.TienThue));
+                                                break;
+                                            case 3:
+                                                textRange.Text = textRange.Text.Replace(textRange.Text, LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.CongTienThanhToan));
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+
+                            tblTongTien.Rows.Insert(indexOfInsertChiuThue8, rowTongTienChiuThue8);
+                        }
+                    }
+                    #endregion
+
                     if (models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
                     {
                         string thanhTienTruocThueKKKNT = models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
@@ -3697,43 +3766,28 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat5.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.CongTienThanhToan), string.Empty, true, true);
                     }
 
-                    if (models.Where(x => (x.ThueGTGT == "10" || x.ThueGTGT == "8") && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
+                    if (models.Where(x => x.ThueGTGT == "8" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
                     {
-                        if (hd.IsGiamTheoNghiQuyet == true && hd.MauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauNhieuThueSuat)
-                        {
-                            var tblTongTien = table.Rows[table.Rows.Count - 1].Cells[0].Tables[0] as Table;
+                        string thanhTienTruocThue8 = models.Where(x => x.ThueGTGT == "8" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                        string tienThue8 = models.Where(x => x.ThueGTGT == "8" && x.IsHangKhongTinhTien != true).Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                        string congTienThanhToan8 = models.Where(x => x.ThueGTGT == "8" && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
-                            for (int i = 0; i < tblTongTien.Rows.Count; i++)
-                            {
-                                if (tblTongTien.Rows[i].Cells[1].Paragraphs.Count > 0)
-                                {
-                                    var find = tblTongTien.Rows[i].Cells[1].Paragraphs[0].Text;
-                                    bool flag = false;
-                                    if (find.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)))
-                                    {
-                                        var par = tblTongTien.Rows[i].Cells[0].Paragraphs[0];
-                                        foreach (DocumentObject obj in par.ChildObjects)
-                                        {
-                                            if (obj.DocumentObjectType == DocumentObjectType.TextRange)
-                                            {
-                                                var textRange = obj as TextRange;
-                                                textRange.Text = textRange.Text.Replace("10%", "8%");
-                                                flag = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if (flag)
-                                    {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
+                        doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), thanhTienTruocThue8, true, true);
+                        doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.TienThue), tienThue8, true, true);
+                        doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.CongTienThanhToan), congTienThanhToan8, true, true);
+                    }
+                    else
+                    {
+                        doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), string.Empty, true, true);
+                        doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.TienThue), string.Empty, true, true);
+                        doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.CongTienThanhToan), string.Empty, true, true);
+                    }
 
-                        string thanhTienTruocThue10 = models.Where(x => (x.ThueGTGT == "10" || x.ThueGTGT == "8") && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                        string tienThue10 = models.Where(x => (x.ThueGTGT == "10" || x.ThueGTGT == "8") && x.IsHangKhongTinhTien != true).Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                        string congTienThanhToan10 = models.Where(x => (x.ThueGTGT == "10" || x.ThueGTGT == "8") && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                    if (models.Where(x => x.ThueGTGT == "10" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
+                    {
+                        string thanhTienTruocThue10 = models.Where(x => x.ThueGTGT == "10" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                        string tienThue10 = models.Where(x => x.ThueGTGT == "10" && x.IsHangKhongTinhTien != true).Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                        string congTienThanhToan10 = models.Where(x => x.ThueGTGT == "10" && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
                         doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), thanhTienTruocThue10, true, true);
                         doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.TienThue), tienThue10, true, true);
@@ -4275,6 +4329,74 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace(LoaiChiTietTuyChonNoiDung.QuyDoi.GenerateKeyTag(), (hd.TongTienThanhToanQuyDoi.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI) + " VND") ?? string.Empty, true, true);
                 }
 
+                #region add tổng tiền chịu thuế 8%
+                if (hd.IsGiamTheoNghiQuyet == true && hd.MauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauNhieuThueSuat)
+                {
+                    var tblTongTien = table.Rows[table.Rows.Count - 1].Cells[0].Tables[0] as Table;
+                    TableRow rowTongTienChiuThue8 = null;
+                    int indexOfInsertChiuThue8 = -1;
+
+                    for (int i = 0; i < tblTongTien.Rows.Count; i++)
+                    {
+                        // tạo dòng tổng tiền chịu thuế 8%
+                        var findTag = tblTongTien[i, 1].Paragraphs[0].Text;
+                        if (findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienKhongKeKhaiThue.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)) ||
+                            findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienKhongChiuThueGTGT.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)) ||
+                            findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat0.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)) ||
+                            findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat5.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)) ||
+                            findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)) ||
+                            findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuatKhac.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)))
+                        {
+                            indexOfInsertChiuThue8 = i + 1;
+                            if (findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)) ||
+                                findTag.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuatKhac.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)))
+                            {
+                                indexOfInsertChiuThue8 = i - 1;
+                            }
+                            rowTongTienChiuThue8 = tblTongTien.Rows[i].Clone();
+                        }
+
+                    }
+
+                    // replace giá trị tag về thuế 8%
+                    if (rowTongTienChiuThue8 != null && indexOfInsertChiuThue8 != -1)
+                    {
+                        for (int i = 0; i < rowTongTienChiuThue8.Cells.Count; i++)
+                        {
+                            bool flag = false;
+                            var par = rowTongTienChiuThue8.Cells[i].Paragraphs[0];
+                            foreach (DocumentObject obj in par.ChildObjects)
+                            {
+                                if (obj.DocumentObjectType == DocumentObjectType.TextRange)
+                                {
+                                    var textRange = obj as TextRange;
+                                    switch (i)
+                                    {
+                                        case 0:
+                                            textRange.Text = textRange.Text.Replace(textRange.Text, "Tổng tiền chịu thuế suất 8%:");
+                                            break;
+                                        case 1:
+                                            textRange.Text = textRange.Text.Replace(textRange.Text, LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue));
+                                            break;
+                                        case 2:
+                                            textRange.Text = textRange.Text.Replace(textRange.Text, LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.TienThue));
+                                            break;
+                                        case 3:
+                                            textRange.Text = textRange.Text.Replace(textRange.Text, LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.CongTienThanhToan));
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+
+                        tblTongTien.Rows.Insert(indexOfInsertChiuThue8, rowTongTienChiuThue8);
+                    }
+                }
+                #endregion
+
                 if (models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
                 {
                     string thanhTienTruocThueKKKNT = models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
@@ -4343,41 +4465,28 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat5.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.CongTienThanhToan), string.Empty, true, true);
                 }
 
-                if (models.Where(x => (x.ThueGTGT == "10" || x.ThueGTGT == "8") && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
+                if (models.Where(x => x.ThueGTGT == "8" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
                 {
-                    if (hd.IsGiamTheoNghiQuyet == true && hd.MauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauNhieuThueSuat)
-                    {
-                        var tblTongTien = table.Rows[table.Rows.Count - 1].Cells[0].Tables[0] as Table;
+                    string thanhTienTruocThue8 = models.Where(x => x.ThueGTGT == "8" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                    string tienThue8 = models.Where(x => x.ThueGTGT == "8" && x.IsHangKhongTinhTien != true).Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                    string congTienThanhToan8 = models.Where(x => x.ThueGTGT == "8" && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
-                        for (int i = 0; i < tblTongTien.Rows.Count; i++)
-                        {
-                            var find = tblTongTien.Rows[i].Cells[1].Paragraphs[0].Text;
-                            bool flag = false;
-                            if (find.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)))
-                            {
-                                var par = tblTongTien.Rows[i].Cells[0].Paragraphs[0];
-                                foreach (DocumentObject obj in par.ChildObjects)
-                                {
-                                    if (obj.DocumentObjectType == DocumentObjectType.TextRange)
-                                    {
-                                        var textRange = obj as TextRange;
-                                        textRange.Text = textRange.Text.Replace("10%", "8%");
-                                        flag = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (flag)
-                            {
-                                break;
-                            }
-                        }
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), thanhTienTruocThue8, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.TienThue), tienThue8, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.CongTienThanhToan), congTienThanhToan8, true, true);
+                }
+                else
+                {
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.TienThue), string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat8.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.CongTienThanhToan), string.Empty, true, true);
+                }
 
-                    }
-
-                    string thanhTienTruocThue10 = models.Where(x => (x.ThueGTGT == "10" || x.ThueGTGT == "8") && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                    string tienThue10 = models.Where(x => (x.ThueGTGT == "10" || x.ThueGTGT == "8") && x.IsHangKhongTinhTien != true).Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                    string congTienThanhToan10 = models.Where(x => (x.ThueGTGT == "10" || x.ThueGTGT == "8") && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                if (models.Where(x => x.ThueGTGT == "10" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
+                {
+                    string thanhTienTruocThue10 = models.Where(x => x.ThueGTGT == "10" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                    string tienThue10 = models.Where(x => x.ThueGTGT == "10" && x.IsHangKhongTinhTien != true).Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                    string congTienThanhToan10 = models.Where(x => x.ThueGTGT == "10" && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), thanhTienTruocThue10, true, true);
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.TienThue), tienThue10, true, true);
@@ -11416,7 +11525,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var enumTruongDLHDs = new TruongDLHDExcel().GetTruongDLHDExcels();
 
                         // declare thue by so thu thu hoa don
-                        Dictionary<int, List<string>> thuePairs = new Dictionary<int, List<string>>();
+                        Dictionary<int, string> thuePairs = new Dictionary<int, string>();
                         // declare tyle % doanh thu by so thu thu hoa don
                         Dictionary<int, List<decimal>> tyLePhanTramDoanhThuPairs = new Dictionary<int, List<decimal>>();
 
@@ -11427,13 +11536,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             if (!string.IsNullOrEmpty(maTruong))
                             {
-                                var findEnum = enumTruongDLHDs.FirstOrDefault(x => x.NameOfKey == maTruong);
+                                var findEnum = enumTruongDLHDs.FirstOrDefault(x => x.Name == maTruong);
                                 if (findEnum != null)
                                 {
                                     var maEnum = (MaTruongDLHDExcel)findEnum.Value;
                                     int nhomThongTin = 1;
 
-                                    if (maEnum >= MaTruongDLHDExcel.HHDV2)
+                                    if (maEnum >= MaTruongDLHDExcel.MaHang)
                                     {
                                         nhomThongTin = 2;
                                     }
@@ -11507,9 +11616,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                 foreach (var group in nhomThongTinNguoiMua)
                                 {
-                                    switch (group.Ma)
+                                    switch (group.TenEnum)
                                     {
-                                        case MaTruongDLHDExcel.NVBANHANG:
+                                        case nameof(item.NhanVienBanHangId):
                                             item.MaNhanVienBanHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             DoiTuongViewModel nhanVien = null;
                                             if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaNhanVienBanHang))
@@ -11525,7 +11634,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 item.NhanVienBanHangId = nhanVien.DoiTuongId;
                                             }
                                             break;
-                                        case MaTruongDLHDExcel.NGAYHOADON:
+                                        case nameof(item.NgayHoaDon):
                                             item.StrNgayHoaDon = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             item.NgayHoaDon = worksheet.Cells[i, group.ColIndex].Value.ParseExactCellDate(out bool isValidNgayHoaDon);
                                             if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.StrNgayHoaDon))
@@ -11537,10 +11646,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                             }
                                             break;
-                                        case MaTruongDLHDExcel.NM1:
+                                        case nameof(item.HoTenNguoiMuaHang):
                                             item.HoTenNguoiMuaHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             break;
-                                        case MaTruongDLHDExcel.NM2:
+                                        case nameof(item.MaKhachHang):
                                             item.MaKhachHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             khachHang = _doiTuongService.CheckMaOutObject(item.MaKhachHang, khachHangs, true);
                                             if (khachHang != null)
@@ -11548,15 +11657,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 item.KhachHangId = khachHang.DoiTuongId;
                                             }
                                             break;
-                                        case MaTruongDLHDExcel.NM3:
+                                        case nameof(item.TenKhachHang):
                                             item.TenKhachHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             item.TenKhachHang = string.IsNullOrEmpty(item.TenKhachHang) ? khachHang?.Ten : item.TenKhachHang;
                                             break;
-                                        case MaTruongDLHDExcel.NM4:
+                                        case nameof(item.DiaChi):
                                             item.DiaChi = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             item.DiaChi = string.IsNullOrEmpty(item.DiaChi) ? khachHang?.DiaChi : item.DiaChi;
                                             break;
-                                        case MaTruongDLHDExcel.NM5:
+                                        case nameof(item.MaSoThue):
                                             item.MaSoThue = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             if (string.IsNullOrEmpty(item.MaSoThue) && khachHang != null)
                                             {
@@ -11575,7 +11684,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 item.ErrorMessage = "Bắt buộc phải nhập thông tin <Địa chỉ> khi đã có thông tin <Mã số thuế>.";
                                             }
                                             break;
-                                        case MaTruongDLHDExcel.NM6:
+                                        case nameof(item.HinhThucThanhToanId):
                                             item.HinhThucThanhToanId = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             item.HinhThucThanhToanId = string.IsNullOrEmpty(item.HinhThucThanhToanId) ? "3" : item.HinhThucThanhToanId;
                                             bool checkHinhThucThanhToan = int.TryParse(item.HinhThucThanhToanId, out int hinhThucThanhToan);
@@ -11587,23 +11696,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 }
                                             }
                                             break;
-                                        case MaTruongDLHDExcel.NM7:
+                                        case nameof(item.EmailNguoiMuaHang):
                                             item.EmailNguoiMuaHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             item.EmailNguoiMuaHang = string.IsNullOrEmpty(item.EmailNguoiMuaHang) ? khachHang?.EmailNguoiMuaHang : item.EmailNguoiMuaHang;
                                             break;
-                                        case MaTruongDLHDExcel.NM8:
+                                        case nameof(item.SoDienThoaiNguoiMuaHang):
                                             item.SoDienThoaiNguoiMuaHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             item.SoDienThoaiNguoiMuaHang = string.IsNullOrEmpty(item.SoDienThoaiNguoiMuaHang) ? khachHang?.SoDienThoaiNguoiMuaHang : item.SoDienThoaiNguoiMuaHang;
                                             break;
-                                        case MaTruongDLHDExcel.NM9:
+                                        case nameof(item.SoTaiKhoanNganHang):
                                             item.SoTaiKhoanNganHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             item.SoTaiKhoanNganHang = string.IsNullOrEmpty(item.SoTaiKhoanNganHang) ? khachHang?.SoTaiKhoanNganHang : item.SoTaiKhoanNganHang;
                                             break;
-                                        case MaTruongDLHDExcel.NM10:
+                                        case nameof(item.TenNganHang):
                                             item.TenNganHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             item.TenNganHang = string.IsNullOrEmpty(item.TenNganHang) ? khachHang?.TenNganHang : item.TenNganHang;
                                             break;
-                                        case MaTruongDLHDExcel.LOAITIEN:
+                                        case nameof(item.LoaiTienId):
                                             item.MaLoaiTien = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             if (string.IsNullOrEmpty(item.MaLoaiTien))
                                             {
@@ -11623,7 +11732,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 item.IsVND = loaiTien.Ma == "VND";
                                             }
                                             break;
-                                        case MaTruongDLHDExcel.TYGIA:
+                                        case nameof(item.TyGia):
                                             string tyGia = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             if (string.IsNullOrEmpty(tyGia) && loaiTien != null)
                                             {
@@ -11669,9 +11778,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             foreach (var group in nhomThongTinHHDVs)
                             {
-                                switch (group.Ma)
+                                switch (group.TenEnum)
                                 {
-                                    case MaTruongDLHDExcel.HHDV2:
+                                    case nameof(item.HoaDonChiTiet.MaHang):
                                         item.HoaDonChiTiet.MaHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         hangHoaDichVu = _hangHoaDichVuService.CheckMaOutObject(item.HoaDonChiTiet.MaHang, hhdvs);
                                         if (hangHoaDichVu != null)
@@ -11679,7 +11788,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             item.HoaDonChiTiet.HangHoaDichVuId = hangHoaDichVu.HangHoaDichVuId;
                                         }
                                         break;
-                                    case MaTruongDLHDExcel.HHDV3:
+                                    case nameof(item.HoaDonChiTiet.TenHang):
                                         item.HoaDonChiTiet.TenHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.HoaDonChiTiet.TenHang))
                                         {
@@ -11691,11 +11800,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         }
                                         item.HoaDonChiTiet.TenHang = string.IsNullOrEmpty(item.HoaDonChiTiet.TenHang) ? hangHoaDichVu?.Ten : item.HoaDonChiTiet.TenHang;
                                         break;
-                                    case MaTruongDLHDExcel.HHDV4:
+                                    case nameof(item.HoaDonChiTiet.TinhChat):
                                         break;
-                                    case MaTruongDLHDExcel.HHDV5:
-                                        break;
-                                    case MaTruongDLHDExcel.HHDV6:
+                                    case nameof(item.HoaDonChiTiet.DonViTinhId):
                                         item.HoaDonChiTiet.TenDonViTinh = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         DonViTinhViewModel donViTinh = _donViTinhService.CheckTenOutObject(item.HoaDonChiTiet.TenDonViTinh, donViTinhs);
                                         if (donViTinh != null)
@@ -11703,7 +11810,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             item.HoaDonChiTiet.DonViTinhId = donViTinh.DonViTinhId;
                                         }
                                         break;
-                                    case MaTruongDLHDExcel.HHDV7:
+                                    case nameof(item.HoaDonChiTiet.SoLuong):
                                         string soLuong = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidSoLuong = soLuong.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.SO_LUONG, out decimal outputSoLuong);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidSoLuong)
@@ -11712,7 +11819,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         }
                                         item.HoaDonChiTiet.SoLuong = outputSoLuong.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG);
                                         break;
-                                    case MaTruongDLHDExcel.HHDV9:
+                                    case nameof(item.HoaDonChiTiet.DonGia):
                                         string donGia = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidDonGia = donGia.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE), out decimal outputDonGia);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidDonGia)
@@ -11721,7 +11828,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         }
                                         item.HoaDonChiTiet.DonGia = outputDonGia.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE);
                                         break;
-                                    case MaTruongDLHDExcel.HHDV11:
+                                    case nameof(item.HoaDonChiTiet.ThanhTien):
                                         string thanhTien = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidThanhTien = thanhTien.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE), out decimal outputThanhTien);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidThanhTien)
@@ -11730,7 +11837,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         }
                                         item.HoaDonChiTiet.ThanhTien = outputThanhTien.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                                         break;
-                                    case MaTruongDLHDExcel.HHDV12:
+                                    case nameof(item.HoaDonChiTiet.ThanhTienQuyDoi):
                                         string thanhTienQuyDoi = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidThanhTienQuyDoi = thanhTienQuyDoi.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, out decimal outputThanhTienQuyDoi);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidThanhTienQuyDoi)
@@ -11739,7 +11846,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         }
                                         item.HoaDonChiTiet.ThanhTienQuyDoi = outputThanhTienQuyDoi.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
                                         break;
-                                    case MaTruongDLHDExcel.HHDV13:
+                                    case nameof(item.HoaDonChiTiet.TyLeChietKhau):
                                         string tyLeCK = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidTyLeCK = tyLeCK.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.HESO_TYLE, out decimal outputTyLeCK);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTyLeCK)
@@ -11754,7 +11861,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             item.ErrorMessage = "Đối với các hóa đơn có thông tin chiết khấu thì <Tỷ lệ chiết khấu> phải nhỏ hơn 100%. Vui lòng kiểm tra lại!";
                                         }
                                         break;
-                                    case MaTruongDLHDExcel.HHDV14:
+                                    case nameof(item.HoaDonChiTiet.TienChietKhau):
                                         string tienCK = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidTienCK = tienCK.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE), out decimal outputTienCK);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienCK)
@@ -11763,7 +11870,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         }
                                         item.HoaDonChiTiet.TienChietKhau = outputTienCK.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                                         break;
-                                    case MaTruongDLHDExcel.HHDV15:
+                                    case nameof(item.HoaDonChiTiet.TienChietKhauQuyDoi):
                                         string tienCKQuyDoi = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidTienCKQuyDoi = tienCKQuyDoi.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, out decimal outputTienCKQuyDoi);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienCKQuyDoi)
@@ -11772,8 +11879,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         }
                                         item.HoaDonChiTiet.TienChietKhauQuyDoi = outputTienCKQuyDoi.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
                                         break;
-                                    case MaTruongDLHDExcel.HHDV16:
+                                    case nameof(item.HoaDonChiTiet.ThueGTGT):
                                         item.HoaDonChiTiet.ThueGTGT = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.HoaDonChiTiet.ThueGTGT))
                                         {
                                             item.ErrorMessage = string.Format(formatRequired, group.TenTruong);
@@ -11789,41 +11897,40 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                             if (!(monthOfNgayHoaDon >= 2 && monthOfNgayHoaDon <= 12 && yearOfNgayHoaDon == 2022))
                                             {
-                                                item.ErrorMessage = "Thuế suất 8% áp dụng trong thời gian từ 01/02/2022 đến 31/12/2022";
+                                                item.ErrorMessage = "Thuế suất 8% áp dụng trong thời gian từ 01/01/2022 đến 31/12/2022. Nếu muốn nhập mức thuế suất KHÁC là 8% (KHÔNG PHẢI trường hợp được áp dụng thuế suất là 8%) thì nhập là KHAC:08.00% hoặc KHAC:08.0% hoặc KHAC:8.00% hoặc KHAC:8.0% hoặc KHAC:8%";
                                             }
                                         }
                                         if (string.IsNullOrEmpty(item.ErrorMessage)) // check TH 
                                         {
                                             if (thuePairs.ContainsKey(item.STT)) // nếu là thuế tiếp theo trong hóa đơn thì KT
                                             {
-                                                var thues = thuePairs[item.STT];
-
                                                 // Nếu là 1 thuế suất thì set các thuế còn lại = thuế dòng đầu tiền
                                                 if (loaiThueSuat == LoaiThueGTGT.MauMotThueSuat)
                                                 {
-                                                    item.HoaDonChiTiet.ThueGTGT = thues[0];
+                                                    var thueGTGT = thuePairs[item.STT];
+                                                    item.HoaDonChiTiet.ThueGTGT = thueGTGT;
                                                 }
                                                 else // Nếu là nhiều thuế suất
                                                 {
-                                                    thues.Add(item.HoaDonChiTiet.ThueGTGT);
+                                                    //thues.Add(item.HoaDonChiTiet.ThueGTGT);
 
-                                                    // Nếu có thuế 8% + thuế khác 8% thì báo
-                                                    if (thues.Contains("8") && thues.Distinct().ToList().Count > 1)
-                                                    {
-                                                        item.ErrorMessage = "Người dùng phải lập hóa đơn riêng cho hàng hóa dịch vụ được giảm thuế giá trị gia tăng (thuế suất 8%)";
-                                                    }
+                                                    //// Nếu có thuế 8% + thuế khác 8% thì báo
+                                                    //if (thues.Contains("8") && thues.Distinct().ToList().Count > 1)
+                                                    //{
+                                                    //    item.ErrorMessage = "Người dùng phải lập hóa đơn riêng cho hàng hóa dịch vụ được giảm thuế giá trị gia tăng (thuế suất 8%)";
+                                                    //}
 
-                                                    thuePairs.Remove(item.STT);
-                                                    thuePairs.Add(item.STT, thues);
+                                                    //thuePairs.Remove(item.STT);
+                                                    //thuePairs.Add(item.STT, thues);
                                                 }
                                             }
                                             else // nếu là thuế của dòng đầu tiên trong hóa đơn thì add vào dic
                                             {
-                                                thuePairs.Add(item.STT, new List<string> { item.HoaDonChiTiet.ThueGTGT });
+                                                thuePairs.Add(item.STT, item.HoaDonChiTiet.ThueGTGT);
                                             }
                                         }
                                         break;
-                                    case MaTruongDLHDExcel.HHDV17:
+                                    case nameof(item.HoaDonChiTiet.TienThueGTGT):
                                         string tienThueGTGT = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidTienThueGTGT = tienThueGTGT.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE), out decimal outputTienThueGTGT);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienThueGTGT)
@@ -11832,7 +11939,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         }
                                         item.HoaDonChiTiet.TienThueGTGT = outputTienThueGTGT.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                                         break;
-                                    case MaTruongDLHDExcel.HHDV18:
+                                    case nameof(item.HoaDonChiTiet.TienThueGTGTQuyDoi):
                                         string tienThueGTGTQuyDoi = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidTienThueGTGTQuyDoi = tienThueGTGTQuyDoi.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, out decimal outputTienThueGTGTQuyDoi);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienThueGTGTQuyDoi)
@@ -11841,7 +11948,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         }
                                         item.HoaDonChiTiet.TienThueGTGTQuyDoi = outputTienThueGTGTQuyDoi.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
                                         break;
-                                    case MaTruongDLHDExcel.HHDV37:
+                                    case nameof(item.HoaDonChiTiet.IsMatHangDuocGiam):
+                                        string isMatHangDuocGiam = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        if (string.IsNullOrEmpty(isMatHangDuocGiam))
+                                        {
+                                            isMatHangDuocGiam = "0";
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && isMatHangDuocGiam != "1" && isMatHangDuocGiam != "0")
+                                        {
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                        }
+                                        item.HoaDonChiTiet.StrMatHangDuocGiam = isMatHangDuocGiam;
+                                        break;
+                                    case nameof(item.HoaDonChiTiet.TyLePhanTramDoanhThu):
                                         string tyLePhanTramDoanhThu = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidTyLePhanTramDoanThu = tyLePhanTramDoanhThu.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.HESO_TYLE, out decimal outputTyLePhanTramDoanhThu);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTyLePhanTramDoanThu)
@@ -11855,7 +11974,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             var monthOfNgayHoaDon = item.NgayHoaDon.Value.Month;
                                             var yearOfNgayHoaDon = item.NgayHoaDon.Value.Year;
 
-                                            if (!(monthOfNgayHoaDon >= 2 && monthOfNgayHoaDon <= 12 && yearOfNgayHoaDon == 2022))
+                                            if (!(monthOfNgayHoaDon >= 2 && monthOfNgayHoaDon <= 12 && yearOfNgayHoaDon == 2022) && item.HoaDonChiTiet.StrMatHangDuocGiam == "1")
                                             {
                                                 item.ErrorMessage = "Giảm thuế GTGT áp dụng trong thời gian từ 01/02/2022 đến 31/12/2022";
                                             }
@@ -11868,11 +11987,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                                 tyLePhanTramDoanhThuPair.Add(item.HoaDonChiTiet.TyLePhanTramDoanhThu.Value);
 
-                                                // Nếu là 1 hóa đơn chọn nhiều tỷ lệ % doanh thu khác nhau
-                                                if (tyLePhanTramDoanhThuPair.Distinct().ToList().Count > 1)
-                                                {
-                                                    item.ErrorMessage = "Người dùng phải lập hóa đơn riêng cho hàng hóa dịch vụ được giảm thuế giá trị gia tăng và riêng cho từng Tỷ lệ % trên doanh thu";
-                                                }
+                                                //// Nếu là 1 hóa đơn chọn nhiều tỷ lệ % doanh thu khác nhau
+                                                //if (tyLePhanTramDoanhThuPair.Distinct().ToList().Count > 1)
+                                                //{
+                                                //    item.ErrorMessage = "Người dùng phải lập hóa đơn riêng cho hàng hóa dịch vụ được giảm thuế giá trị gia tăng và riêng cho từng Tỷ lệ % trên doanh thu";
+                                                //}
 
                                                 tyLePhanTramDoanhThuPairs.Remove(item.STT);
                                                 tyLePhanTramDoanhThuPairs.Add(item.STT, tyLePhanTramDoanhThuPair);
@@ -11883,7 +12002,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             }
                                         }
                                         break;
-                                    case MaTruongDLHDExcel.HHDV38:
+                                    case nameof(item.HoaDonChiTiet.TienGiam):
                                         string tienGiam = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidTienGiam = tienGiam.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE), out decimal outputTienGiam);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienGiam)
@@ -11892,7 +12011,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         }
                                         item.HoaDonChiTiet.TienGiam = outputTienGiam.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                                         break;
-                                    case MaTruongDLHDExcel.HHDV39:
+                                    case nameof(item.HoaDonChiTiet.TienGiamQuyDoi):
                                         string tienGiamQuyDoi = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidTienGiamQuyDoi = tienGiamQuyDoi.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, out decimal outputTienGiamQuyDoi);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienGiamQuyDoi)
@@ -12060,6 +12179,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         ThueGTGT = y.HoaDonChiTiet.ThueGTGT.ConvertThueExcetToDB(),
                         TienThueGTGT = y.HoaDonChiTiet.TienThueGTGT ?? 0,
                         TienThueGTGTQuyDoi = y.HoaDonChiTiet.TienThueGTGTQuyDoi ?? 0,
+                        IsMatHangDuocGiam = y.HoaDonChiTiet.StrMatHangDuocGiam == "1",
                         TyLePhanTramDoanhThu = y.HoaDonChiTiet.TyLePhanTramDoanhThu ?? 0,
                         TienGiam = y.HoaDonChiTiet.TienGiam ?? 0,
                         TienGiamQuyDoi = y.HoaDonChiTiet.TienGiamQuyDoi ?? 0,
@@ -12076,10 +12196,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 switch ((LoaiHoaDon)item.LoaiHoaDon)
                 {
                     case LoaiHoaDon.HoaDonGTGT:
-                        item.IsGiamTheoNghiQuyet = item.HoaDonChiTiets.All(x => x.ThueGTGT == "8");
+                        item.IsGiamTheoNghiQuyet = item.HoaDonChiTiets.Any(x => x.ThueGTGT == "8");
                         break;
                     case LoaiHoaDon.HoaDonBanHang:
-                        item.IsGiamTheoNghiQuyet = item.HoaDonChiTiets.All(x => x.TyLePhanTramDoanhThu != 0);
+                        item.IsGiamTheoNghiQuyet = item.HoaDonChiTiets.Any(x => x.IsMatHangDuocGiam == true);
                         break;
                     case LoaiHoaDon.HoaDonBanTaiSanCong:
                         break;
@@ -12175,6 +12295,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 Status = true
                             });
                         }
+                    }
+
+                    if (detail.IsMatHangDuocGiam != true)
+                    {
+                        detail.TyLePhanTramDoanhThu = 0;
+                        detail.TienGiam = 0;
+                        detail.TienGiamQuyDoi = 0;
                     }
 
                     if (detail.TinhChat == 1 || detail.TinhChat == 2)
@@ -12318,89 +12445,104 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     for (int j = 3; j <= numCol + 1; j++)
                     {
                         var truongDL = result.ListTruongDuLieu.FirstOrDefault(x => x.ColIndex == j);
+                        if (truongDL == null)
+                        {
+                            break;
+                        }
 
                         if (j != (numCol + 1))
                         {
                             switch (truongDL.Ma)
                             {
-                                case MaTruongDLHDExcel.NVBANHANG:
+                                case MaTruongDLHDExcel.NhanVienBanHangId:
                                     worksheet.Cells[idx, j].Value = item.MaNhanVienBanHang;
                                     break;
-                                case MaTruongDLHDExcel.NGAYHOADON:
-                                    worksheet.Cells[idx, j].Value = item.NgayHoaDon.Value.ToString("dd/MM/yyyy");
+                                case MaTruongDLHDExcel.NgayHoaDon:
+                                    worksheet.Cells[idx, j].Value = item.NgayHoaDon.HasValue ? item.NgayHoaDon.Value.ToString("dd/MM/yyyy") : string.Empty;
                                     break;
-                                case MaTruongDLHDExcel.NM1:
+                                case MaTruongDLHDExcel.HoTenNguoiMuaHang:
                                     worksheet.Cells[idx, j].Value = item.HoTenNguoiMuaHang;
                                     break;
-                                case MaTruongDLHDExcel.NM2:
+                                case MaTruongDLHDExcel.MaKhachHang:
+                                    worksheet.Cells[idx, j].Value = item.MaKhachHang;
                                     break;
-                                case MaTruongDLHDExcel.NM3:
+                                case MaTruongDLHDExcel.TenKhachHang:
                                     worksheet.Cells[idx, j].Value = item.TenKhachHang;
                                     break;
-                                case MaTruongDLHDExcel.NM4:
+                                case MaTruongDLHDExcel.DiaChi:
                                     worksheet.Cells[idx, j].Value = item.DiaChi;
                                     break;
-                                case MaTruongDLHDExcel.NM5:
+                                case MaTruongDLHDExcel.MaSoThue:
                                     worksheet.Cells[idx, j].Value = item.MaSoThue;
                                     break;
-                                case MaTruongDLHDExcel.NM6:
+                                case MaTruongDLHDExcel.HinhThucThanhToanId:
                                     worksheet.Cells[idx, j].Value = item.HinhThucThanhToanId;
                                     break;
-                                case MaTruongDLHDExcel.NM7:
+                                case MaTruongDLHDExcel.EmailNguoiMuaHang:
                                     worksheet.Cells[idx, j].Value = item.EmailNguoiMuaHang;
                                     break;
-                                case MaTruongDLHDExcel.NM8:
+                                case MaTruongDLHDExcel.SoDienThoaiNguoiMuaHang:
+                                    worksheet.Cells[idx, j].Value = item.SoDienThoaiNguoiMuaHang;
                                     break;
-                                case MaTruongDLHDExcel.NM9:
+                                case MaTruongDLHDExcel.SoTaiKhoanNganHang:
                                     worksheet.Cells[idx, j].Value = item.SoTaiKhoanNganHang;
                                     break;
-                                case MaTruongDLHDExcel.NM10:
+                                case MaTruongDLHDExcel.TenNganHang:
                                     worksheet.Cells[idx, j].Value = item.TenNganHang;
                                     break;
-                                case MaTruongDLHDExcel.LOAITIEN:
+                                case MaTruongDLHDExcel.LoaiTienId:
                                     worksheet.Cells[idx, j].Value = item.MaLoaiTien;
                                     break;
-                                case MaTruongDLHDExcel.TYGIA:
+                                case MaTruongDLHDExcel.TyGia:
                                     worksheet.Cells[idx, j].Value = item.TyGia;
                                     break;
-                                case MaTruongDLHDExcel.HHDV2:
+                                case MaTruongDLHDExcel.MaHang:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.MaHang;
                                     break;
-                                case MaTruongDLHDExcel.HHDV3:
+                                case MaTruongDLHDExcel.TenHang:
                                     worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.TenHang;
                                     break;
-                                case MaTruongDLHDExcel.HHDV4:
-                                    break;
-                                case MaTruongDLHDExcel.HHDV5:
-                                    break;
-                                case MaTruongDLHDExcel.HHDV6:
+                                case MaTruongDLHDExcel.DonViTinhId:
                                     worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.TenDonViTinh;
                                     break;
-                                case MaTruongDLHDExcel.HHDV7:
+                                case MaTruongDLHDExcel.SoLuong:
                                     worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.SoLuong;
                                     break;
-                                case MaTruongDLHDExcel.HHDV9:
+                                case MaTruongDLHDExcel.DonGia:
                                     worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.DonGia;
                                     break;
-                                case MaTruongDLHDExcel.HHDV11:
+                                case MaTruongDLHDExcel.ThanhTien:
                                     worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.ThanhTien;
                                     break;
-                                case MaTruongDLHDExcel.HHDV12:
+                                case MaTruongDLHDExcel.ThanhTienQuyDoi:
                                     worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.ThanhTienQuyDoi;
                                     break;
-                                case MaTruongDLHDExcel.HHDV13:
+                                case MaTruongDLHDExcel.TyLeChietKhau:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.TyLeChietKhau;
                                     break;
-                                case MaTruongDLHDExcel.HHDV14:
+                                case MaTruongDLHDExcel.TienChietKhau:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.TienChietKhau;
                                     break;
-                                case MaTruongDLHDExcel.HHDV15:
+                                case MaTruongDLHDExcel.TienChietKhauQuyDoi:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.TienChietKhauQuyDoi;
                                     break;
-                                case MaTruongDLHDExcel.HHDV16:
+                                case MaTruongDLHDExcel.ThueGTGT:
                                     worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.ThueGTGT;
                                     break;
-                                case MaTruongDLHDExcel.HHDV17:
+                                case MaTruongDLHDExcel.TienThueGTGT:
                                     worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.TienThueGTGT;
                                     break;
-                                case MaTruongDLHDExcel.HHDV18:
+                                case MaTruongDLHDExcel.TienThueGTGTQuyDoi:
                                     worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.TienThueGTGTQuyDoi;
+                                    break;
+                                case MaTruongDLHDExcel.TyLePhanTramDoanhThu:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.TyLePhanTramDoanhThu;
+                                    break;
+                                case MaTruongDLHDExcel.TienGiam:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.TienGiam;
+                                    break;
+                                case MaTruongDLHDExcel.TienGiamQuyDoi:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.TienGiamQuyDoi;
                                     break;
                                 default:
                                     break;

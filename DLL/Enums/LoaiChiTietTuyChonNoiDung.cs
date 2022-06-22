@@ -113,6 +113,8 @@
         TienThueHHDV,
         ThanhTienSauThueHHDV,
         DongTienThanhToan,
-        TyGiaHHDV
+        TyGiaHHDV,
+        ///////////////////////
+        TongTienChiuThueSuat8
     }
 }

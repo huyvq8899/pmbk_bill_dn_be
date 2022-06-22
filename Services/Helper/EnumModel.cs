@@ -1,4 +1,6 @@
-﻿namespace Services.Helper
+﻿using Services.Helper.Params.HeThong;
+
+namespace Services.Helper
 {
     public class EnumModel
     {

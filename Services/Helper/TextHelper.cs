@@ -1362,18 +1362,18 @@ namespace ManagementServices.Helper
         /// <returns></returns>
         public static bool CheckValidThueKhac(this string value)
         {
-            if (!value.Contains("%") || value.Count(c => c == '%') > 1 || value.Substring(value.Length - 1) != "%")
+            if (!(value.StartsWith("KHAC:") && value.EndsWith("%")))
             {
                 return false;
             }
 
-            var splitThue = value.Substring(0, value.Length - 2).Split(".");
+            var splitThue = value.Substring(5, value.Length - 6).Split(".");
             if (splitThue.Length > 2)
             {
                 return false;
             }
 
-            return splitThue.All(x => x.CheckValidNumber());
+            return splitThue.All(x => CheckValidNumberThue(x));
         }
 
         /// <summary>
@@ -1408,7 +1408,7 @@ namespace ManagementServices.Helper
 
             if (value.CheckValidThueKhac())
             {
-                var thue = value.Substring(0, value.Length - 2).Replace(".", ",");
+                var thue = value.Substring(5, value.Length - 6).Replace(".", ",");
                 var thueDec = decimal.Parse(thue, NumberStyles.Float, CultureInfo.CreateSpecificCulture("es-ES"));
                 thue = thueDec.ToString("G29").Replace(",", ".");
 
@@ -1422,6 +1422,12 @@ namespace ManagementServices.Helper
         {
             var result = decimal.Parse(value.Replace(".", ","), NumberStyles.Float, CultureInfo.CreateSpecificCulture("es-ES"));
             return result;
+        }
+
+        public static bool CheckValidNumberThue(this string value)
+        {
+            if (string.IsNullOrEmpty(value)) return false;
+            return Regex.IsMatch(value, "^[0-9]{1,2}$");
         }
 
         public static bool CheckValidNumber(this string value)
