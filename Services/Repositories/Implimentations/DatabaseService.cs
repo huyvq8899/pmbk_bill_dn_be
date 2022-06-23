@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using ManagementServices.Helper;
+using Microsoft.Extensions.Configuration;
 using Services.Helper;
 using Services.Repositories.Interfaces;
 using System;
@@ -6,6 +7,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Implimentations
@@ -173,6 +176,10 @@ namespace Services.Repositories.Implimentations
                 {
                     try
                     {
+                        if(item.Server != "10.10.20.11")
+                        {
+                            var a = 0;
+                        }
                         using (SqlConnection connection = new SqlConnection(item.ConnectionString))
                         {
                             string query = $"SELECT COUNT(*) FROM HoaDonDienTus WHERE MaTraCuu = @MaTraCuu";
@@ -199,7 +206,7 @@ namespace Services.Repositories.Implimentations
                 
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -329,6 +336,9 @@ namespace Services.Repositories.Implimentations
             }
 
             //companyModels = companyModels.Where(x => x.Server == server).ToList();
+            var servers = companyModels.DistinctBy(x => x.Server).Select(x => x.Server).ToList();
+            var availableServer = servers.Where(x => IsAvailableServer(x)).ToList();
+            companyModels = companyModels.Where(x => availableServer.Contains(x.Server)).ToList();
             return companyModels;
         }
 
@@ -343,10 +353,20 @@ namespace Services.Repositories.Implimentations
             // Get connection string default database.
             if(formatConnection.Contains("Database={0}"))
             {
-                return string.Format(formatConnection, "CusMan");
+                return string.Format(formatConnection, "CusManKiemThu");
             }
 
             return formatConnection;
+        }
+
+        private bool IsAvailableServer(string IPAddrr)
+        {
+            var splitAdd = IPAddrr.Split(".");
+            var bSplitAdd = splitAdd.Select(x => byte.Parse(x)).ToArray();
+            var ping = new Ping();
+                                                            // or...
+            var reply = ping.Send(new IPAddress(bSplitAdd), 3000);
+            return reply.Status == IPStatus.Success;
         }
     }
 }
