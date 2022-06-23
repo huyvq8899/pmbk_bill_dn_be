@@ -11626,7 +11626,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 nhanVien = _doiTuongService.CheckMaOutObject(item.MaNhanVienBanHang, nhanViens, false);
                                                 if (nhanVien == null)
                                                 {
-                                                    item.ErrorMessage = string.Format(formatExists, group.TenTruong, item.MaNhanVienBanHang);
+                                                    item.ErrorMessage = string.Format(formatExists, group.TenTruongExcel, item.MaNhanVienBanHang);
                                                 }
                                             }
                                             if (nhanVien != null)
@@ -11639,11 +11639,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             item.NgayHoaDon = worksheet.Cells[i, group.ColIndex].Value.ParseExactCellDate(out bool isValidNgayHoaDon);
                                             if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.StrNgayHoaDon))
                                             {
-                                                item.ErrorMessage = string.Format(formatRequired, group.TenTruong);
+                                                item.ErrorMessage = string.Format(formatRequired, group.TenTruongExcel);
                                             }
                                             if (string.IsNullOrEmpty(item.ErrorMessage) && !isValidNgayHoaDon)
                                             {
-                                                item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                                item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                             }
                                             break;
                                         case nameof(item.HoTenNguoiMuaHang):
@@ -11673,7 +11673,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             }
                                             if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaSoThue) && !item.MaSoThue.CheckValidMaSoThue())
                                             {
-                                                item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                                item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                             }
                                             if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaSoThue) && string.IsNullOrEmpty(item.TenKhachHang))
                                             {
@@ -11692,7 +11692,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             {
                                                 if (!checkHinhThucThanhToan || (checkHinhThucThanhToan && (hinhThucThanhToan < 1 || hinhThucThanhToan > 6)))
                                                 {
-                                                    item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                                    item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                                 }
                                             }
                                             break;
@@ -11723,7 +11723,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 loaiTien = _loaiTienService.CheckMaOutObject(item.MaLoaiTien, loaiTiens);
                                                 if (loaiTien == null)
                                                 {
-                                                    item.ErrorMessage = string.Format(formatExists, group.TenTruong, item.MaLoaiTien);
+                                                    item.ErrorMessage = string.Format(formatExists, group.TenTruongExcel, item.MaLoaiTien);
                                                 }
                                             }
                                             if (loaiTien != null)
@@ -11741,7 +11741,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             var checkValidTyGia = tyGia.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TY_GIA, out decimal outputTyGia);
                                             if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTyGia)
                                             {
-                                                item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                                item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                             }
                                             item.TyGia = outputTyGia.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TY_GIA);
                                             break;
@@ -11792,11 +11792,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         item.HoaDonChiTiet.TenHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.HoaDonChiTiet.TenHang))
                                         {
-                                            item.ErrorMessage = string.Format(formatRequired, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatRequired, group.TenTruongExcel);
                                         }
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.HoaDonChiTiet.TenHang) && item.HoaDonChiTiet.TenHang.Length > 400)
                                         {
-                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruong, 400);
+                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruongExcel, 400);
                                         }
                                         item.HoaDonChiTiet.TenHang = string.IsNullOrEmpty(item.HoaDonChiTiet.TenHang) ? hangHoaDichVu?.Ten : item.HoaDonChiTiet.TenHang;
                                         break;
@@ -11815,7 +11815,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         var checkValidSoLuong = soLuong.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.SO_LUONG, out decimal outputSoLuong);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidSoLuong)
                                         {
-                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                         }
                                         item.HoaDonChiTiet.SoLuong = outputSoLuong.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG);
                                         break;
@@ -11824,7 +11824,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         var checkValidDonGia = donGia.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE), out decimal outputDonGia);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidDonGia)
                                         {
-                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                         }
                                         item.HoaDonChiTiet.DonGia = outputDonGia.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE);
                                         break;
@@ -11833,7 +11833,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         var checkValidThanhTien = thanhTien.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE), out decimal outputThanhTien);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidThanhTien)
                                         {
-                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                         }
                                         item.HoaDonChiTiet.ThanhTien = outputThanhTien.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                                         break;
@@ -11842,7 +11842,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         var checkValidThanhTienQuyDoi = thanhTienQuyDoi.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, out decimal outputThanhTienQuyDoi);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidThanhTienQuyDoi)
                                         {
-                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                         }
                                         item.HoaDonChiTiet.ThanhTienQuyDoi = outputThanhTienQuyDoi.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
                                         break;
@@ -11851,7 +11851,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         var checkValidTyLeCK = tyLeCK.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.HESO_TYLE, out decimal outputTyLeCK);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTyLeCK)
                                         {
-                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                         }
                                         item.HoaDonChiTiet.TyLeChietKhau = outputTyLeCK.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE);
 
@@ -11866,7 +11866,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         var checkValidTienCK = tienCK.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE), out decimal outputTienCK);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienCK)
                                         {
-                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                         }
                                         item.HoaDonChiTiet.TienChietKhau = outputTienCK.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                                         break;
@@ -11875,7 +11875,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         var checkValidTienCKQuyDoi = tienCKQuyDoi.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, out decimal outputTienCKQuyDoi);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienCKQuyDoi)
                                         {
-                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                         }
                                         item.HoaDonChiTiet.TienChietKhauQuyDoi = outputTienCKQuyDoi.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
                                         break;
@@ -11884,11 +11884,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.HoaDonChiTiet.ThueGTGT))
                                         {
-                                            item.ErrorMessage = string.Format(formatRequired, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatRequired, group.TenTruongExcel);
                                         }
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !item.HoaDonChiTiet.ThueGTGT.CheckValidThueGTGT())
                                         {
-                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                         }
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && item.HoaDonChiTiet.ThueGTGT == "8") // check giảm thuế 8% trong khoảng 01/02/2022 đến 31/12/2022
                                         {
@@ -11935,7 +11935,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         var checkValidTienThueGTGT = tienThueGTGT.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE), out decimal outputTienThueGTGT);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienThueGTGT)
                                         {
-                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                         }
                                         item.HoaDonChiTiet.TienThueGTGT = outputTienThueGTGT.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                                         break;
@@ -11944,7 +11944,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         var checkValidTienThueGTGTQuyDoi = tienThueGTGTQuyDoi.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, out decimal outputTienThueGTGTQuyDoi);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienThueGTGTQuyDoi)
                                         {
-                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                         }
                                         item.HoaDonChiTiet.TienThueGTGTQuyDoi = outputTienThueGTGTQuyDoi.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
                                         break;
@@ -11956,7 +11956,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         }
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && isMatHangDuocGiam != "1" && isMatHangDuocGiam != "0")
                                         {
-                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                         }
                                         item.HoaDonChiTiet.StrMatHangDuocGiam = isMatHangDuocGiam;
                                         break;
@@ -11965,7 +11965,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         var checkValidTyLePhanTramDoanThu = tyLePhanTramDoanhThu.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.HESO_TYLE, out decimal outputTyLePhanTramDoanhThu);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTyLePhanTramDoanThu)
                                         {
-                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                         }
                                         item.HoaDonChiTiet.TyLePhanTramDoanhThu = outputTyLePhanTramDoanhThu.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE);
 
@@ -12007,7 +12007,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         var checkValidTienGiam = tienGiam.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE), out decimal outputTienGiam);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienGiam)
                                         {
-                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                         }
                                         item.HoaDonChiTiet.TienGiam = outputTienGiam.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                                         break;
@@ -12016,7 +12016,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         var checkValidTienGiamQuyDoi = tienGiamQuyDoi.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, out decimal outputTienGiamQuyDoi);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienGiamQuyDoi)
                                         {
-                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
                                         }
                                         item.HoaDonChiTiet.TienGiamQuyDoi = outputTienGiamQuyDoi.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
                                         break;
