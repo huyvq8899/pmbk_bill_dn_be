@@ -353,7 +353,7 @@ namespace Services.Repositories.Implimentations
             // Get connection string default database.
             if(formatConnection.Contains("Database={0}"))
             {
-                return string.Format(formatConnection, "CusManKiemThu");
+                return string.Format(formatConnection, "CusMan");
             }
 
             return formatConnection;
