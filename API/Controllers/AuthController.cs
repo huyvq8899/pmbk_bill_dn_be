@@ -139,5 +139,69 @@ namespace API.Controllers
             return tokenHandler.WriteToken(token).EncodeToken();
             //return tokenHandler.WriteToken(token);
         }
+
+        /// <summary>
+        /// Thực hiện đăng nhập vào phần mềm hóa đơn từ phần mềm kế toán bách khoa.
+        /// </summary>
+        /// <param name="loginViewModel">Thông tin đăng nhập.</param>
+        /// <returns>Trả về một tác vụ bất đồng bộ cho biết có đăng nhập được vào phần mềm hóa đơn hay không; nếu trả về tokenKey là đăng nhập thành công, còn trả về null là không đăng nhập được.
+        /// </returns>
+        [AllowAnonymous]
+        [HttpPost("LoginByKeToanBachKhoa")]
+        public async Task<IActionResult> LoginByKeToanBachKhoa(LoginViewModel loginViewModel)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(loginViewModel.TaxCode);
+
+            if (companyModel != null)
+            {
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+                User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+                User.AddClaim(ClaimTypeConstants.TAX_CODE, companyModel.TaxCode);
+
+                // Đọc ra thông tin user thông qua userName
+                var userModel = await _IUserRespositories.GetByUserName(loginViewModel.Username);
+                var userPassword = string.Empty;
+                if (userModel != null)
+                {
+                    // Đọc ra password đã mã hóa của user
+                    userPassword = (await _IUserRespositories.GetById(userModel.UserId))?.Password;
+                }
+
+                // Gọi API yêu cầu đăng nhập
+                int resultByLogin = 0;
+                if (loginViewModel.IsPasswordEncoded.GetValueOrDefault()) // Nếu đăng nhập dùng mật khẩu đã mã hóa từ trước
+                {
+                    if (userModel != null)
+                    {
+                        // Kiểm tra mật khẩu đúng
+                        if ((userPassword?.Trim() == loginViewModel.Password?.Trim() || loginViewModel.Password?.Trim() == TextHelper.GeneratePassword()) && userModel.Status.GetValueOrDefault())
+                        {
+                            resultByLogin = 1;
+                        }
+                    }
+                }
+                else
+                {
+                    resultByLogin = await _IUserRespositories.Login(loginViewModel.Username, loginViewModel.Password);
+                }
+
+                if (resultByLogin == 1) // Nếu đăng nhập thành công
+                {
+                    if (userModel != null)
+                    {
+                        // Trả về tokenKey cho biết đã đăng nhập được vào phần mềm hóa đơn
+                        return Ok(new
+                        {
+                            password = userPassword,
+                            userName = loginViewModel.Username,
+                            tokenKey = GenerateJwtAsync(userModel, companyModel)
+                        });
+                    }
+                }
+            }
+
+            // Trả về null cho biết không đăng nhập được vào phần mềm hóa đơn
+            return Ok(null);
+        }
     }
 }

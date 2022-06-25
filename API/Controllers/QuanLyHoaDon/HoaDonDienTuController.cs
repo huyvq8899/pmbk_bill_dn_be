@@ -1318,5 +1318,17 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.IsDaGuiEmailChoKhachHangAsync(id);
             return Ok(result);
         }
+
+        /// <summary>
+        /// Đọc dữ liệu hóa đơn để import vào chức năng đề nghị ghi nhận doanh thu của phần mềm kế toán bách khoa.
+        /// </summary>
+        /// <param name="thamSoLayDuLieu">Điều kiện đọc dữ liệu.</param>
+        /// <returns>Danh sách các hóa đơn cần để import.</returns>
+        [HttpPost("GetHoaDonChoKeToanBachKhoa")]
+        public async Task<IActionResult> GetHoaDonChoKeToanBachKhoa(ThamSoLayDuLieuHoaDon thamSoLayDuLieu)
+        {
+            var result = await _hoaDonDienTuService.GetHoaDonChoKeToanBachKhoaAsync(thamSoLayDuLieu);
+            return Ok(result);
+        }
     }
 }
