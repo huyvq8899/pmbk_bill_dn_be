@@ -11515,11 +11515,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                   select mhd.LoaiThueGTGT).FirstOrDefaultAsync();
                         var _tuyChons = await _TuyChonService.GetAllAsync();
                         var tienVND = _mp.Map<LoaiTienViewModel>(loaiTiens.FirstOrDefault(x => x.Ma == "VND"));
+                        var truongDuLieuHoaDon = await _db.ThietLapTruongDuLieus.Where(x => (int)x.LoaiHoaDon == @params.LoaiHoaDon).AsNoTracking().ToListAsync();
 
                         string formatRequired = "<{0}> không được bỏ trống.";
                         string formatValid = "Dữ liệu cột <{0}> không hợp lệ.";
                         string formatExists = "{0} <{1}> không có trong danh mục.";
                         string overMaxLength = "<{0}> không vượt quá {1} ký tự.";
+                        string formatGreaterThan = "<{0}> phải lớn hơn {1}.";
 
                         var truongDLHDExcels = new List<TruongDLHDExcel>();
                         var enumTruongDLHDs = new TruongDLHDExcel().GetTruongDLHDExcels();
@@ -11533,6 +11535,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             var maTruong = (worksheet.Cells[begin_row - 2, i].Value ?? string.Empty).ToString();
                             var tenTruong = (worksheet.Cells[begin_row - 1, i].Value ?? string.Empty).ToString();
+
+                            if (string.IsNullOrEmpty(tenTruong))
+                            {
+                                tenTruong = truongDuLieuHoaDon.FirstOrDefault(x => x.MaTruong == maTruong)?.TenTruongHienThi;
+                            }
 
                             if (!string.IsNullOrEmpty(maTruong))
                             {
@@ -11897,7 +11904,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                             if (!(monthOfNgayHoaDon >= 2 && monthOfNgayHoaDon <= 12 && yearOfNgayHoaDon == 2022))
                                             {
-                                                item.ErrorMessage = "Thuế suất 8% áp dụng trong thời gian từ 01/01/2022 đến 31/12/2022. Nếu muốn nhập mức thuế suất KHÁC là 8% (KHÔNG PHẢI trường hợp được áp dụng thuế suất là 8%) thì nhập là KHAC:08.00% hoặc KHAC:08.0% hoặc KHAC:8.00% hoặc KHAC:8.0% hoặc KHAC:8%";
+                                                item.ErrorMessage = "Thuế suất 8% áp dụng trong thời gian từ 01/02/2022 đến 31/12/2022. Nếu muốn nhập mức thuế suất KHÁC là 8% (KHÔNG PHẢI trường hợp được áp dụng thuế suất là 8%) thì nhập là KHAC:08.00% hoặc KHAC:08.0% hoặc KHAC:8.00% hoặc KHAC:8.0% hoặc KHAC:8%";
                                             }
                                         }
                                         if (string.IsNullOrEmpty(item.ErrorMessage)) // check TH 
@@ -11961,7 +11968,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         item.HoaDonChiTiet.StrMatHangDuocGiam = isMatHangDuocGiam;
                                         break;
                                     case nameof(item.HoaDonChiTiet.TyLePhanTramDoanhThu):
-                                        string tyLePhanTramDoanhThu = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        string tyLePhanTramDoanhThu = item.HoaDonChiTiet.StrMatHangDuocGiam == "0" ? "0" : (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidTyLePhanTramDoanThu = tyLePhanTramDoanhThu.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.HESO_TYLE, out decimal outputTyLePhanTramDoanhThu);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTyLePhanTramDoanThu)
                                         {
@@ -11978,6 +11985,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             {
                                                 item.ErrorMessage = "Giảm thuế GTGT áp dụng trong thời gian từ 01/02/2022 đến 31/12/2022";
                                             }
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && item.HoaDonChiTiet.StrMatHangDuocGiam == "1" && item.HoaDonChiTiet.TyLePhanTramDoanhThu == 0)
+                                        {
+                                            item.ErrorMessage = string.Format(formatGreaterThan, group.TenTruongExcel, 0);
                                         }
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && item.HoaDonChiTiet.TyLePhanTramDoanhThu != 0)
                                         {
@@ -12003,7 +12014,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         }
                                         break;
                                     case nameof(item.HoaDonChiTiet.TienGiam):
-                                        string tienGiam = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        string tienGiam = item.HoaDonChiTiet.StrMatHangDuocGiam == "0" ? "0" : (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidTienGiam = tienGiam.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE), out decimal outputTienGiam);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienGiam)
                                         {
@@ -12012,7 +12023,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         item.HoaDonChiTiet.TienGiam = outputTienGiam.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                                         break;
                                     case nameof(item.HoaDonChiTiet.TienGiamQuyDoi):
-                                        string tienGiamQuyDoi = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        string tienGiamQuyDoi = item.HoaDonChiTiet.StrMatHangDuocGiam == "0" ? "0" : (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         var checkValidTienGiamQuyDoi = tienGiamQuyDoi.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, out decimal outputTienGiamQuyDoi);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienGiamQuyDoi)
                                         {
