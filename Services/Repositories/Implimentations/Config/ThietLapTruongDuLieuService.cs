@@ -50,7 +50,7 @@ namespace Services.Repositories.Implimentations.Config
         {
             ThietLapTruongDuLieuData data = new ThietLapTruongDuLieuData();
             var initData = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(data.InitData());
-            initData = initData.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).ToList();
+            initData = initData.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).OrderBy(x => x.STT).ToList();
 
             var oldData = await _db.ThietLapTruongDuLieus.Where(x => initData.Select(y => y.TenCot).Contains(x.TenCot) && x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon)
                 .AsNoTracking()

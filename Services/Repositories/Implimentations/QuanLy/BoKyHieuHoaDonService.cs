@@ -755,6 +755,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                     ThongDiepId = x.ThongDiepId,
                     LoaiHetHieuLuc = x.LoaiHetHieuLuc,
                     SoLuongHoaDon = x.SoLuongHoaDon,
+                    NgayHoaDon = x.NgayHoaDon,
                     CreatedBy = x.CreatedBy,
                     PhuongThucChuyenDL = x.PhuongThucChuyenDL,
                     TenPhuongThucChuyenDL = x.PhuongThucChuyenDL == PhuongThucChuyenDL.CDDu ? "Chuyển đầy đủ nội dung từng hóa đơn" : "Chuyển theo bảng tổng hợp dữ liệu hóa đơn điện tử"
@@ -899,7 +900,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                             BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
                             ThoiGianXacThuc = DateTime.Now,
                             LoaiHetHieuLuc = model.LoaiHetHieuLuc,
-                            SoLuongHoaDon = model.LoaiHetHieuLuc == LoaiHetHieuLuc.XuatHetSoHoaDon ? model.SoLuongHoaDon : entity.SoLonNhatDaLapDenHienTai
+                            SoLuongHoaDon = model.LoaiHetHieuLuc == LoaiHetHieuLuc.XuatHetSoHoaDon ? model.SoLuongHoaDon : entity.SoLonNhatDaLapDenHienTai,
+                            NgayHoaDon = model.NgayHoaDon
                         };
                     }
 

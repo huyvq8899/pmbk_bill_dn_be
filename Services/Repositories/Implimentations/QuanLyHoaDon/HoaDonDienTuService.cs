@@ -486,6 +486,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 query = query.OrderBy(x => x.IsCoSoHoaDon)
                     .ThenByDescending(x => x.NgayHoaDon.Value.Date)
                     .ThenByDescending(x => x.SoHoaDon)
+                    .ThenByDescending(x => x.KyHieuHoaDon)
                     .ThenByDescending(x => x.CreatedDate);
             }
 
