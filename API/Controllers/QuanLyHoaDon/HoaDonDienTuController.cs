@@ -401,9 +401,7 @@ namespace API.Controllers.QuanLyHoaDon
             {
                 try
                 {
-                    await _hoaDonDienTuChiTietService.RemoveRangeAsync(id);
                     bool result = await _hoaDonDienTuService.DeleteAsync(id);
-
                     transaction.Commit();
                     return Ok(result);
                 }

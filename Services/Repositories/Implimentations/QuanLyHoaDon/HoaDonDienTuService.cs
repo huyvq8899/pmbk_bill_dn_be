@@ -187,23 +187,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<bool> DeleteAsync(string id)
         {
+            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _IHttpContextAccessor);
+            await uploadFile.DeleteFileRefTypeById(id, _db);
+
             var hoaDonChiTiets = await _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == id).ToListAsync();
             _db.HoaDonDienTuChiTiets.RemoveRange(hoaDonChiTiets);
 
             var nhatKyThaoTacHoaDons = await _db.NhatKyThaoTacHoaDons.Where(x => x.HoaDonDienTuId == id).ToListAsync();
             _db.NhatKyThaoTacHoaDons.RemoveRange(nhatKyThaoTacHoaDons);
 
-            if (await _db.SaveChangesAsync() == hoaDonChiTiets.Count + nhatKyThaoTacHoaDons.Count)
-            {
-                UploadFile uploadFile = new UploadFile(_hostingEnvironment, _IHttpContextAccessor);
-                await uploadFile.DeleteFileRefTypeById(id, _db);
+            var nhatKyThaoTacLois = await _db.NhatKyThaoTacLois.Where(x => x.RefId == id).ToListAsync();
+            _db.NhatKyThaoTacLois.RemoveRange(nhatKyThaoTacLois);
 
-                var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
-                _db.HoaDonDienTus.Remove(entity);
-                return await _db.SaveChangesAsync() > 0;
-            }
-
-            return false;
+            var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
+            _db.HoaDonDienTus.Remove(entity);
+            return await _db.SaveChangesAsync() > 0;
         }
 
         public ThamChieuModel DeleteRangeHoaDonDienTuAsync(List<HoaDonDienTuViewModel> list)

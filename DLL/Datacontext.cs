@@ -78,6 +78,7 @@ namespace DLL
         #region Tiện tích
         public DbSet<NhatKyTruyCap> NhatKyTruyCaps { get; set; }
         public DbSet<NhatKyGuiEmail> NhatKyGuiEmails { get; set; }
+        public DbSet<NhatKyThaoTacLoi> NhatKyThaoTacLois { get; set; }
         #endregion
 
         #region Hóa đơn
@@ -167,6 +168,7 @@ namespace DLL
             #region Tiện tích
             modelBuilder.AddConfiguration(new NhatKyTruyCapConfiguration());
             modelBuilder.AddConfiguration(new NhatKyGuiEmailConfiguration());
+            modelBuilder.AddConfiguration(new NhatKyThaoTacLoiConfiguration());
             #endregion
 
             #region Hóa đơn

@@ -58,6 +58,7 @@ namespace Services.AutoMapper
             #region Tiện ích
             CreateMap<NhatKyGuiEmail, NhatKyGuiEmailViewModel>();
             CreateMap<NhatKyTruyCap, NhatKyTruyCapViewModel>();
+            CreateMap<NhatKyThaoTacLoi, NhatKyThaoTacLoiViewModel>();
             #endregion
 
             #region Hóa đơn
