@@ -5323,7 +5323,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var _objHDDT = await this.GetByIdAsync(hddt.HoaDonDienTuId);
 
                 string[] fileUrls = new string[] { pdfFilePath };
-                if (await SendEmailAsync(ToMail ?? hddt.EmailNguoiNhanHD, messageTitle, messageBody, fileUrls))
+                var sentResult = await SendEmailAsync(ToMail ?? hddt.EmailNguoiNhanHD, messageTitle, messageBody, fileUrls);
+                if (sentResult.Status)
                 {
                     _objHDDT.TrangThaiGuiHoaDon = (int)TrangThaiGuiHoaDon.DaGui;
 
@@ -5375,7 +5376,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
         [Obsolete]
-        private async Task<bool> SendEmailAsync(string toMail, string subject, string message, string[] fileUrl = null, string cc = "", string bcc = "")
+        private async Task<(bool Status, NhatKyThaoTacLoiViewModel ErrorModel)> SendEmailAsync(string toMail, string subject, string message, string[] fileUrl = null, string cc = "", string bcc = "")
         {
             try
             {
@@ -5452,18 +5453,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         await client.SendAsync(mimeMessage);
                         await client.DisconnectAsync(true);
 
-                        return true;
+                        return (true, null);
                     }
-                    catch (System.Net.Mail.SmtpFailedRecipientsException)
+                    catch (Exception e)
                     {
-                        return false;
+                        // log error send email
+                        NhatKyThaoTacLoiViewModel errorModel = new NhatKyThaoTacLoiViewModel();
+                        var errorResult = TextHelper.GetErrorWhenSendEmailToClient(e.Message);
+                        errorModel.MoTa = errorResult.Item1;
+                        errorModel.HuongDanXuLy = errorResult.Item2;
+                        errorModel.ThaoTacLoi = ThaoTacLoi.GuiEmail;
+                        return (false, errorModel);
                     }
                 }
             }
             catch (Exception ex)
             {
                 Tracert.WriteLog(ex.Message);
-                return false;
+                return (false, null);
             }
 
         }
@@ -5555,7 +5562,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (updateNhatKyGuiEmail != null)
                 {
-                    if (ketQuaGuiEmail)
+                    if (ketQuaGuiEmail.Status)
                     {
                         updateNhatKyGuiEmail.TrangThaiGuiEmail = TrangThaiGuiEmail.DaGui;
 
@@ -5609,7 +5616,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     await _db.SaveChangesAsync();
                 }
 
-                return ketQuaGuiEmail;
+                return ketQuaGuiEmail.Status;
             }
             catch (Exception)
             {
@@ -5652,7 +5659,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 string[] pdfFilePath = null;
 
-                if (await SendEmailAsync(@params.ToMail, messageTitle, messageBody, pdfFilePath, @params.CC, @params.BCC))
+                var sentResult = await SendEmailAsync(@params.ToMail, messageTitle, messageBody, pdfFilePath, @params.CC, @params.BCC);
+
+                if (sentResult.Status)
                 {
                     thongTinHoaDon.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChoKHKy;
                     _db.ThongTinHoaDons.Update(thongTinHoaDon);
@@ -5858,7 +5867,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     fileUrls = new string[] { pdfFilePath };
                 }
 
-                if (await SendEmailAsync(@params.ToMail, messageTitle, messageBody, fileUrls, @params.CC, @params.BCC))
+                var sentResult = await SendEmailAsync(@params.ToMail, messageTitle, messageBody, fileUrls, @params.CC, @params.BCC);
+                @params.ErrorActionModel = sentResult.ErrorModel;
+                if (sentResult.Status)
                 {
                     if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
                     {
@@ -5949,7 +5960,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     await UpdateAsync(_objHDDT);
                     return false;
                 }
-
             }
             catch (Exception ex)
             {

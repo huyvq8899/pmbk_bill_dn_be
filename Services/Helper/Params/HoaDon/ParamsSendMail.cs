@@ -1,4 +1,5 @@
 ﻿using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.TienIch;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -18,6 +19,7 @@ namespace Services.Helper.Params.HoaDon
         public string Link { get; set; }
         public string LinkTraCuu { get; set; }
         public string BienBanDieuChinhId { get; set; }
+        public NhatKyThaoTacLoiViewModel ErrorActionModel { get; set; }
     }
 
     public class ParamsSendMailThongTinHoaDon

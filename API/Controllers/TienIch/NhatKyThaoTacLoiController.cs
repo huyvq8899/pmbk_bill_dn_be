@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DLL.Enums;
+using Microsoft.AspNetCore.Mvc;
 using Services.Repositories.Interfaces.TienIch;
 using Services.ViewModels.TienIch;
 using System.Threading.Tasks;
@@ -12,6 +13,13 @@ namespace API.Controllers.TienIch
         public NhatKyThaoTacLoiController(INhatKyThaoTacLoiService nhatKyThaoTacLoiService)
         {
             _nhatKyThaoTacLoiService = nhatKyThaoTacLoiService;
+        }
+
+        [HttpGet("GetByDetail/{refId}/{thaoTacLoi}")]
+        public async Task<IActionResult> GetByDetail(string refId, ThaoTacLoi thaoTacLoi)
+        {
+            var result = await _nhatKyThaoTacLoiService.GetByDetailAsync(refId, thaoTacLoi);
+            return Ok(result);
         }
 
         [HttpGet("GetByRefId/{refId}")]

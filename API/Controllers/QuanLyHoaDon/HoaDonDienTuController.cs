@@ -15,6 +15,7 @@ using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
+using Services.Repositories.Interfaces.TienIch;
 using Services.ViewModels.FormActions;
 using Services.ViewModels.Import;
 using Services.ViewModels.QuanLyHoaDonDienTu;
@@ -32,8 +33,7 @@ namespace API.Controllers.QuanLyHoaDon
         private readonly IUserRespositories _userRespositories;
         private readonly ITraCuuService _traCuuService;
         private readonly IDatabaseService _databaseService;
-
-        //IThamChieuService _thamChieuService;
+        private readonly INhatKyThaoTacLoiService _nhatKyThaoTacLoiService;
         private readonly Datacontext _db;
 
         public HoaDonDienTuController(
@@ -43,7 +43,7 @@ namespace API.Controllers.QuanLyHoaDon
             IUserRespositories userRespositories,
             ITraCuuService traCuuService,
             IDatabaseService databaseService,
-            //IThamChieuService thamChieuService,
+            INhatKyThaoTacLoiService nhatKyThaoTacLoiService,
             Datacontext db
         )
         {
@@ -53,7 +53,7 @@ namespace API.Controllers.QuanLyHoaDon
             _traCuuService = traCuuService;
             _databaseService = databaseService;
             _thongTinHoaDonService = thongTinHoaDonService;
-            //_thamChieuService = thamChieuService;
+            _nhatKyThaoTacLoiService = nhatKyThaoTacLoiService;
             _db = db;
         }
 
@@ -599,6 +599,13 @@ namespace API.Controllers.QuanLyHoaDon
                     if (result == true)
                         transaction.Commit();
                     else transaction.Rollback();
+
+                    if (hd.ErrorActionModel != null)
+                    {
+                        hd.ErrorActionModel.RefId = hd.HoaDon.HoaDonDienTuId;
+                        await _nhatKyThaoTacLoiService.InsertAsync(hd.ErrorActionModel);
+                    }
+
                     return Ok(result);
                 }
                 catch (Exception)

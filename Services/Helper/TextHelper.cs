@@ -1507,5 +1507,31 @@ namespace ManagementServices.Helper
 
             return text;
         }
+
+        public static (string , string) GetErrorWhenSendEmailToClient(string message)
+        {
+            string moTa;
+            string huongDanXuLy = "Vui lòng kiểm tra lại"; 
+            if (message.Contains("may not exist"))
+            {
+                moTa = "Email người nhận không tồn tại";
+                huongDanXuLy = "Vui lòng kiểm tra lại";
+            }
+            else if (message.Contains("Incorrect authentication data"))
+            {
+                moTa = "Email gửi hoặc mật khẩu không đúng";
+            }
+            else if (message.Contains("No such host is known"))
+            {
+                moTa = "Tên máy chủ không đúng";
+            }
+            else
+            {
+                moTa = "Lỗi hệ thống";
+                huongDanXuLy = "Vui lòng liên hệ với bộ phẫn hỗ trợ để được trợ giúp";
+            }
+
+            return (moTa, huongDanXuLy);
+        }
     }
 }

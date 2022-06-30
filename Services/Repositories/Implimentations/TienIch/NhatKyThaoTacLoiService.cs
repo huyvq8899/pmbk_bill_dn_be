@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Entity.TienIch;
+using DLL.Enums;
 using Microsoft.EntityFrameworkCore;
 using Services.Repositories.Interfaces.TienIch;
 using Services.ViewModels.TienIch;
@@ -23,6 +24,17 @@ namespace Services.Repositories.Implimentations.TienIch
             _mp = mapper;
         }
 
+        public async Task<List<NhatKyThaoTacLoiViewModel>> GetByDetailAsync(string refId, ThaoTacLoi thaoTacLoi)
+        {
+            var result = await _db.NhatKyThaoTacLois
+                .Where(x => x.RefId == refId && x.ThaoTacLoi == thaoTacLoi)
+                .OrderBy(x => x.CreatedDate)
+                .ProjectTo<NhatKyThaoTacLoiViewModel>(_mp.ConfigurationProvider)
+                .ToListAsync();
+
+            return result;
+        }
+
         public async Task<List<NhatKyThaoTacLoiViewModel>> GetByRefIdAsync(string refId)
         {
             var result = await _db.NhatKyThaoTacLois
@@ -37,7 +49,7 @@ namespace Services.Repositories.Implimentations.TienIch
         public async Task<bool> InsertAsync(NhatKyThaoTacLoiViewModel model)
         {
             // remove old list nhat ky
-            var oldNhatKys = await _db.NhatKyThaoTacLois.Where(x => x.RefId == model.RefId).ToListAsync();
+            var oldNhatKys = await _db.NhatKyThaoTacLois.Where(x => x.RefId == model.RefId && x.ThaoTacLoi == model.ThaoTacLoi).ToListAsync();
             _db.NhatKyThaoTacLois.RemoveRange(oldNhatKys);
 
             // insert
