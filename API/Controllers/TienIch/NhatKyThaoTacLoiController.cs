@@ -14,7 +14,7 @@ namespace API.Controllers.TienIch
             _nhatKyThaoTacLoiService = nhatKyThaoTacLoiService;
         }
 
-        [HttpGet("GetByRefId")]
+        [HttpGet("GetByRefId/{refId}")]
         public async Task<IActionResult> GetByRefId(string refId)
         {
             var result = await _nhatKyThaoTacLoiService.GetByRefIdAsync(refId);
