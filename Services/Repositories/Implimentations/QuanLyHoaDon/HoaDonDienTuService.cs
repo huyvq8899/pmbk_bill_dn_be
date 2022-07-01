@@ -56,6 +56,7 @@ using System.Xml;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Security.Authentication;
+using DLL.Entity.TienIch;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -1236,13 +1237,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             EmailNguoiNhanHD = hd.EmailNguoiNhanHD ?? string.Empty,
                             SoDienThoaiNguoiNhanHD = hd.SoDienThoaiNguoiNhanHD ?? string.Empty,
                             LoaiTienId = lt.LoaiTienId ?? string.Empty,
+                            MaLoaiTien = hd.MaLoaiTien,
                             LoaiTien = lt != null ? new LoaiTienViewModel
                             {
                                 Ma = lt.Ma,
                                 Ten = lt.Ten
                             } : null,
                             TyGia = hd.TyGia ?? 1,
-                            MaLoaiTien = lt != null ? lt.Ma : "VND",
                             IsVND = lt == null || (lt.Ma == "VND"),
                             TrangThai = hd.TrangThai,
                             TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
@@ -1834,6 +1835,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 entity.MaNhanVienBanHang = string.Empty;
             }
 
+            var _loaiTien = await _db.LoaiTiens.AsNoTracking().FirstOrDefaultAsync(x => x.LoaiTienId == entity.LoaiTienId);
+            if (_loaiTien != null)
+            {
+                entity.MaLoaiTien = _loaiTien.Ma;
+            }
+
             entity.SoLanChuyenDoi = 0;
 
             await _db.HoaDonDienTus.AddAsync(entity);
@@ -1881,6 +1888,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             else
             {
                 model.MaNhanVienBanHang = string.Empty;
+            }
+
+            var _loaiTien = await _db.LoaiTiens.AsNoTracking().FirstOrDefaultAsync(x => x.LoaiTienId == model.LoaiTienId);
+            if (_loaiTien != null && string.IsNullOrEmpty(model.MaLoaiTien))
+            {
+                model.MaLoaiTien = _loaiTien.Ma;
             }
 
             var _mauHoaDon = await _db.MauHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId);
@@ -15519,6 +15532,67 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             return ketQuaNhanBiet;
+        }
+
+        /// <summary>
+        /// update trường mã khách hàng, mã nhân viên,vvv..  khi sửa mã trong danh mục
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateTruongMaKhiSuaTrongDanhMucAsync(UpdateMa param)
+        {
+            List<HoaDonDienTu> listHDDTs = new List<HoaDonDienTu>();
+            List<HoaDonDienTuChiTiet> listHDDTCTs = new List<HoaDonDienTuChiTiet>();
+            List<NhatKyTruyCap> listNhatKyTruyCaps = new List<NhatKyTruyCap>();
+
+            switch (param.Loai)
+            {
+                case LoaiUpdateMa.KhachHang:
+                    listHDDTs = await _db.HoaDonDienTus.Where(x => x.KhachHangId == param.RefId).ToListAsync();
+
+                    foreach (var item in listHDDTs)
+                    {
+                        listNhatKyTruyCaps.Add(new NhatKyTruyCap
+                        {
+
+                        });
+
+
+                        item.MaKhachHang = param.Ma;
+                    }
+                    break;
+                case LoaiUpdateMa.NhanVien:
+                    listHDDTs = await _db.HoaDonDienTus.Where(x => x.NhanVienBanHangId == param.RefId).ToListAsync();
+                    listHDDTCTs = await _db.HoaDonDienTuChiTiets.Where(x => x.NhanVienBanHangId == param.RefId).ToListAsync();
+                    foreach (var item in listHDDTs)
+                    {
+                        item.MaNhanVienBanHang = param.Ma;
+                    }
+                    foreach (var item in listHDDTCTs)
+                    {
+                        item.MaNhanVien = param.Ma;
+                    }
+                    break;
+                case LoaiUpdateMa.HangHoaDichVu:
+                    listHDDTCTs = await _db.HoaDonDienTuChiTiets.Where(x => x.HangHoaDichVuId == param.RefId).ToListAsync();
+                    foreach (var item in listHDDTCTs)
+                    {
+                        item.MaHang = param.Ma;
+                    }
+                    break;
+                case LoaiUpdateMa.LoaiTien:
+                    listHDDTs = await _db.HoaDonDienTus.Where(x => x.LoaiTienId == param.RefId).ToListAsync();
+                    foreach (var item in listHDDTs)
+                    {
+                        item.MaLoaiTien = param.Ma;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            var result = await _db.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

@@ -53,6 +53,8 @@
 	  <Compile Remove="Migrations\20220423012323_add-thong-tin-phat-hanh-table.Designer.cs" />
 	  <Compile Remove="Migrations\20220519034640_test.cs" />
 	  <Compile Remove="Migrations\20220519034640_test.Designer.cs" />
+	  <Compile Remove="Migrations\20220701084611_add-ma-loai-tien-column.cs" />
+	  <Compile Remove="Migrations\20220701084611_add-ma-loai-tien-column.Designer.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

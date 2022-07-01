@@ -38,6 +38,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string MaNhanVienBanHang { get; set; }
         public string TenNhanVienBanHang { get; set; }
         public string LoaiTienId { get; set; }
+        public string MaLoaiTien { get; set; }
         public LoaiTien LoaiTien { get; set; }
         public decimal? TyGia { get; set; }
         public int? TrangThai { get; set; } // DLL.Enums.TrangThaiHoaDon
