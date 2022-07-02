@@ -31,6 +31,8 @@ namespace DLL.Configurations.QuanLyHoaDonDienTu
             entity.Property(r => r.TyLePhanTramDoanhThu).HasColumnType("decimal(6,4)");
             entity.Property(r => r.TienGiam).HasColumnType("decimal(21,6)");
             entity.Property(r => r.TienGiamQuyDoi).HasColumnType("decimal(21,6)");
+
+            entity.Property(c => c.TenDonViTinh).HasMaxLength(50);
         }
     }
 }

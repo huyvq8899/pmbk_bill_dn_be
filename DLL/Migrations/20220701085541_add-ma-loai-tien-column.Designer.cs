@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20220701085541_add-ma-loai-tien-column")]
+    partial class addmaloaitiencolumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1585,9 +1587,6 @@ namespace DLL.Migrations
 
                     b.Property<bool>("Status");
 
-                    b.Property<string>("TenDonViTinh")
-                        .HasMaxLength(50);
-
                     b.Property<string>("TenHang");
 
                     b.Property<string>("TenNhanVien");
@@ -2664,40 +2663,6 @@ namespace DLL.Migrations
                     b.HasKey("NhatKyGuiEmailId");
 
                     b.ToTable("NhatKyGuiEmails");
-                });
-
-            modelBuilder.Entity("DLL.Entity.TienIch.NhatKyThaoTacLoi", b =>
-                {
-                    b.Property<string>("NhatKyThaoTacLoiId")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(36);
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<string>("HuongDanXuLy")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("MoTa")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("ModifyBy");
-
-                    b.Property<DateTime?>("ModifyDate");
-
-                    b.Property<string>("RefId")
-                        .HasMaxLength(36);
-
-                    b.Property<int?>("STT");
-
-                    b.Property<bool>("Status");
-
-                    b.Property<int>("ThaoTacLoi");
-
-                    b.HasKey("NhatKyThaoTacLoiId");
-
-                    b.ToTable("NhatKyThaoTacLois");
                 });
 
             modelBuilder.Entity("DLL.Entity.TienIch.NhatKyTruyCap", b =>

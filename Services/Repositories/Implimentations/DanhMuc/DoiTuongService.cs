@@ -675,6 +675,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                         // Số tài khoản NH
                         item.SoTaiKhoanNganHang = worksheet.Cells[row, 6].Value == null ? "" : worksheet.Cells[row, 6].Value.ToString().Trim();
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.SoTaiKhoanNganHang) && item.SoTaiKhoanNganHang.Length > 30)
+                        {
+                            item.ErrorMessage = "<Số tài khoản ngân hàng> không vượt quá 50 ký tự.";
+                            item.HasError = true;
+                        }
 
                         // Tên ngân hàng
                         item.TenNganHang = worksheet.Cells[row, 7].Value == null ? "" : worksheet.Cells[row, 7].Value.ToString().Trim();
@@ -690,6 +695,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 item.ErrorMessage = "<Số tài khoản NH> không được để trống vì đã nhập <Tên ngân hàng>";
                                 item.HasError = true;
                             }
+                        }
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.TenNganHang) && item.TenNganHang.Length > 400)
+                        {
+                            item.ErrorMessage = "<Tên ngân hàng> không vượt quá 400 ký tự.";
+                            item.HasError = true;
                         }
 
                         // Chi nhánh
@@ -749,6 +759,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 }
                             }
                         }
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.Ma) && item.Ma.Length > 50)
+                        {
+                            item.ErrorMessage = "<Mã khách hàng> không vượt quá 50 ký tự.";
+                            item.HasError = true;
+                        }
 
                         // Tên khách hàng
                         item.Ten = worksheet.Cells[row, 3].Value == null ? "" : worksheet.Cells[row, 3].Value.ToString().Trim();
@@ -760,12 +775,27 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 item.HasError = true;
                             }
                         }
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.Ten) && item.Ten.Length > 400)
+                        {
+                            item.ErrorMessage = "<Tên khách hàng> không vượt quá 400 ký tự.";
+                            item.HasError = true;
+                        }
 
                         // Địa chỉ
                         item.DiaChi = worksheet.Cells[row, 5].Value == null ? "" : worksheet.Cells[row, 5].Value.ToString().Trim();
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.DiaChi) && item.DiaChi.Length > 400)
+                        {
+                            item.ErrorMessage = "<Địa chỉ> không vượt quá 400 ký tự.";
+                            item.HasError = true;
+                        }
 
                         // HoTenNguoiMuaHang
                         item.HoTenNguoiMuaHang = worksheet.Cells[row, 9].Value == null ? "" : worksheet.Cells[row, 9].Value.ToString().Trim();
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.HoTenNguoiMuaHang) && item.HoTenNguoiMuaHang.Length > 100)
+                        {
+                            item.ErrorMessage = "<Họ tên người mua hàng> không vượt quá 100 ký tự.";
+                            item.HasError = true;
+                        }
 
                         // EmailNguoiMuaHang
                         item.EmailNguoiMuaHang = worksheet.Cells[row, 10].Value == null ? "" : worksheet.Cells[row, 10].Value.ToString().Trim();
@@ -776,6 +806,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 item.ErrorMessage = "<Email của người mua hàng> không hợp lệ";
                                 item.HasError = true;
                             }
+                        }
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.EmailNguoiMuaHang) && item.EmailNguoiMuaHang.Length > 50)
+                        {
+                            item.ErrorMessage = "<Email người mua hàng> không vượt quá 50 ký tự.";
+                            item.HasError = true;
                         }
 
                         // SoDienThoaiNguoiMuaHang
@@ -788,10 +823,19 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 item.HasError = true;
                             }
                         }
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.SoDienThoaiNguoiMuaHang) && item.SoDienThoaiNguoiMuaHang.Length > 20)
+                        {
+                            item.ErrorMessage = "<Số điện thoại người mua hàng> không vượt quá 20 ký tự.";
+                            item.HasError = true;
+                        }
 
                         // HoTenNguoiNhanHD
                         item.HoTenNguoiNhanHD = worksheet.Cells[row, 12].Value == null ? "" : worksheet.Cells[row, 12].Value.ToString().Trim();
-
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.HoTenNguoiNhanHD) && item.HoTenNguoiNhanHD.Length > 100)
+                        {
+                            item.ErrorMessage = "<Họ tên người nhận hàng> không vượt quá 100 ký tự.";
+                            item.HasError = true;
+                        }
 
                         // EmailNguoiNhanHD
                         item.EmailNguoiNhanHD = worksheet.Cells[row, 13].Value == null ? "" : worksheet.Cells[row, 13].Value.ToString().Trim();
@@ -803,6 +847,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 item.HasError = true;
                             }
                         }
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.EmailNguoiNhanHD) && item.EmailNguoiNhanHD.Length > 50)
+                        {
+                            item.ErrorMessage = "<Email người nhận hàng> không vượt quá 50 ký tự.";
+                            item.HasError = true;
+                        }
 
                         // SoDienThoaiNguoiNhanHD
                         item.SoDienThoaiNguoiNhanHD = worksheet.Cells[row, 14].Value == null ? "" : worksheet.Cells[row, 14].Value.ToString().Trim();
@@ -813,6 +862,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 item.ErrorMessage = "<Số điện thoại của người nhận hóa đơn> không hợp lệ";
                                 item.HasError = true;
                             }
+                        }
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.SoDienThoaiNguoiNhanHD) && item.SoDienThoaiNguoiNhanHD.Length > 20)
+                        {
+                            item.ErrorMessage = "<Số điện thoại người nhận hàng> không vượt quá 20 ký tự.";
+                            item.HasError = true;
                         }
 
                         // success
@@ -983,6 +1037,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                         // Số tài khoản NH
                         item.SoTaiKhoanNganHang = worksheet.Cells[row, 7].Value == null ? "" : worksheet.Cells[row, 7].Value.ToString().Trim();
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.SoTaiKhoanNganHang) && item.SoTaiKhoanNganHang.Length > 30)
+                        {
+                            item.ErrorMessage = "<Số tài khoản ngân hàng> không vượt quá 30 ký tự.";
+                            item.HasError = true;
+                        }
 
                         // Tên ngân hàng
                         item.TenNganHang = worksheet.Cells[row, 8].Value == null ? "" : worksheet.Cells[row, 8].Value.ToString().Trim();
@@ -998,6 +1057,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 item.ErrorMessage = "<Số tài khoản NH> không được để trống vì đã nhập <Tên ngân hàng>";
                                 item.HasError = true;
                             }
+                        }
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.TenNganHang) && item.TenNganHang.Length > 400)
+                        {
+                            item.ErrorMessage = "<Số tài khoản ngân hàng> không vượt quá 400 ký tự.";
+                            item.HasError = true;
                         }
 
                         // Chi nhánh
@@ -1057,6 +1121,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 }
                             }
                         }
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.Ma) && item.Ma.Length > 50)
+                        {
+                            item.ErrorMessage = "<Mã nhân viên> không vượt quá 50 ký tự.";
+                            item.HasError = true;
+                        }
 
                         // Tên khách hàng
                         item.Ten = worksheet.Cells[row, 4].Value == null ? "" : worksheet.Cells[row, 4].Value.ToString().Trim();
@@ -1067,6 +1136,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 item.ErrorMessage = "<Tên nhân viên> không được để trống";
                                 item.HasError = true;
                             }
+                        }
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.Ten) && item.Ten.Length > 400)
+                        {
+                            item.ErrorMessage = "<Tên nhân viên> không vượt quá 400 ký tự.";
+                            item.HasError = true;
                         }
 
                         //Chức danh
@@ -1085,6 +1159,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 item.HasError = true;
                             }
                         }
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.EmailNguoiNhanHD) && item.EmailNguoiNhanHD.Length > 50)
+                        {
+                            item.ErrorMessage = "<Email> không vượt quá 50 ký tự.";
+                            item.HasError = true;
+                        }
 
                         // Website
                         item.SoDienThoaiNguoiNhanHD = worksheet.Cells[row, 11].Value == null ? "" : worksheet.Cells[row, 11].Value.ToString().Trim();
@@ -1095,6 +1174,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 item.ErrorMessage = "<Số điện thoại> không hợp lệ";
                                 item.HasError = true;
                             }
+                        }
+                        if (item.ErrorMessage == null && !string.IsNullOrEmpty(item.SoDienThoaiNguoiNhanHD) && item.SoDienThoaiNguoiNhanHD.Length > 20)
+                        {
+                            item.ErrorMessage = "<Số điện thoại> không vượt quá 20 ký tự.";
+                            item.HasError = true;
                         }
 
                         // success

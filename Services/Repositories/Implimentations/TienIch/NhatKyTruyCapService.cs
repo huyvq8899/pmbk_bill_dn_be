@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DLL;
+using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.TienIch;
 using DLL.Enums;
 using ManagementServices.Helper;
@@ -12,11 +13,11 @@ using OfficeOpenXml;
 using Services.Enums;
 using Services.Helper;
 using Services.Helper.LogHelper;
+using Services.Helper.Params.HoaDon;
 using Services.Helper.Params.TienIch;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.TienIch;
 using Services.ViewModels;
-using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.TienIch;
@@ -1255,6 +1256,5 @@ namespace Services.Repositories.Implimentations.TienIch
                         };
             return await query.ToListAsync();
         }
-
     }
 }
