@@ -12,6 +12,7 @@
         KhachHang,
         NhanVien,
         HangHoaDichVu,
-        LoaiTien
+        LoaiTien,
+        DonViTinh
     }
 }

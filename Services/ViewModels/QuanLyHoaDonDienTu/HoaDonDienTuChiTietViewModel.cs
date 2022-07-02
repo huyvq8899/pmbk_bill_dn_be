@@ -151,6 +151,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenNhanVien { get; set; }
 
         [IgnoreLogging]
+        public DoiTuongViewModel NhanVien { get; set; }
+
+        [IgnoreLogging]
         public decimal? TongTienThanhToan { get; set; }
 
         [IgnoreLogging]

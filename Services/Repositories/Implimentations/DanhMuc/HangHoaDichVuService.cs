@@ -427,6 +427,14 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 }
                             }
                         }
+                        if (item.ErrorMessage == null)
+                        {
+                            if (item.Ma.Length > 50)
+                            {
+                                item.ErrorMessage = "<Mã hàng> không vượt quá 50 ký tự.";
+                                item.HasError = true;
+                            }
+                        }
 
                         // Tên vật tư, hàng hóa
                         item.Ten = worksheet.Cells[row, 2].Value == null ? "" : worksheet.Cells[row, 2].Value.ToString().Trim();
@@ -459,6 +467,14 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             if (item.TenDonViTinh != "" && item.DonViTinhId == null)
                             {
                                 item.ErrorMessage = "<Đơn vị tính> chưa tồn tại trong hệ thống";
+                                item.HasError = true;
+                            }
+                        }
+                        if (item.ErrorMessage == null)
+                        {
+                            if (item.TenDonViTinh.Length > 50)
+                            {
+                                item.ErrorMessage = "<Đơn vị tính> không vượt quá 50 ký tự";
                                 item.HasError = true;
                             }
                         }
