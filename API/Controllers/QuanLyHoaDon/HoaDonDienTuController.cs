@@ -497,7 +497,7 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.GetTrangThaiHoaDon();
             return Ok(result);
         }
-        
+
         [HttpGet("GetTrangThaiGuiHoaDon")]
         public async Task<IActionResult> GetTrangThaiGuiHoaDon()
         {
@@ -533,7 +533,7 @@ namespace API.Controllers.QuanLyHoaDon
                 {
                     var result = await _hoaDonDienTuService.GateForWebSocket(@params);
                     transaction.Commit();
-                    return Ok(@params.TrangThaiQuyTrinh);
+                    return Ok(result);
                 }
                 catch (Exception e)
                 {
