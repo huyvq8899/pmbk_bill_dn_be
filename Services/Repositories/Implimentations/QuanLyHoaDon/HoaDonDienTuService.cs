@@ -11633,13 +11633,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         case nameof(item.HinhThucThanhToanId):
                                             item.HinhThucThanhToanId = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             item.HinhThucThanhToanId = string.IsNullOrEmpty(item.HinhThucThanhToanId) ? "3" : item.HinhThucThanhToanId;
-                                            bool checkHinhThucThanhToan = int.TryParse(item.HinhThucThanhToanId, out int hinhThucThanhToan);
-                                            if (string.IsNullOrEmpty(item.ErrorMessage))
+                                            //bool checkHinhThucThanhToan = int.TryParse(item.HinhThucThanhToanId, out int hinhThucThanhToan);
+                                            //if (string.IsNullOrEmpty(item.ErrorMessage))
+                                            //{
+                                            //    if (!checkHinhThucThanhToan || (checkHinhThucThanhToan && (hinhThucThanhToan < 1 || hinhThucThanhToan > 6)))
+                                            //    {
+                                            //        item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
+                                            //    }
+                                            //}
+                                            if (string.IsNullOrEmpty(item.ErrorMessage) && item.HinhThucThanhToanId.Length > 50)
                                             {
-                                                if (!checkHinhThucThanhToan || (checkHinhThucThanhToan && (hinhThucThanhToan < 1 || hinhThucThanhToan > 6)))
-                                                {
-                                                    item.ErrorMessage = string.Format(formatValid, group.TenTruongExcel);
-                                                }
+                                                item.ErrorMessage = string.Format(overMaxLength, group.TenTruongExcel, 50);
                                             }
                                             break;
                                         case nameof(item.EmailNguoiMuaHang):
