@@ -314,7 +314,7 @@ namespace Services.Repositories.Implimentations
 
         public void CreateQuyDinhKyThuat_PhanII_II_5(string xmlFilePath, ThongDiepChungViewModel model)
         {
-            ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep
+            TDiep200GTGT tDiep = new TDiep200GTGT
             {
                 TTChung = new TTChungThongDiep
                 {
@@ -632,11 +632,11 @@ namespace Services.Repositories.Implimentations
                     }
                     #endregion
 
-                    //if ((model.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh) && (model.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin) && (model.IsThongTinNguoiBanHoacNguoiMua == true))
-                    //{
-                    //    hDonGTGT.DLHDon.NDHDon.DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu>();
-                    //    hDonGTGT.DLHDon.NDHDon.TToan = null;
-                    //}
+                    if ((model.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh) && (model.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin) && (model.IsThongTinNguoiBanHoacNguoiMua == true))
+                    {
+                        hDonGTGT.DLHDon.NDHDon.DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu>();
+                        hDonGTGT.DLHDon.NDHDon.TToan = null;
+                    }
 
                     if (model.TTChungThongDiep != null)
                     {

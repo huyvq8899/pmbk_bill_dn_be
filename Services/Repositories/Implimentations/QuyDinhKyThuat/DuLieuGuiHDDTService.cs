@@ -310,44 +310,90 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             };
             await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
 
-            // add thongdiep
             model.ThongDiepChungId = Guid.NewGuid().ToString();
+
+            // get MaThongDiep from HoaDon
+            var fileHoaDon = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.IsSigned == true && x.Type == 1 && x.RefId == model.DuLieuGuiHDDT.HoaDonDienTuId);
+            if (fileHoaDon != null)
+            {
+                MemoryStream stream = new MemoryStream(fileHoaDon.Binary);
+                XmlDocument doc = new XmlDocument();
+                doc.Load(stream);
+                var mTDiep = doc.SelectSingleNode("//TDiep/TTChung/MTDiep")?.InnerText;
+                if (!string.IsNullOrEmpty(mTDiep))
+                {
+                    model.MaThongDiep = mTDiep;
+                }
+
+                string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
+                string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+                if (!Directory.Exists(fullFolderPath))
+                {
+                    Directory.CreateDirectory(fullFolderPath);
+                }
+
+                string fileName = $"TD-{Guid.NewGuid()}.xml";
+                string filePath = Path.Combine(fullFolderPath, fileName);
+                await File.WriteAllBytesAsync(filePath, fileHoaDon.Binary);
+
+                // add filedata for thongdiep
+                var fileData = new FileData
+                {
+                    RefId = model.ThongDiepChungId,
+                    Type = 1,
+                    IsSigned = true,
+                    DateTime = DateTime.Now,
+                    Binary = fileHoaDon.Binary,
+                    FileName = fileName
+                };
+                await _db.FileDatas.AddAsync(fileData);
+            }
+
+            // add thongdiep 200 | 203
             model.IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId;
             model.NgayGui = DateTime.Now;
+            model.HinhThuc = 0;
+            model.TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi;
+            model.ThongDiepGuiDi = true;
             ThongDiepChung entity = _mp.Map<ThongDiepChung>(model);
             await _db.ThongDiepChungs.AddAsync(entity);
             await _db.SaveChangesAsync();
             ThongDiepChungViewModel result = _mp.Map<ThongDiepChungViewModel>(entity);
 
-            #region create xml
-            string xmlContent = "";
-            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
-            string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-            if (!Directory.Exists(fullFolderPath))
+            // add thongdiep 999
+            var thongDiep999 = new ThongDiepChung
             {
-                Directory.CreateDirectory(fullFolderPath);
-            }
-
-            string fileName = $"TD-{Guid.NewGuid()}.xml";
-            string filePath = Path.Combine(fullFolderPath, fileName);
-            await _xMLInvoiceService.CreateQuyDinhKyThuatTheoMaLoaiThongDiep(filePath, model);
-            xmlContent = File.ReadAllText(filePath);
-            #endregion
-
-            // add filedata for thongdiep
-            var fileData = new FileData
-            {
-                RefId = entity.ThongDiepChungId,
-                Type = 1,
-                IsSigned = true,
-                DateTime = DateTime.Now,
-                Binary = Encoding.UTF8.GetBytes(xmlContent),
-                Content = xmlContent
+                ThongDiepChungId = Guid.NewGuid().ToString(),
+                PhienBan = model.PhienBan,
+                MaNoiGui = model.MaNoiNhan,
+                MaNoiNhan = model.MaNoiGui,
+                MaLoaiThongDiep = 999,
+                MaThongDiepThamChieu = model.MaThongDiep,
+                MaSoThue = model.MaSoThue,
+                SoLuong = model.SoLuong,
+                ThongDiepGuiDi = false,
+                TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
+                Status = true,
             };
-            await _db.FileDatas.AddAsync(fileData);
-            await _db.SaveChangesAsync();
+            await _db.ThongDiepChungs.AddAsync(thongDiep999);
 
+            //#region create xml 200 | 203
+            //string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            //string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
+            //string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+            //if (!Directory.Exists(fullFolderPath))
+            //{
+            //    Directory.CreateDirectory(fullFolderPath);
+            //}
+
+            //string fileName = $"TD-{Guid.NewGuid()}.xml";
+            //string filePath = Path.Combine(fullFolderPath, fileName);
+            //await _xMLInvoiceService.CreateQuyDinhKyThuatTheoMaLoaiThongDiep(filePath, model);
+            //string xmlContent = File.ReadAllText(filePath);
+            //#endregion
+
+            await _db.SaveChangesAsync();
             return result;
         }
 
@@ -626,34 +672,24 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     status = TrangThaiQuyTrinh.GuiKhongLoi;
                 }
 
-                // add thong diep phan hoi 999
-                var thongDiepChung = new ThongDiepChung
+                // update thongdiep 999
+                var tDiepChung999 = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == 999 && x.MaThongDiepThamChieu == tDiep999.TTChung.MTDTChieu);
+                if (tDiepChung999 != null)
                 {
-                    ThongDiepChungId = Guid.NewGuid().ToString(),
-                    PhienBan = tDiep999.TTChung.PBan,
-                    MaNoiGui = tDiep999.TTChung.MNGui,
-                    MaNoiNhan = tDiep999.TTChung.MNNhan,
-                    MaLoaiThongDiep = int.Parse(tDiep999.TTChung.MLTDiep),
-                    MaThongDiep = tDiep999.TTChung.MTDiep,
-                    MaThongDiepThamChieu = tDiep999.TTChung.MTDTChieu,
-                    MaSoThue = tDiep999.TTChung.MST,
-                    SoLuong = tDiep999.TTChung.SLuong,
-                    ThongDiepGuiDi = false,
-                    TrangThaiGui = tDiep999.DLieu.TBao.TTTNhan == (int)TTTNhan.KhongLoi ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi,
-                    NgayThongBao = DateTime.Now,
-                    Status = true,
-                };
-                await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+                    tDiepChung999.MaThongDiep = tDiep999.TTChung.MTDiep;
+                    tDiepChung999.TrangThaiGui = tDiep999.DLieu.TBao.TTTNhan == (int)TTTNhan.KhongLoi ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi;
+                    tDiepChung999.NgayThongBao = DateTime.Now;
 
-                var fileData999 = new FileData
-                {
-                    RefId = thongDiepChung.ThongDiepChungId,
-                    Type = 1,
-                    DateTime = DateTime.Now,
-                    Binary = Encoding.UTF8.GetBytes(strContent),
-                    Content = strContent,
-                };
-                await _db.FileDatas.AddAsync(fileData999);
+                    var fileData999 = new FileData
+                    {
+                        RefId = tDiepChung999.ThongDiepChungId,
+                        Type = 1,
+                        DateTime = DateTime.Now,
+                        Binary = Encoding.UTF8.GetBytes(strContent),
+                        Content = strContent,
+                    };
+                    await _db.FileDatas.AddAsync(fileData999);
+                }
             }
             else
             {
@@ -666,26 +702,29 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                         where tdg.ThongDiepChungId == id
                                         select dlghhdt.HoaDonDienTuId).FirstOrDefaultAsync();
             var hoaDon = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hoaDonDienTuId);
-            hoaDon.TrangThaiQuyTrinh = (int)status;
-
-            // set TrangThaiGui cho ThongDiepGui
-            TrangThaiGuiThongDiep trangThaiGui = TrangThaiGuiThongDiep.ChoPhanHoi;
-            switch (status)
+            if (hoaDon.TrangThaiQuyTrinh <= (int)TrangThaiQuyTrinh.GuiKhongLoi)
             {
-                case TrangThaiQuyTrinh.GuiTCTNLoi:
-                    trangThaiGui = TrangThaiGuiThongDiep.GuiTCTNLoi;
-                    break;
-                case TrangThaiQuyTrinh.GuiKhongLoi:
-                    trangThaiGui = TrangThaiGuiThongDiep.GuiKhongLoi;
-                    break;
-                case TrangThaiQuyTrinh.GuiLoi:
-                    trangThaiGui = TrangThaiGuiThongDiep.GuiLoi;
-                    break;
-                default:
-                    break;
+                hoaDon.TrangThaiQuyTrinh = (int)status;
+
+                // set TrangThaiGui cho ThongDiepGui
+                TrangThaiGuiThongDiep trangThaiGui = TrangThaiGuiThongDiep.ChoPhanHoi;
+                switch (status)
+                {
+                    case TrangThaiQuyTrinh.GuiTCTNLoi:
+                        trangThaiGui = TrangThaiGuiThongDiep.GuiTCTNLoi;
+                        break;
+                    case TrangThaiQuyTrinh.GuiKhongLoi:
+                        trangThaiGui = TrangThaiGuiThongDiep.GuiKhongLoi;
+                        break;
+                    case TrangThaiQuyTrinh.GuiLoi:
+                        trangThaiGui = TrangThaiGuiThongDiep.GuiLoi;
+                        break;
+                    default:
+                        break;
+                }
+                var thongDiepGui = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == id);
+                thongDiepGui.TrangThaiGui = (int)trangThaiGui;
             }
-            var thongDiepGui = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == id);
-            thongDiepGui.TrangThaiGui = (int)trangThaiGui;
 
             // save db
             await _db.SaveChangesAsync();
