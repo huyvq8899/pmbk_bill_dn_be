@@ -440,7 +440,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             try
             {
-               IQueryable<ThongDiepChungViewModel> query = from tdc in _dataContext.ThongDiepChungs
+                IQueryable<ThongDiepChungViewModel> query = from tdc in _dataContext.ThongDiepChungs
                                                             where tdc.ThongDiepGuiDi == @params.IsThongDiepGui
                                                             && (tdc.MaLoaiThongDiep != (int)MLTDiep.TDCBTHDLHDDDTDCQThue ||
                                                             (tdc.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue && tdc.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui))
@@ -553,7 +553,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     query = query.Where(x => x.TrangThaiGui == (TrangThaiGuiThongDiep)@params.TrangThaiGui);
                 }
 
-                if(@params.LocThongBaoHoaDonCanRaSoat == true)
+                if (@params.LocThongBaoHoaDonCanRaSoat == true)
                 {
                     query = query.Where(x => x.MaLoaiThongDiep == (int)MLTDiep.TDTBHDDTCRSoat && (x.TrangThaiGui == TrangThaiGuiThongDiep.TrongHanVaChuaGiaiTrinh || x.TrangThaiGui == TrangThaiGuiThongDiep.QuaHanVaChuaGiaiTrinh));
                 }
@@ -1259,7 +1259,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         await _dataContext.ThongDiepChungs.AddAsync(tdc204);
 
                         // update trạng thái quy trình cho hóa đơn
-                        if(entityTD.MaLoaiThongDiep != 400) await UpdateTrangThaiQuyTrinhHDDTAsync(entityTD, MLTDiep.TDTBKQKTDLHDon, tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao1 || tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao3);
+                        if (entityTD.MaLoaiThongDiep != 400) await UpdateTrangThaiQuyTrinhHDDTAsync(entityTD, MLTDiep.TDTBKQKTDLHDon, tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao1 || tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao3);
                         break;
                     case (int)MLTDiep.TDCDLTVANUQCTQThue: // 999
                         var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(@params.DataXML);
@@ -3529,6 +3529,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _dataContext.BangTongHopDuLieuHoaDons.Update(entity);
 
             return await _dataContext.SaveChangesAsync() > 0;
+        }
+
+        /// <summary>
+        /// Check chưa lập tờ khai 01
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> CheckChuaLapToKhaiAsync()
+        {
+            var result = await _dataContext.ThongDiepChungs
+                .AnyAsync(x => x.MaLoaiThongDiep == 100 && ((x.HinhThuc == (int)HThuc.DangKyMoi) || ((x.HinhThuc == (int)HThuc.ThayDoiThongTin) && (x.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChapNhan))));
+
+            return !result;
         }
     }
 }

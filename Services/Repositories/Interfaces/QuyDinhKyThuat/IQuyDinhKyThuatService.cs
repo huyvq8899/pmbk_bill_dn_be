@@ -35,6 +35,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<ThongDiepChiTiet> ShowThongDiepFromFileByIdAsync(string id);
         Task<FileReturn> ExportBangKeAsync(ThongDiepChungParams @params);
         Task<ThongDiepChungViewModel> GetThongDiepThemMoiToKhai();
+        Task<bool> CheckChuaLapToKhaiAsync();
         Task<List<ToKhaiForBoKyHieuHoaDonViewModel>> GetListToKhaiFromBoKyHieuHoaDonAsync(ToKhaiParams toKhaiParams);
         List<DangKyUyNhiemViewModel> GetListTrungKyHieuTrongHeThong(List<DangKyUyNhiemViewModel> data);
         Task<FileReturn> GetLinkFileXml(ThongDiepChungViewModel model, bool signed = false);

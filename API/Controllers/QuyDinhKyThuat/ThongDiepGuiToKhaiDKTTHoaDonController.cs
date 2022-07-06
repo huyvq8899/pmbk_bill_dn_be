@@ -234,7 +234,7 @@ namespace API.Controllers.QuyDinhKyThuat
             var paged = await _IQuyDinhKyThuatService.GetPagingThongDiepChungAsync(pagingParams);
             if (paged != null)
             {
-                foreach(var item in paged.Items)
+                foreach (var item in paged.Items)
                 {
                     if (item.ThongDiepGuiDi == false && item.MaLoaiThongDiep == (int)MLTDiep.TDTBHDDTCRSoat)
                     {
@@ -394,6 +394,17 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> GetThongDiepThemMoiToKhai()
         {
             var result = await _IQuyDinhKyThuatService.GetThongDiepThemMoiToKhai();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Check chưa lập tờ khai 01
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("CheckChuaLapToKhai")]
+        public async Task<IActionResult> CheckChuaLapToKhai()
+        {
+            var result = await _IQuyDinhKyThuatService.CheckChuaLapToKhaiAsync();
             return Ok(result);
         }
 

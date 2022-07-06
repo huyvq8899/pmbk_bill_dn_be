@@ -11700,6 +11700,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             {
                                                 item.LoaiTienId = loaiTien.LoaiTienId;
                                                 item.IsVND = loaiTien.Ma == "VND";
+                                                item.MaLoaiTien = loaiTien.Ma;
                                             }
                                             break;
                                         case nameof(item.TyGia):
@@ -12142,6 +12143,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     TrangThaiGuiHoaDon = (int)TrangThaiGuiHoaDon.ChuaGui,
                     LoaiHoaDon = x.First().LoaiHoaDon ?? 1,
                     IsVND = x.First().IsVND,
+                    MaLoaiTien = x.First().MaLoaiTien,
                     LoaiChietKhau = LoaiChietKhau.TheoMatHang,
                     HoaDonChiTiets = x.Select(y => new HoaDonDienTuChiTietViewModel
                     {
