@@ -181,7 +181,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             SignedStatus = tk.SignedStatus,
                             NgayGui = tdc != null ? tdc.NgayGui : null,
                             ModifyDate = tk.ModifyDate,
-                            PPTinh = tk.PPTinh
+                            PPTinh = tk.PPTinh,
+                            CreatedDate = tk.CreatedDate,
+                            CreatedBy = tk.CreatedBy
                         };
 
             query = query.GroupBy(x => new { x.Id })
@@ -198,7 +200,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             ToKhaiUyNhiem = x.First().ToKhaiUyNhiem,
                             NgayGui = x.OrderByDescending(y => y.NgayGui).Select(z => z.NgayGui).FirstOrDefault(),
                             ModifyDate = x.First().ModifyDate,
-                            PPTinh = x.First().PPTinh
+                            PPTinh = x.First().PPTinh,
+                            CreatedBy = x.First().CreatedBy,
+                            CreatedDate = x.First().CreatedDate
                         });
 
             var data = await query.FirstOrDefaultAsync();
