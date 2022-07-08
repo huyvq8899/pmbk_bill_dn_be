@@ -8238,6 +8238,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                      join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                      from lt in tmpLoaiTiens.DefaultIfEmpty()
                                      where ((!string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) && hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh)) && hddc == null
+                                     && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
                                      select new HoaDonDienTuViewModel
                                      {
                                          ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hd.DieuChinhChoHoaDonId), thongDiepChungs),
@@ -8618,6 +8619,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         item.LyDoDieuChinhModelTmp = null;
                     }
                 }
+
+                // Nếu hóa đơn bị điều chỉnh không có children thì không hiện
+                listHoaDonBDC = listHoaDonBDC.Where(x => x.Children != null);
 
                 if (@params.LoaiTrangThaiHoaDonDieuChinh != LoaiTrangThaiHoaDonDieuChinh.TatCa)
                 {
