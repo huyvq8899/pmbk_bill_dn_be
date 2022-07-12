@@ -2680,7 +2680,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         && (@params.LoaiHoaDon.Contains((int)LoaiHoaDon.TatCa) || @params.LoaiHoaDon.Contains(hd.LoaiHoaDon))
                         && (@params.TrangThaiQuyTrinh.Contains((int)TrangThaiQuyTrinh.TatCa) || @params.TrangThaiQuyTrinh.Contains(hd.TrangThaiQuyTrinh.Value))
                         && (@params.TrangThaiGuiHoaDon.Contains(-1) || @params.TrangThaiHoaDon.Contains(hd.TrangThaiGuiHoaDon.Value))
-                        && (@params.TrangThaiChuyenDoi == -1 || @params.TrangThaiChuyenDoi == 0 ? hd.SoLanChuyenDoi == 0 : hd.SoLanChuyenDoi > 0)
+                        && (@params.TrangThaiChuyenDoi == -1 || (@params.TrangThaiChuyenDoi != -1 && @params.TrangThaiChuyenDoi == 0 ? hd.SoLanChuyenDoi == 0 : hd.SoLanChuyenDoi > 0))
                         && (@params.KhachHangId.Contains("-1") || @params.KhachHangId.Contains(hd.KhachHangId))
                         && (@params.BoKyHieuHoaDonId.Contains("-1") || @params.BoKyHieuHoaDonId.Contains(hd.BoKyHieuHoaDonId))
                         select new HoaDonDienTuViewModel()
