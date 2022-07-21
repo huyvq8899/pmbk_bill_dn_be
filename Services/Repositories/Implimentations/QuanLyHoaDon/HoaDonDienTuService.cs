@@ -3438,7 +3438,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     File.WriteAllBytes(pathFilePDF, binPDF);
                     await addTextDelete(pathFilePDF);
                 }
-                if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && hd.BuyerSigned != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi) && (!string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy)))
+                if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && hd.BuyerSigned != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi) && (!string.IsNullOrEmpty(hd.FileDaKy) && !string.IsNullOrEmpty(hd.XMLDaKy)))
                 {
                     // Check file exist to re-save
                     await RestoreFilesInvoiceSigned(hd.HoaDonDienTuId);
@@ -3446,7 +3446,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     return new KetQuaConvertPDF
                     {
                         FilePDF = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{hd.FileDaKy}",
-                        FileXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{hd.XMLDaKy}",
+                        FileXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{hd.XMLDaKy}"
                     };
                 }
 
@@ -4049,23 +4049,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else
                     {
-                        if (hd.IsPhatHanh == true)
-                        {
-                            xmlFileName = Path.GetFileNameWithoutExtension(pdfFileName) + ".xml";
-                        }
-                        else
-                        {
-                            xmlFileName = entity.XMLDaKy;
-                        }
+                        xmlFileName = entity.XMLDaKy;
                     }
                 }
                 else
                 {
-                    pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.pdf";
-                    xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.xml";
-
-                    entity.FileChuaKy = pdfFileName;
-                    entity.XMLChuaKy = xmlFileName;
+                    if (hd.SoHoaDon.HasValue)
+                    {
+                        pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
+                        entity.FileDaKy = pdfFileName;
+                    }
+                    else
+                    {
+                        pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.pdf";
+                        entity.FileChuaKy = pdfFileName;
+                    }
                 }
 
                 string fullPdfFilePath = Path.Combine(fullPdfFolder, pdfFileName);
@@ -4073,10 +4071,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 hd.HoaDonChiTiets = models;
                 hd.SoTienBangChu = soTienBangChu;
-                //doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
                 doc.SaveToPDF(fullPdfFilePath, _hostingEnvironment, mauHoaDon.LoaiNgonNgu, isEmptySignature);
 
-                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
+                if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
                 {
                     if (hd.IsCapMa == true)
                     {
@@ -4088,22 +4085,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     await _xMLInvoiceService.CreateXMLInvoice(fullXmlFilePath, hd);
                 }
 
-                if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true)
+                if (!string.IsNullOrEmpty(entity.FileDaKy))
                 {
-                    if (hd.IsReloadSignedPDF == true || hd.IsPhatHanh == true)
-                    {
-                        await UpdateFileDataPdfForHDDT(hd.HoaDonDienTuId, fullPdfFilePath);
-                    }
-                    else
+                    if (hd.IsCapMa == true)
                     {
                         await UpdateFileDataForHDDT(hd.HoaDonDienTuId, fullPdfFilePath, fullXmlFilePath);
                     }
-                }
+                    else
+                    {
+                        await UpdateFileDataPdfForHDDT(hd.HoaDonDienTuId, fullPdfFilePath);
+                    }
 
-                await _db.SaveChangesAsync();
-
-                if (hd.IsBuyerSigned == true || hd.IsPhatHanh == true)
-                {
                     path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{pdfFileName}";
                     pathXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{xmlFileName}";
                 }
@@ -4113,6 +4105,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     pathXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}/{xmlFileName}";
                 }
 
+                await _db.SaveChangesAsync();
+
                 return new KetQuaConvertPDF()
                 {
                     FilePDF = path,
@@ -4120,7 +4114,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     PdfName = pdfFileName,
                     XMLName = xmlFileName,
                     XMLBase64 = File.Exists(fullXmlFilePath) ? TextHelper.Compress(File.ReadAllText(fullXmlFilePath)) : null
-                    //PDFBase64 = fullPdfFilePath.EncodeFile()
                 };
             }
             catch (Exception ex)
@@ -14488,7 +14481,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<(bool, List<HoaDonDienTuViewModel>)> UpdateNgayHoaDonBangNgayHoaDonPhatHanhAsync(HoaDonDienTuViewModel model)
         {
             var listHoaDonCoNgayHDNhoHon = await _db.HoaDonDienTus
-                .Where(x => x.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId && !x.SoHoaDon.HasValue && x.NgayHoaDon.Value.Date < model.NgayHoaDon)
+                .Where(x => x.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId &&
+                            !x.SoHoaDon.HasValue &&
+                            (x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi) &&
+                            x.NgayHoaDon.Value.Date < model.NgayHoaDon)
                 .ToListAsync();
 
             var listViewModels = _mp.Map<List<HoaDonDienTuViewModel>>(listHoaDonCoNgayHDNhoHon);
@@ -15724,6 +15720,61 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var result = await _db.SaveChangesAsync();
             return result > 0;
+        }
+
+        public async Task<FileReturn> CreateXMLToSignAsync(HoaDonDienTuViewModel hd)
+        {
+            string xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.xml";
+            string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
+
+            #region create folder
+            if (!Directory.Exists(fullXmlFolder))
+            {
+                Directory.CreateDirectory(fullXmlFolder);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(hd.XMLDaKy))
+                {
+                    string oldFilePath = Path.Combine(fullXmlFolder, hd.XMLDaKy);
+                    if (File.Exists(oldFilePath))
+                    {
+                        File.Delete(oldFilePath);
+                    }
+                }
+            }
+            #endregion
+
+            // get tuy chon
+            var _tuyChons = await _TuyChonService.GetAllAsync();
+
+            var _cachDocSo0HangChuc = _tuyChons.Where(x => x.Ma == "CachDocSo0OHangChuc").Select(x => x.GiaTri).FirstOrDefault();
+            var _cachDocHangNghin = _tuyChons.Where(x => x.Ma == "CachDocSoTienOHangNghin").Select(x => x.GiaTri).FirstOrDefault();
+            var _cachTheHienSoTienBangChu = int.Parse(_tuyChons.Where(x => x.Ma == "CachTheHienSoTienBangChu").Select(x => x.GiaTri).FirstOrDefault());
+            var _cachTheHienSoTienThueLaKCT = _tuyChons.Where(x => x.Ma == "CachTheHienSoTienThueLaKCT").Select(x => x.GiaTri).FirstOrDefault();
+            var _cachTheHienSoTienThueLaKKKNT = _tuyChons.Where(x => x.Ma == "CachTheHienSoTienThueLaKKKNT").Select(x => x.GiaTri).FirstOrDefault();
+            var _hienThiSoChan = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiTuChanKhiDocSoTien").Select(x => x.GiaTri).FirstOrDefault());
+            var _hienThiDonViTienNgoaiTe = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiDonViTienNgoaiTeTrenHoaDon").Select(x => x.GiaTri).FirstOrDefault());
+
+            hd.SoTienBangChu = hd.TongTienThanhToan.Value
+                    .MathRoundNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE)
+                    .ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan, hd.LoaiTien.Ma, _cachTheHienSoTienBangChu, hd);
+            hd.HoaDonChiTiets = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId, false);
+
+            var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hd.HoaDonDienTuId);
+            entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.DangKyDienTu;
+            entity.XMLDaKy = xmlFileName;
+
+            string fullXmlFilePath = Path.Combine(fullXmlFolder, xmlFileName);
+            await _xMLInvoiceService.CreateXMLInvoice(fullXmlFilePath, hd);
+
+            await _db.SaveChangesAsync();
+
+            return new FileReturn
+            {
+                Base64 = TextHelper.Compress(File.ReadAllText(fullXmlFilePath))
+            };
         }
     }
 }

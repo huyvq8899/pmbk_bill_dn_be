@@ -1342,5 +1342,20 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.UpdateTruongMaKhiSuaTrongDanhMucAsync(param);
             return Ok(result);
         }
+
+        [HttpPost("CreateXMLToSign")]
+        public async Task<IActionResult> CreateXMLToSign(HoaDonDienTuViewModel hd)
+        {
+            try
+            {
+                var result = await _hoaDonDienTuService.CreateXMLToSignAsync(hd);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                Tracert.WriteLog("CreateXMLToSign", e);
+                return Ok(null);
+            }
+        }
     }
 }
