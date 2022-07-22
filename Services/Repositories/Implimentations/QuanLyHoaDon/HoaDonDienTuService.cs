@@ -6633,7 +6633,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                           TongTienThanhToan = hd.ThanhTien, //mặc định,
                                           DaLapHoaDonThayThe = true,
                                           CreatedDate = hd.CreatedDate,
-                                          PhuongThucChuyenDL = ((PhuongThucChuyenDL)hd.PhuongThucChuyenDL).GetDescription(),
                                           HoaDonNgoaiHeThong = true,
                                           TaiLieuDinhKems = (from tldk in listTaiLieuDinhKems
                                                              where tldk.NghiepVuId == hd.Id
@@ -8202,7 +8201,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     StrSoHoaDon = hd.SoHoaDon,
                                     MaCuaCQT = hd.MaCQTCap ?? string.Empty,
                                     LapTuPMGP = false,
-                                    PhuongThucChuyenDL = ((PhuongThucChuyenDL)hd.PhuongThucChuyenDL).GetDescription(),                                    
                                     MauSo = hd.MauSoHoaDon,
                                     KyHieu = hd.KyHieuHoaDon,
                                     KyHieuHoaDon = hd.MauSoHoaDon + hd.KyHieuHoaDon,

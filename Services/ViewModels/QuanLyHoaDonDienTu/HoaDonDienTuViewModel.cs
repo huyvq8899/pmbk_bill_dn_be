@@ -522,7 +522,6 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? IsNotCreateThayThe { get; set; }//đánh dấu Hóa đơn xóa bỏ không cần lập thay thế
         public int? HinhThucXoabo { get; set; }
         public int? BackUpTrangThai { get; set; }
-        public string PhuongThucChuyenDL { get; set; }
 
         [IgnoreLogging]
         public bool? IsGuiTungHoaDon { get; set; }
