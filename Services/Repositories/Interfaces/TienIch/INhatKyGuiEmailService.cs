@@ -18,5 +18,6 @@ namespace Services.Repositories.Interfaces.TienIch
         Task<NhatKyGuiEmailViewModel> GetNhatKyGuiEmailByHoaDonDienTuIdAsync(string hoaDonDienTuId, int type);
         Task<HoaDonDienTuViewModel> GetThongTinById(string Id);
         Task<HoaDonDienTuViewModel> GetByIdAsync(string id);
+        Task<NhatKyGuiEmailViewModel> GetThongTinEmailDaGuiChoKHGanNhatAsync();
     }
 }
