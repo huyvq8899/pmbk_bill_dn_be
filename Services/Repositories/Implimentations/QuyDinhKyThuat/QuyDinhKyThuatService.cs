@@ -199,6 +199,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         break;
                     }
                 case (int)MLTDiep.TDCBTHDLHDDDTDCQThue:
+                case (int)MLTDiep.TDCDLHDKMDCQThue:
                     {
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChuaGui, Name = TrangThaiGuiThongDiep.ChuaGui.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChoPhanHoi, Name = TrangThaiGuiThongDiep.ChoPhanHoi.GetDescription() });
@@ -207,6 +208,27 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CoHDKhongHopLe, Name = TrangThaiGuiThongDiep.CoHDKhongHopLe.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe, Name = TrangThaiGuiThongDiep.GoiDuLieuHopLe.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe, Name = TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe.GetDescription() });
+                        break;
+                    }
+                case (int)MLTDiep.TDGHDDTTCQTCapMa:
+                    {
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiKhongLoi, Name = TrangThaiGuiThongDiep.GuiKhongLoi.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChoPhanHoi, Name = TrangThaiGuiThongDiep.ChoPhanHoi.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CQTDaCapMa, Name = TrangThaiGuiThongDiep.CQTDaCapMa.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiTCTNLoi, Name = TrangThaiGuiThongDiep.GuiTCTNLoi.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.KhongDuDieuKienCapMa, Name = TrangThaiGuiThongDiep.KhongDuDieuKienCapMa.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiLoi, Name = TrangThaiGuiThongDiep.GuiLoi.GetDescription() });
+                        break;
+                    }
+                case (int)MLTDiep.TBKQCMHDon:
+                    {
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CQTDaCapMa, Name = TrangThaiGuiThongDiep.CQTDaCapMa.GetDescription() });
+                        break;
+                    }
+                case (int)MLTDiep.TBTNVKQXLHDDTSSot:
+                    {
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon, Name = TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan, Name = TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan.GetDescription() });
                         break;
                     }
                 default: break;
