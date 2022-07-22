@@ -594,7 +594,7 @@ namespace ManagementServices.Helper
                     }
                 }
 
-                return rs;
+                return rs + ".";
             }
             catch
             {
@@ -1508,10 +1508,10 @@ namespace ManagementServices.Helper
             return text;
         }
 
-        public static (string , string) GetErrorWhenSendEmailToClient(string message)
+        public static (string, string) GetErrorWhenSendEmailToClient(string message)
         {
             string moTa;
-            string huongDanXuLy = "Vui lòng kiểm tra lại"; 
+            string huongDanXuLy = "Vui lòng kiểm tra lại";
             if (message.Contains("may not exist"))
             {
                 moTa = "Email người nhận không tồn tại";
