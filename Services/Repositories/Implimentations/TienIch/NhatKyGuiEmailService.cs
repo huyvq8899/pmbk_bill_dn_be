@@ -482,7 +482,7 @@ namespace Services.Repositories.Implimentations.TienIch
             return result > 0;
         }
 
-        public async Task<bool> KiemTraDaGuiEmailChoKhachHangAsync(string hoaDonDienTuId,int type)
+        public async Task<bool> KiemTraDaGuiEmailChoKhachHangAsync(string hoaDonDienTuId, int type)
         {
             var query = await _db.NhatKyGuiEmails.CountAsync(x => x.RefId == hoaDonDienTuId && (x.LoaiEmail == (LoaiEmail)type || type == -100) && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan));
 
@@ -490,7 +490,7 @@ namespace Services.Repositories.Implimentations.TienIch
         }
         public async Task<NhatKyGuiEmailViewModel> GetNhatKyGuiEmailByHoaDonDienTuIdAsync(string hoaDonDienTuId, int type)
         {
-            var query = _db.NhatKyGuiEmails.Where(x => x.NhatKyGuiEmailId == hoaDonDienTuId && (x.LoaiEmail == (LoaiEmail)type || type == -100) && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan)).OrderByDescending(x=>x.ModifyDate)
+            var query = _db.NhatKyGuiEmails.Where(x => x.NhatKyGuiEmailId == hoaDonDienTuId && (x.LoaiEmail == (LoaiEmail)type || type == -100) && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan)).OrderByDescending(x => x.ModifyDate)
                 .Select(nk => new NhatKyGuiEmailViewModel
                 {
                     NhatKyGuiEmailId = nk.NhatKyGuiEmailId,
@@ -513,7 +513,7 @@ namespace Services.Repositories.Implimentations.TienIch
                     CreatedDate = nk.CreatedDate,
                     CreatedBy = nk.CreatedBy,
                     Status = nk.Status,
-                    thongBaoSaiThongTin = _db.ThongBaoSaiThongTins.Where(t=>t.NhatKyGuiEmailId == nk.NhatKyGuiEmailId).Select(tt=> new ThongBaoSaiThongTin
+                    thongBaoSaiThongTin = _db.ThongBaoSaiThongTins.Where(t => t.NhatKyGuiEmailId == nk.NhatKyGuiEmailId).Select(tt => new ThongBaoSaiThongTin
                     {
                         Id = Guid.NewGuid().ToString(),
                         DoiTuongId = tt.DoiTuongId,
@@ -904,6 +904,16 @@ namespace Services.Repositories.Implimentations.TienIch
                 result.LyDoDieuChinhModel.DieuChinhChoHoaDonId = result.DieuChinhChoHoaDonId;
             }
             result.TenTrangThaiLanDieuChinhGanNhat = result.TrangThaiLanDieuChinhGanNhat.HasValue ? ((TrangThaiQuyTrinh)result.TrangThaiLanDieuChinhGanNhat.Value).GetDescription() : string.Empty;
+            return result;
+        }
+
+        public async Task<NhatKyGuiEmailViewModel> GetThongTinEmailDaGuiChoKHGanNhatAsync()
+        {
+            var entity = await _db.NhatKyGuiEmails
+                .OrderByDescending(x => x.CreatedDate)
+                .FirstOrDefaultAsync(x => x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui);
+
+            var result = _mp.Map<NhatKyGuiEmailViewModel>(entity);
             return result;
         }
     }

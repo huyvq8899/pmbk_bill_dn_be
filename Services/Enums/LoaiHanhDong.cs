@@ -24,7 +24,7 @@ namespace Services.Enums
         KyDienTu,
         [Description("Phát hành hóa đơn thành công")]
         PhatHanhHoaDonThanhCong,
-        [Description("Phát hành hóa đơn thất bại")]
+        [Description("Phát hành hóa đơn không thành công")]
         PhatHanhHoaDonThatBai,
         [Description("Chuyển thành hóa đơn giấy")]
         ChuyenThanhHoaDonGiay,
@@ -43,6 +43,10 @@ namespace Services.Enums
         [Description("Nhân bản")]
         NhanBan,
         [Description("Cập nhật ngày hóa đơn")]
-        CapNhatNgayHoaDon
+        CapNhatNgayHoaDon,
+        [Description("Gửi BB cho KH")]
+        GuiBienBanChoKhachHang,
+        [Description("Gửi thông báo HĐ có thông tin sai sót không phải lập lại HĐ")]
+        GuiThongBaoHoaDonCoThongTinSaiSot
     }
 }
