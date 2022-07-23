@@ -595,7 +595,7 @@ namespace ManagementServices.Helper
                     }
                 }
 
-                return rs;
+                return rs + ".";
             }
             catch
             {
