@@ -1,8 +1,6 @@
-﻿using DLL;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Services.Helper.Params.TienIch;
 using Services.Repositories.Interfaces.TienIch;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers.TienIch
@@ -33,7 +31,7 @@ namespace API.Controllers.TienIch
         [HttpGet("KiemTraDaGuiEmailChoKhachHang/{HoaDonDienTuId}")]
         public async Task<IActionResult> KiemTraDaGuiEmailChoKhachHang(string hoaDonDienTuId)
         {
-            var result = await _nhatKyGuiEmailService.KiemTraDaGuiEmailChoKhachHangAsync(hoaDonDienTuId,-100);
+            var result = await _nhatKyGuiEmailService.KiemTraDaGuiEmailChoKhachHangAsync(hoaDonDienTuId, -100);
             return Ok(result);
         }
         /// <summary>
@@ -46,6 +44,13 @@ namespace API.Controllers.TienIch
         public async Task<IActionResult> KiemTraDaGuiTBSSKhongLapHd(string hoaDonDienTuId)
         {
             var result = await _nhatKyGuiEmailService.GetNhatKyGuiEmailByHoaDonDienTuIdAsync(hoaDonDienTuId, 4);
+            return Ok(result);
+        }
+
+        [HttpGet("GetThongTinEmailDaGuiChoKHGanNhat")]
+        public async Task<IActionResult> GetThongTinEmailDaGuiChoKHGanNhat()
+        {
+            var result = await _nhatKyGuiEmailService.GetThongTinEmailDaGuiChoKHGanNhatAsync();
             return Ok(result);
         }
     }

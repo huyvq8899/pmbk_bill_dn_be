@@ -181,7 +181,7 @@ namespace Services.Repositories.Implimentations.TienIch
             NhatKyTruyCap entity = new NhatKyTruyCap
             {
                 DoiTuongThaoTac = !string.IsNullOrEmpty(model.DoiTuongThaoTac) ? (model.DoiTuongThaoTac == "empty" ? string.Empty : model.DoiTuongThaoTac) : model.RefType.GetDescription(),
-                HanhDong = model.LoaiHanhDong.GetDescription(),
+                HanhDong = !string.IsNullOrEmpty(model.HanhDong) ? model.HanhDong : model.LoaiHanhDong.GetDescription(),
                 ThamChieu = model.ThamChieu,
                 MoTaChiTiet = model.MoTaChiTiet,
                 DiaChiIP = GetIpAddressOfClient(),

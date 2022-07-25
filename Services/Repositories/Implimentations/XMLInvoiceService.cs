@@ -616,8 +616,8 @@ namespace Services.Repositories.Implimentations
                         .Select(x => new HoaDonDienTuChiTietViewModel
                         {
                             ThueGTGT = x.Key,
-                            ThanhTien = x.Sum(y => y.ThanhTien),
-                            TienThueGTGT = x.Sum(y => y.TienThueGTGT)
+                            ThanhTien = x.Sum(y => y.TinhChat == 3 ? -y.ThanhTien : y.ThanhTien),
+                            TienThueGTGT = x.Sum(y => y.TinhChat == 3 ? -y.TienThueGTGT : y.TienThueGTGT)
                         })
                         .ToList();
 

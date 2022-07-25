@@ -116,5 +116,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> IsDaGuiEmailChoKhachHangAsync(string id);
         Task<List<HoaDonChoKeToanBachKhoaViewModel>> GetHoaDonChoKeToanBachKhoaAsync(ThamSoLayDuLieuHoaDon thamSoLayDuLieu);
         Task<bool> UpdateTruongMaKhiSuaTrongDanhMucAsync(UpdateMa param);
+        Task<FileReturn> CreateXMLToSignAsync(HoaDonDienTuViewModel hd);
     }
 }

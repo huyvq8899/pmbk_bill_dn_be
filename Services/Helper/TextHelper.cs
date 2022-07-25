@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Newtonsoft.Json;
 using Services.Helper;
+using Services.Helper.Params.HoaDon;
 using Services.ViewModels.Config;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
@@ -1525,13 +1526,40 @@ namespace ManagementServices.Helper
             {
                 moTa = "Tên máy chủ không đúng";
             }
+            else if (message.Contains("Username and Password not accepted"))
+            {
+                moTa = "Tên người dùng và mật khẩu không được chấp nhận";
+            }
             else
             {
                 moTa = "Lỗi hệ thống";
-                huongDanXuLy = "Vui lòng liên hệ với bộ phẫn hỗ trợ để được trợ giúp";
+                huongDanXuLy = "Vui lòng liên hệ với bộ phận hỗ trợ để được trợ giúp";
             }
 
             return (moTa, huongDanXuLy);
+        }
+
+        public static string GetEmailWithBCCAndCC(string toEmail, string cc, string bcc)
+        {
+            var list = new List<string> { toEmail };
+            if (!string.IsNullOrEmpty(cc))
+            {
+                var listCC = cc.Split(";");
+                foreach (var item in listCC)
+                {
+                    list.Add("(CC)" + item);
+                }
+            }
+            if (!string.IsNullOrEmpty(bcc))
+            {
+                var listBCC = bcc.Split(";");
+                foreach (var item in listBCC)
+                {
+                    list.Add("(BCC)" + item);
+                }
+            }
+
+            return string.Join(";", list);
         }
     }
 }
