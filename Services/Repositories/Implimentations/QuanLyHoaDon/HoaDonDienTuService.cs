@@ -11778,9 +11778,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         {
                                             item.ErrorMessage = string.Format(formatRequired, group.TenTruongExcel);
                                         }
-                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.HoaDonChiTiet.TenHang) && item.HoaDonChiTiet.TenHang.Length > 400)
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.HoaDonChiTiet.TenHang) && item.HoaDonChiTiet.TenHang.Length > 500)
                                         {
-                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruongExcel, 400);
+                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruongExcel, 500);
                                         }
                                         item.HoaDonChiTiet.TenHang = string.IsNullOrEmpty(item.HoaDonChiTiet.TenHang) ? hangHoaDichVu?.Ten : item.HoaDonChiTiet.TenHang;
                                         break;
