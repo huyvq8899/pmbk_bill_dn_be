@@ -44,9 +44,13 @@ namespace Services.Enums
         NhanBan,
         [Description("Cập nhật ngày hóa đơn")]
         CapNhatNgayHoaDon,
-        [Description("Gửi BB cho KH")]
-        GuiBienBanChoKhachHang,
+        [Description("Gửi biên bản điều chỉnh HĐ")]
+        GuiBienBanDieuChinhHoaDon,
         [Description("Gửi thông báo HĐ có thông tin sai sót không phải lập lại HĐ")]
-        GuiThongBaoHoaDonCoThongTinSaiSot
+        GuiThongBaoHoaDonCoThongTinSaiSot,
+        [Description("Gửi thông báo xóa bỏ HĐ")]
+        GuiThongBaoXoaBoHoaDon,
+        [Description("Gửi biên bản hủy HĐ")]
+        GuiBienBanHuyHoaDon
     }
 }

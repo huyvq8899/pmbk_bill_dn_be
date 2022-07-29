@@ -5624,6 +5624,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var bbxb = await GetBienBanXoaBoHoaDon(@params.HoaDon.HoaDonDienTuId);
                 var _tuyChons = await _TuyChonService.GetAllAsync();
                 BienBanDieuChinh bbdc = null;
+                var isBanNhap = false;
 
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string assetsFolder = $"FilesUpload/{databaseName}";
@@ -5707,6 +5708,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
+                    isBanNhap = true;
                     var convertPDF = await ConvertHoaDonToFilePDF(hddt);
                     pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FilePDF);
                     xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FileXML);
@@ -5847,11 +5849,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (isSystem)
                     {
+                        string tenHanhDong = ((LoaiEmail)@params.LoaiEmail).GetDescription();
+                        if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon && isBanNhap)
+                        {
+                            tenHanhDong = isBanNhap ? "Gửi hóa đơn" : "Gửi bản nháp";
+                        }
+
                         await _nhatKyTruyCapService.InsertAsync(new NhatKyTruyCapViewModel
                         {
                             DoiTuongThaoTac = $"Tên loại hóa đơn: {((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription()}",
-                            HanhDong = ((LoaiEmail)@params.LoaiEmail).GetDescription(),
-                            MoTaChiTiet = "Mô tả: " + @params.ErrorActionModel.MoTa + " | Hướng dẫn xử lý: " + @params.ErrorActionModel.HuongDanXuLy,
+                            HanhDong = tenHanhDong,
+                            MoTaChiTiet = $"{tenHanhDong} không thành công. Mô tả: " + @params.ErrorActionModel.MoTa + " | Hướng dẫn xử lý: " + @params.ErrorActionModel.HuongDanXuLy,
                             RefId = hddt.HoaDonDienTuId,
                             RefType = RefType.HoaDonDienTu
                         });
@@ -8207,7 +8215,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     StrSoHoaDon = hd.SoHoaDon,
                                     MaCuaCQT = hd.MaCQTCap ?? string.Empty,
                                     LapTuPMGP = false,
-                                    PhuongThucChuyenDL = ((PhuongThucChuyenDL)hd.PhuongThucChuyenDL).GetDescription(),                                    
+                                    PhuongThucChuyenDL = ((PhuongThucChuyenDL)hd.PhuongThucChuyenDL).GetDescription(),
                                     MauSo = hd.MauSoHoaDon,
                                     KyHieu = hd.KyHieuHoaDon,
                                     KyHieuHoaDon = hd.MauSoHoaDon + hd.KyHieuHoaDon,
