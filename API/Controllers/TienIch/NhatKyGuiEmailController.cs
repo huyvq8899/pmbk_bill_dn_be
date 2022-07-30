@@ -47,10 +47,10 @@ namespace API.Controllers.TienIch
             return Ok(result);
         }
 
-        [HttpGet("GetThongTinEmailDaGuiChoKHGanNhat")]
-        public async Task<IActionResult> GetThongTinEmailDaGuiChoKHGanNhat()
+        [HttpGet("GetThongTinEmailDaGuiChoKHGanNhat/{refId}")]
+        public async Task<IActionResult> GetThongTinEmailDaGuiChoKHGanNhat(string refId)
         {
-            var result = await _nhatKyGuiEmailService.GetThongTinEmailDaGuiChoKHGanNhatAsync();
+            var result = await _nhatKyGuiEmailService.GetThongTinEmailDaGuiChoKHGanNhatAsync(refId);
             return Ok(result);
         }
     }

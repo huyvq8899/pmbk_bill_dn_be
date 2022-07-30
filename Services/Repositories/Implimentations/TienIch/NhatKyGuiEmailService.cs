@@ -907,11 +907,11 @@ namespace Services.Repositories.Implimentations.TienIch
             return result;
         }
 
-        public async Task<NhatKyGuiEmailViewModel> GetThongTinEmailDaGuiChoKHGanNhatAsync()
+        public async Task<NhatKyGuiEmailViewModel> GetThongTinEmailDaGuiChoKHGanNhatAsync(string refId)
         {
             var entity = await _db.NhatKyGuiEmails
                 .OrderByDescending(x => x.CreatedDate)
-                .FirstOrDefaultAsync(x => x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui);
+                .FirstOrDefaultAsync(x => x.RefId == refId && x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui);
 
             var result = _mp.Map<NhatKyGuiEmailViewModel>(entity);
             return result;
