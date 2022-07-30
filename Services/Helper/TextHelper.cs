@@ -558,7 +558,7 @@ namespace ManagementServices.Helper
                     rs = rs.Substring(1);
                     rs = rs1 + rs;
                 }
-                rs = rs.Replace("lẻ", cachDocSo0HangChuc).Replace("mươi", "mươi").Replace("trăm", "trăm").Replace("mười", "mười").Replace("nghìn", cachDocSoHangNghin) + ((total % 1000 == 0 && hienThiSoChan) ? " chẵn" : string.Empty);
+                rs = rs.Replace("lẻ", cachDocSo0HangChuc).Replace("mươi", "mươi").Replace("trăm", "trăm").Replace("mười", "mười").Replace("nghìn", cachDocSoHangNghin) + ((hienThiSoChan) ? " chẵn" : string.Empty);
 
                 // nếu là hóa đơn điều chỉnh tăng hoặc giảm thì đoc theo tùy chọn
                 if (!string.IsNullOrEmpty(maLoaiTien) && (hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh) && ((hd.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhTang) || (hd.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam)))
@@ -594,7 +594,7 @@ namespace ManagementServices.Helper
                     }
                 }
 
-                return rs;
+                return rs + ".";
             }
             catch
             {
@@ -1508,10 +1508,10 @@ namespace ManagementServices.Helper
             return text;
         }
 
-        public static (string , string) GetErrorWhenSendEmailToClient(string message)
+        public static (string, string) GetErrorWhenSendEmailToClient(string message)
         {
             string moTa;
-            string huongDanXuLy = "Vui lòng kiểm tra lại"; 
+            string huongDanXuLy = "Vui lòng kiểm tra lại";
             if (message.Contains("may not exist"))
             {
                 moTa = "Email người nhận không tồn tại";

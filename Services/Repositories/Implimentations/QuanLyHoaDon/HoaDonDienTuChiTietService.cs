@@ -128,6 +128,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TinhChat = hdct.TinhChat,
                             DonViTinhId = dvt.DonViTinhId ?? string.Empty,
                             DonViTinh = dvt != null ? _mp.Map<DonViTinhViewModel>(dvt) : null,
+                            TenDonViTinh = hdct.TenDonViTinh,
                             SoLuong = hdct.SoLuong,
                             DonGia = hdct.DonGia,
                             DonGiaQuyDoi = hdct.DonGiaQuyDoi,
