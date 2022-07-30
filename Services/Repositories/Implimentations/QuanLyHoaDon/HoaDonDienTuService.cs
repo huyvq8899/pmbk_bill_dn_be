@@ -5859,7 +5859,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             DoiTuongThaoTac = $"Tên loại hóa đơn: {((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription()}",
                             HanhDong = tenHanhDong,
-                            MoTaChiTiet = $"{tenHanhDong} không thành công. Mô tả: " + @params.ErrorActionModel.MoTa + " | Hướng dẫn xử lý: " + @params.ErrorActionModel.HuongDanXuLy,
+                            MoTaChiTiet = $"{tenHanhDong} không thành công.\nMẫu số: <{hddt.MauSo}>; Ký hiệu: <{hddt.KyHieu}>; Số hóa đơn: <{(hddt.SoHoaDon.HasValue ? hddt.SoHoaDon.ToString() : "Chưa cấp số")}>; Ngày hóa đơn: <{hddt.NgayHoaDon.Value:dd/MM/yyyy}>; Tên người nhận: <{TenNguoiNhan}>; Email người nhận: <{TextHelper.GetEmailWithBCCAndCC(@params.ToMail, @params.CC, @params.BCC)}>.\nMô tả: " + @params.ErrorActionModel.MoTa + " | Hướng dẫn xử lý: " + @params.ErrorActionModel.HuongDanXuLy,
                             RefId = hddt.HoaDonDienTuId,
                             RefType = RefType.HoaDonDienTu
                         });
