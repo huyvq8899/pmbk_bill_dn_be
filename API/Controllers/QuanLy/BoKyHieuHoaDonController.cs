@@ -1,4 +1,5 @@
 ﻿using DLL;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -66,6 +67,13 @@ namespace API.Controllers.QuanLy
         public async Task<IActionResult> GetListForHoaDon(BoKyHieuHoaDonViewModel model)
         {
             var result = await _boKyHieuHoaDonService.GetListForHoaDonAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost("GetListForPhatHanhDongLoat")]
+        public async Task<IActionResult> GetListForPhatHanhDongLoat(PagingParams param)
+        {
+            var result = await _boKyHieuHoaDonService.GetListForPhatHanhDongLoatAsync(param);
             return Ok(result);
         }
 

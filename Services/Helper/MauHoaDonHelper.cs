@@ -3014,6 +3014,7 @@ namespace Services.Helper
         public string ContentType { get; set; }
         public string FileName { get; set; }
         public string Base64 { get; set; }
+        public string RefId { get; set; }
     }
 
     public enum DinhDangTepMau

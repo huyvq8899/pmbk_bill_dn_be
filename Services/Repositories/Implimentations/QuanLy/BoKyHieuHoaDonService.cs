@@ -1338,5 +1338,52 @@ namespace Services.Repositories.Implimentations.QuanLy
 
             return result;
         }
+
+        /// <summary>
+        /// Lấy danh sách bộ ký hiệu để phát hành hóa đơn đồng loạt
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<List<BoKyHieuHoaDonViewModel>> GetListForPhatHanhDongLoatAsync(PagingParams param)
+        {
+            var yyOfNgayHoaDon = int.Parse(DateTime.Now.ToString("yy"));
+
+            var result = await (from bkhhd in _db.BoKyHieuHoaDons
+                                join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
+                                where (param.Permission == true || param.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)) &&
+                                (bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc || bkhhd.TrangThaiSuDung == TrangThaiSuDung.DangSuDung || bkhhd.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
+                                select new BoKyHieuHoaDonViewModel
+                                {
+                                    BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                                    TrangThaiSuDung = bkhhd.TrangThaiSuDung,
+                                    LoaiHoaDon = bkhhd.LoaiHoaDon,
+                                    KyHieu = bkhhd.KyHieu,
+                                    KyHieu23 = bkhhd.KyHieu23,
+                                    KyHieu23Int = int.Parse(bkhhd.KyHieu23),
+                                    MauHoaDonId = bkhhd.MauHoaDonId,
+                                    SoLonNhatDaLapDenHienTai = bkhhd.SoLonNhatDaLapDenHienTai,
+                                    MauHoaDon = new MauHoaDonViewModel
+                                    {
+                                        MauHoaDonId = mhd.MauHoaDonId,
+                                        LoaiHoaDon = mhd.LoaiHoaDon,
+                                        LoaiThueGTGT = mhd.LoaiThueGTGT
+                                    }
+                                })
+                                .Where(x => x.KyHieu23Int == yyOfNgayHoaDon)
+                                .OrderByDescending(x => x.KyHieu23Int)
+                                .ThenBy(x => x.KyHieu)
+                                .ToListAsync();
+
+            if (result.Any())
+            {
+                result.Insert(0, new BoKyHieuHoaDonViewModel
+                {
+                    BoKyHieuHoaDonId = "-1",
+                    KyHieu = "Tất cả"
+                });
+            }
+
+            return result;
+        }
     }
 }

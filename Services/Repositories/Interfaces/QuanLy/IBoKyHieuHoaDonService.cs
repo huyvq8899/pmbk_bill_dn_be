@@ -21,6 +21,7 @@ namespace Services.Repositories.Interfaces.QuanLy
         CtsModel CheckSoSeriChungThu(BoKyHieuHoaDonViewModel model);
         Task<bool> CheckThoiHanChungThuSoAsync(BoKyHieuHoaDonViewModel model);
         Task<List<BoKyHieuHoaDonViewModel>> GetListForHoaDonAsync(BoKyHieuHoaDonViewModel model);
+        Task<List<BoKyHieuHoaDonViewModel>> GetListForPhatHanhDongLoatAsync(PagingParams param);
         Task<bool> CheckDaHetSoLuongHoaDonAsync(string boKyHieuHoaDonId, long? soHoaDon);
         Task<string> GetSoSeriChungThuByIdAsync(string id);
         BoKyHieuHoaDonViewModel CheckKyHieuOutObject(string kyHieu, List<BoKyHieuHoaDon> models);

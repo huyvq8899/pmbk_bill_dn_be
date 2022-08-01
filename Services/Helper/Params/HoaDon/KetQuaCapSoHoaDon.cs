@@ -1,4 +1,6 @@
-﻿namespace Services.Helper.Params.HoaDon
+﻿using Services.ViewModels.QuanLyHoaDonDienTu;
+
+namespace Services.Helper.Params.HoaDon
 {
     public class KetQuaCapSoHoaDon
     {
@@ -23,5 +25,6 @@
         public long? SoHoaDon { get; set; }
         public string ErrorMessage { get; set; } = string.Empty;
         public bool? IsYesNo { get; set; }
+        public HoaDonDienTuViewModel HoaDon { get; set; }
     }
 }

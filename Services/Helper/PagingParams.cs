@@ -22,6 +22,7 @@ namespace ManagementServices.Helper
         public bool? IsActive { get; set; }
         public List<FilterColumn> FilterColumns { get; set; }
         public List<string> MauHoaDonDuocPQ { get; set; }
+        public bool? Permission { get; set; }
     }
 
     public class ThongDiepChungParams : PagingParams

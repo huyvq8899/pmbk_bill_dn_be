@@ -1,10 +1,8 @@
-﻿using DLL.Enums;
-using Services.ViewModels.QuanLyHoaDonDienTu;
+﻿using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Services.Helper.Params.HoaDon
 {
@@ -38,6 +36,10 @@ namespace Services.Helper.Params.HoaDon
         public bool? IsPhatHanh { get; set; }
         public TTNKy NBan { set; get; }
         public int? TrangThaiQuyTrinh { get; set; }
+        public int? TypeOfError { get; set; }
+        public string Exception { set; get; }
+        public string NoiDungLoi { get; set; }
+        public ThongDiepChungViewModel ThongDiepChung { get; set; }
     }
 
     public class TTNKy

@@ -1357,5 +1357,39 @@ namespace API.Controllers.QuanLyHoaDon
                 return Ok(null);
             }
         }
+
+        [HttpPost("GetListHoaDonDePhatHanhDongLoat")]
+        public async Task<IActionResult> GetListHoaDonDePhatHanhDongLoat(HoaDonParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetListHoaDonDePhatHanhDongLoatAsync(pagingParams);
+            return Ok(result);
+        }
+
+        [HttpPost("GroupListDeXemDuLieuPhatHanhDongLoat")]
+        public async Task<IActionResult> GroupListDeXemDuLieuPhatHanhDongLoat(List<HoaDonDienTuViewModel> list)
+        {
+            var result = await _hoaDonDienTuService.GroupListDeXemDuLieuPhatHanhDongLoatAsync(list);
+            return Ok(result);
+        }
+
+        [HttpPost("PhatHanhHoaDonDongLoat")]
+        public async Task<IActionResult> PhatHanhHoaDonDongLoat(List<ParamPhatHanhHD> @params)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.PhatHanhHoaDonDongLoatAsync(@params);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    Tracert.WriteLog("PhatHanhHoaDonDongLoat: ", e);
+                    transaction.Rollback();
+                    return Ok(null);
+                }
+            }
+        }
     }
 }
