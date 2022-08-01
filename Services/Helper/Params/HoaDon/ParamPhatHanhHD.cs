@@ -38,7 +38,9 @@ namespace Services.Helper.Params.HoaDon
         public int? TrangThaiQuyTrinh { get; set; }
         public int? TypeOfError { get; set; }
         public string Exception { set; get; }
-        public string NoiDungLoi { get; set; }
+        public string NoiDungLoiPhatHanh { get; set; }
+        public string MoTa { get; set; }
+        public string HuongDanXuLy { get; set; }
         public ThongDiepChungViewModel ThongDiepChung { get; set; }
     }
 

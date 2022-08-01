@@ -1320,5 +1320,23 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             return result;
         }
+
+        public async Task<List<TrangThaiQuyTrinh>> InsertRangeAsync(List<ThongDiepChungViewModel> models)
+        {
+            var result = new List<TrangThaiQuyTrinh>();
+
+            foreach (var thongDiep in models)
+            {
+                if (thongDiep.MaLoaiThongDiep == 200)
+                {
+                    var rsInsertThongDiep = await InsertAsync(thongDiep);
+                    var rsSendCQT = await GuiThongDiepDuLieuHDDTAsync(rsInsertThongDiep.ThongDiepChungId);
+                    result.Add(rsSendCQT);
+                    //result.Add(TrangThaiQuyTrinh.GuiKhongLoi);
+                }
+            }
+
+            return result;
+        }
     }
 }

@@ -25,5 +25,6 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<ThongDiepChungViewModel> InsertAsync(ThongDiepChungViewModel model);
         Task<bool> UpdateAsync(DuLieuGuiHDDTViewModel model);
         Task<bool> UpdateTrangThaiGuiAsync(DuLieuGuiHDDTViewModel model);
+        Task<List<TrangThaiQuyTrinh>> InsertRangeAsync(List<ThongDiepChungViewModel> models);
     }
 }

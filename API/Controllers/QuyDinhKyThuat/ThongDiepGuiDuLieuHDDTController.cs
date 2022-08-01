@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Services.Helper;
 using DLL.Constants;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace API.Controllers.QuyDinhKyThuat
 {
@@ -191,6 +192,25 @@ namespace API.Controllers.QuyDinhKyThuat
             }
 
             return Ok(false);
+        }
+
+        [HttpPost("InsertRange")]
+        public async Task<IActionResult> InsertRange(List<ThongDiepChungViewModel> models)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _thongDiepGuiHDDTKhongMaService.InsertRangeAsync(models);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(e.ToString());
+                }
+            }
         }
     }
 }

@@ -79,6 +79,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IDonViTinhService _donViTinhService;
         private readonly IThongTinHoaDonService _thongTinHoaDonService;
         private readonly INhatKyTruyCapService _nhatKyTruyCapService;
+        private readonly INhatKyThaoTacLoiService _nhatKyThaoTacLoiService;
         private readonly ITVanService _tVanService;
         private int timeToListenResTCT = 0;
 
@@ -100,6 +101,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             IDonViTinhService donViTinhService,
             IThongTinHoaDonService thongTinHoaDonService,
             INhatKyTruyCapService nhatKyTruyCapService,
+            INhatKyThaoTacLoiService nhatKyThaoTacLoiService,
             ITVanService tVanService
         )
         {
@@ -4736,7 +4738,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return await _db.SaveChangesAsync() > 0;
         }
 
-        [Obsolete]
         public async Task<bool> GateForWebSocket(ParamPhatHanhHD param)
         {
             if (!string.IsNullOrEmpty(param.HoaDonDienTuId))
@@ -15953,13 +15954,63 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return groups;
         }
 
+        /// <summary>
+        /// Phát hành hóa đơn đồng loạt
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         public async Task<List<HoaDonDienTuViewModel>> PhatHanhHoaDonDongLoatAsync(List<ParamPhatHanhHD> @params)
         {
             var result = new List<HoaDonDienTuViewModel>();
 
+            var hoaDonDienTus = await _db.HoaDonDienTus
+                .Where(x => @params.Select(y => y.HoaDonDienTuId).Contains(x.HoaDonDienTuId))
+                .Select(x => new HoaDonDienTuViewModel
+                {
+                    HoaDonDienTuId = x.HoaDonDienTuId,
+                    TrangThaiQuyTrinh = x.TrangThaiQuyTrinh
+                })
+                .ToDictionaryAsync(x => x.HoaDonDienTuId);
+
             foreach (var param in @params)
             {
-                // var rsGateForWebSocket = await GateForWebSocket(param);
+                // check trường hợp liên tục vào socket thì check nếu ko đúng trạng thái quy trình thì block
+                var currentTrangThaiQuyTrinh = (TrangThaiQuyTrinh)hoaDonDienTus[param.HoaDonDienTuId].TrangThaiQuyTrinh;
+                if (currentTrangThaiQuyTrinh != TrangThaiQuyTrinh.ChuaKyDienTu &&
+                    currentTrangThaiQuyTrinh != TrangThaiQuyTrinh.DangKyDienTu &&
+                    currentTrangThaiQuyTrinh != TrangThaiQuyTrinh.KyDienTuLoi &&
+                    currentTrangThaiQuyTrinh != TrangThaiQuyTrinh.GuiTCTNLoi)
+                {
+                    continue;
+                }
+
+                // ký điện tử
+                var rsGateForWebSocket = await GateForWebSocket(param);
+                if (rsGateForWebSocket) // ký thành công
+                {
+                    await _nhatKyTruyCapService.InsertAsync(new NhatKyTruyCapViewModel
+                    {
+                        LoaiHanhDong = LoaiHanhDong.PhatHanhHoaDonThanhCong,
+                        DoiTuongThaoTac = "empty",
+                        RefType = RefType.HoaDonDienTu,
+                        ThamChieu = $"Hóa đơn {param.HoaDon.SoHoaDon} - {param.HoaDon.MauSo} - {param.HoaDon.KyHieu} - {param.HoaDon.MaTraCuu}",
+                        MoTaChiTiet = $"Phát hành HĐ {param.HoaDon.SoHoaDon} - {param.HoaDon.MauSo} - {param.HoaDon.KyHieu} - {param.HoaDon.MaTraCuu}",
+                        RefId = param.HoaDonDienTuId
+                    });
+                }
+                else // ký không thành công
+                {
+                    await UpdateTrangThaiQuyTrinhAsync(param.HoaDonDienTuId, TrangThaiQuyTrinh.KyDienTuLoi);
+                    await _nhatKyThaoTacLoiService.InsertAsync(new NhatKyThaoTacLoiViewModel
+                    {
+                        MoTa = param.MoTa,
+                        HuongDanXuLy = param.HuongDanXuLy,
+                        RefId = param.HoaDonDienTuId,
+                        ThaoTacLoi = ThaoTacLoi.KyDienTu
+                    });
+                }
+
+                result.Add(param.HoaDon);
             }
 
             return result;
