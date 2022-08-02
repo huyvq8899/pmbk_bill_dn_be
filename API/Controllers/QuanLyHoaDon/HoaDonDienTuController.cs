@@ -1391,5 +1391,12 @@ namespace API.Controllers.QuanLyHoaDon
                 }
             }
         }
+
+        [HttpPost("TaiTepPhatHanhHoaDonLoi")]
+        public async Task<IActionResult> TaiTepPhatHanhHoaDonLoi(List<HoaDonDienTuViewModel> list)
+        {
+            var result = await _hoaDonDienTuService.TaiTepPhatHanhHoaDonLoiAsync(list);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
     }
 }

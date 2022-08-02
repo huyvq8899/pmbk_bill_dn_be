@@ -653,6 +653,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public DateTime? NgayHoaDonLienQuan { get; set; }
+
+        [IgnoreLogging]
+        public string ErrorMessage { get; set; }
+
+        [IgnoreLogging]
+        public bool HasError { get; set; }
     }
 
     public class CotThongBaoSaiSotViewModel

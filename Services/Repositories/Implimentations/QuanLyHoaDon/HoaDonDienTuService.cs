@@ -122,6 +122,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _donViTinhService = donViTinhService;
             _thongTinHoaDonService = thongTinHoaDonService;
             _nhatKyTruyCapService = nhatKyTruyCapService;
+            _nhatKyThaoTacLoiService = nhatKyThaoTacLoiService;
             _tVanService = tVanService;
         }
 
@@ -7507,7 +7508,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             return true;
         }
-        [Obsolete]
         public async Task<bool> XoaBoHoaDon(ParamXoaBoHoaDon @params)
         {
             var _objHDDT = _mp.Map<HoaDonDienTuViewModel>(await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == @params.HoaDon.HoaDonDienTuId));
@@ -14140,6 +14140,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     return new KetQuaCapSoHoaDon
                     {
+                        HoaDon = hoaDon,
                         TitleMessage = "Kiểm tra lại",
                         ErrorMessage = $"Không thể phát hành hóa đơn khi trạng thái sử dụng của ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; là <strong>Chưa xác thực</strong>. " +
                                         $"Bạn cần xác thực sử dụng trước khi phát hành. Vui lòng kiểm tra lại."
@@ -14150,6 +14151,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     return new KetQuaCapSoHoaDon
                     {
+                        HoaDon = hoaDon,
                         TitleMessage = "Kiểm tra lại",
                         ErrorMessage = param.IsPhatHanh == true ?
                                         $"Không thể phát hành hóa đơn khi trạng thái sử dụng của ký hiệu <span class='colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> là <strong>Ngừng sử dụng</strong>. Vui lòng kiểm tra lại!" :
@@ -14165,6 +14167,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         return new KetQuaCapSoHoaDon
                         {
+                            HoaDon = hoaDon,
                             TitleMessage = "Kiểm tra lại",
                             ErrorMessage = $"Ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; đã phát hành đến số tối đa {lastNKXT.SoLuongHoaDon}. Vui lòng kiểm tra lại."
                         };
@@ -14185,6 +14188,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     {
                                         return new KetQuaCapSoHoaDon
                                         {
+                                            HoaDon = hoaDon,
                                             IsAcceptHetHieuLucTrongKhoang = true,
                                             IsYesNo = true,
                                             TitleMessage = param.IsPhatHanh != true ? "Lập hóa đơn điện tử" : "Phát hành hóa đơn điện tử",
@@ -14197,6 +14201,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     return new KetQuaCapSoHoaDon
                                     {
+                                        HoaDon = hoaDon,
                                         TitleMessage = "Kiểm tra lại",
                                         ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
                                                         $"Thời điểm hiện tại là năm 20{yearOfSysten} và đã quá thời hạn kê khai thuế GTGT của kỳ kê khai thuế GTGT tháng 12/20{boKyHieuHoaDon.KyHieu23Int}. " +
@@ -14214,6 +14219,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     {
                                         return new KetQuaCapSoHoaDon
                                         {
+                                            HoaDon = hoaDon,
                                             IsAcceptHetHieuLucTrongKhoang = true,
                                             IsYesNo = true,
                                             TitleMessage = param.IsPhatHanh != true ? "Lập hóa đơn điện tử" : "Phát hành hóa đơn điện tử",
@@ -14226,6 +14232,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     return new KetQuaCapSoHoaDon
                                     {
+                                        HoaDon = hoaDon,
                                         TitleMessage = "Kiểm tra lại",
                                         ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
                                                     $"Thời điểm hiện tại là năm 20{yearOfSysten} và đã quá thời hạn kê khai thuế GTGT của kỳ kê khai thuế GTGT quý 4/20{boKyHieuHoaDon.KyHieu23Int}. " +
@@ -14248,6 +14255,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     return new KetQuaCapSoHoaDon
                     {
+                        HoaDon = hoaDon,
                         TitleMessage = "Kiểm tra lại",
                         ErrorMessage = $"Hệ thống tìm thấy có tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử có mã thông điệp gửi &lt;{thongDiepMoiNhat.MaThongDiep}&gt; " +
                         $"đã được cơ quan thuế chấp nhận ngày {thongDiepMoiNhat.NgayThongBao.Value:dd/MM/yyyy} có thông tin về Hình thức hóa đơn và Loại hóa đơn phù hợp với ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; " +
@@ -14262,6 +14270,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         return new KetQuaCapSoHoaDon
                         {
+                            HoaDon = hoaDon,
                             TitleMessage = "Kiểm tra lại",
                             ErrorMessage = $"Ngày ký điện tử (Ngày hiện tại) đang nhỏ hơn ngày hóa đơn <span class='colorChuYTrongThongBao'><b>{ngayHoaDon:dd/MM/yyyy}</b></span>. Vui lòng kiểm tra lại!"
                         };
@@ -14271,6 +14280,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         return new KetQuaCapSoHoaDon
                         {
+                            HoaDon = hoaDon,
                             IsAcceptNgayKyLonHonNgayHoaDon = true,
                             IsYesNo = true,
                             TitleMessage = "Phát hành hóa đơn",
@@ -14295,6 +14305,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     return new KetQuaCapSoHoaDon
                                     {
+                                        HoaDon = hoaDon,
                                         IsYesNo = true,
                                         IsCoCanhBaoChenhLechThanhTien = true,
                                         TitleMessage = "Phát hành hóa đơn",
@@ -14315,6 +14326,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     return new KetQuaCapSoHoaDon
                                     {
+                                        HoaDon = hoaDon,
                                         IsYesNo = true,
                                         IsCoCanhBaoChenhLechTienChietKhau = true,
                                         TitleMessage = "Phát hành hóa đơn",
@@ -14350,6 +14362,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     {
                                         return new KetQuaCapSoHoaDon
                                         {
+                                            HoaDon = hoaDon,
                                             IsYesNo = true,
                                             IsCoCanhBaoChenhLechTienThueGTGT = true,
                                             TitleMessage = "Phát hành hóa đơn",
@@ -14387,6 +14400,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         return new KetQuaCapSoHoaDon
                         {
+                            HoaDon = hoaDon,
                             TitleMessage = "Kiểm tra lại",
                             ErrorMessage = $"Bạn đang lựa chọn kỳ kê khai thuế GTGT là kê khai theo {kyKeKhai}. " +
                             $"Hóa đơn đang thực hiện phát hành có Ký hiệu {boKyHieuHoaDon.KyHieu} ngày hóa đơn {ngayHoaDon:dd/MM/yyyy} thuộc kỳ kê khai thuế GTGT " +
@@ -14398,6 +14412,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         return new KetQuaCapSoHoaDon
                         {
+                            HoaDon = hoaDon,
                             TitleMessage = "Kiểm tra lại",
                             ErrorMessage = $"Bạn đang lựa chọn kỳ kê khai thuế GTGT là kê khai theo {kyKeKhai}. " +
                             $"Hóa đơn đang lập có ngày hóa đơn {ngayHoaDon:dd/MM/yyyy} thuộc kỳ kê khai thuế GTGT " +
@@ -14422,6 +14437,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         return new KetQuaCapSoHoaDon
                         {
+                            HoaDon = hoaDon,
                             TitleMessage = "Kiểm tra lại",
                             ErrorMessage = $"Ngày hóa đơn phải lớn hơn hoặc bằng ngày kết thúc thời gian tạm ngừng sử dụng hóa đơn điện tử là ngày <strong>{ngayKetThucTamNgungHDDT:dd/MM/yyyy}</strong>. Vui lòng kiểm tra lại!"
                         };
@@ -14435,6 +14451,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         return new KetQuaCapSoHoaDon
                         {
+                            HoaDon = hoaDon,
                             TitleMessage = "Kiểm tra lại",
                             ErrorMessage = $"Ngày hóa đơn phải lớn hơn hoặc bằng ngày bắt đầu sử dụng hóa đơn điện tử là ngày <strong>{ngayBatDauSuDung:dd/MM/yyyy}</strong>. Vui lòng kiểm tra lại!"
                         };
@@ -14456,6 +14473,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     return new KetQuaCapSoHoaDon
                     {
+                        HoaDon = hoaDon,
                         TitleMessage = "Kiểm tra lại",
                         ErrorMessage = $"Ngày hóa đơn không nhỏ hơn ngày hóa đơn của hóa đơn có số hóa đơn lớn nhất là hóa đơn có ký hiệu " +
                                         $"<span class = 'colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> số <span class = 'colorChuYTrongThongBao'><b>{hoaDonLonNhat.SoHoaDon}</b></span> ngày <span class = 'colorChuYTrongThongBao'><b>{hoaDonLonNhat.NgayHoaDon:dd/MM/yyyy}</b></span>. " +
@@ -14513,7 +14531,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     LoaiHanhDong = LoaiHanhDong.CapNhatNgayHoaDon,
                     RefType = RefType.HoaDonDienTu,
-                    ThamChieu = $"Số hóa đơn {(item.SoHoaDon.HasValue ? item.SoHoaDon.ToString() : "<Chưa cấp số>")}\nNgày hóa đơn ${item.NgayHoaDon.Value:dd/MM/yyyy}",
+                    ThamChieu = $"Số hóa đơn {(item.SoHoaDon.HasValue ? item.SoHoaDon.ToString() : "<Chưa cấp số>")}\nNgày hóa đơn {item.NgayHoaDon.Value:dd/MM/yyyy}",
                     MoTaChiTiet = $"Cập nhật ngày hóa đơn từ {item.NgayHoaDon.Value:dd/MM/yyyy} về ngày {model.NgayHoaDon.Value:dd/MM/yyyy} khi phát hành hóa đơn có ký hiệu {model.KyHieuHoaDon} ngày {model.NgayHoaDon.Value:dd/MM/yyyy} tổng tiền thanh toán {tongTienThanhToan}",
                     RefId = item.HoaDonDienTuId
                 });
@@ -15810,8 +15828,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         where (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.ChuaKyDienTu ||
                         hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KyDienTuLoi ||
                         hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiTCTNLoi) &&
-                        (!fromDate.HasValue || (fromDate <= hddt.NgayHoaDon)) &&
-                        (!toDate.HasValue || (toDate >= hddt.NgayHoaDon)) &&
+                        (!string.IsNullOrEmpty(pagingParams.HoaDonDienTuId) ? pagingParams.HoaDonDienTuId == hddt.HoaDonDienTuId : ((!fromDate.HasValue || (fromDate <= hddt.NgayHoaDon)) && (!toDate.HasValue || (toDate >= hddt.NgayHoaDon)))) &&
                         (pagingParams.BoKyHieuHoaDonId == "-1" ? boKyHieuAll.Select(x => x.BoKyHieuHoaDonId).Contains(hddt.BoKyHieuHoaDonId) : (pagingParams.BoKyHieuHoaDonId == hddt.BoKyHieuHoaDonId))
                         orderby hddt.NgayHoaDon, bkh.KyHieuHoaDon, hddt.CreatedDate
                         select new HoaDonDienTuViewModel
@@ -15829,6 +15846,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             KyHieu = bkh.KyHieuHoaDon,
                             NgayHoaDon = hddt.NgayHoaDon,
                             SoHoaDon = hddt.SoHoaDon,
+                            KhachHangId = hddt.KhachHangId,
                             MaKhachHang = hddt.MaKhachHang,
                             TenKhachHang = hddt.TenKhachHang,
                             MaSoThue = hddt.MaSoThue,
@@ -15845,7 +15863,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             HoTenNguoiNhanHD = (kh != null && !string.IsNullOrEmpty(kh.HoTenNguoiNhanHD)) ? kh.HoTenNguoiNhanHD : hddt.HoTenNguoiNhanHD,
                             EmailNguoiNhanHD = (kh != null && !string.IsNullOrEmpty(kh.EmailNguoiNhanHD)) ? kh.EmailNguoiNhanHD : hddt.EmailNguoiNhanHD,
                             HoaDonChiTiets = (from hdct in _db.HoaDonDienTuChiTiets
-                                              where hddt.HoaDonDienTuId == hddt.HoaDonDienTuId
+                                              where hdct.HoaDonDienTuId == hddt.HoaDonDienTuId
                                               orderby hdct.CreatedDate
                                               select new HoaDonDienTuChiTietViewModel
                                               {
@@ -15984,10 +16002,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     continue;
                 }
 
-                // ký điện tử
-                var rsGateForWebSocket = await GateForWebSocket(param);
-                if (rsGateForWebSocket) // ký thành công
+                var rsKyDienTu = await PhatHanhHoaDonAsync(param);
+                if (param.TypeOfError == 0 && rsKyDienTu)
                 {
+                    // ký điện tử
+                    await GateForWebSocket(param);
                     await _nhatKyTruyCapService.InsertAsync(new NhatKyTruyCapViewModel
                     {
                         LoaiHanhDong = LoaiHanhDong.PhatHanhHoaDonThanhCong,
@@ -15997,23 +16016,116 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         MoTaChiTiet = $"Phát hành HĐ {param.HoaDon.SoHoaDon} - {param.HoaDon.MauSo} - {param.HoaDon.KyHieu} - {param.HoaDon.MaTraCuu}",
                         RefId = param.HoaDonDienTuId
                     });
+                    param.HoaDon.HasError = false;
                 }
                 else // ký không thành công
                 {
                     await UpdateTrangThaiQuyTrinhAsync(param.HoaDonDienTuId, TrangThaiQuyTrinh.KyDienTuLoi);
                     await _nhatKyThaoTacLoiService.InsertAsync(new NhatKyThaoTacLoiViewModel
                     {
-                        MoTa = param.MoTa,
-                        HuongDanXuLy = param.HuongDanXuLy,
+                        MoTa = rsKyDienTu ? "Lỗi hệ thống" : param.MoTa,
+                        HuongDanXuLy = rsKyDienTu ? "Vui lòng liên hệ với bộ phận hỗ trợ để được trợ giúp" : param.HuongDanXuLy,
                         RefId = param.HoaDonDienTuId,
                         ThaoTacLoi = ThaoTacLoi.KyDienTu
                     });
+                    param.HoaDon.HasError = true;
                 }
 
                 result.Add(param.HoaDon);
             }
 
             return result;
+        }
+
+        public async Task<FileReturn> TaiTepPhatHanhHoaDonLoiAsync(List<HoaDonDienTuViewModel> list)
+        {
+            // Export excel
+            string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/temp");
+
+            if (!Directory.Exists(uploadFolder))
+            {
+                Directory.CreateDirectory(uploadFolder);
+            }
+
+            string excelFileName = $"hoa-don-error-{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+            string excelFolder = $"FilesUpload/temp/{excelFileName}";
+            string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+
+            // Excel
+            string _sample = $"docs/HoaDonDienTu/PHAT_HANH_HOA_DON_LOI.xlsx";
+            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+            //
+            var nhatKyThaoTacLois = await _db.NhatKyThaoTacLois
+                .Where(x => list.Any(y => y.HoaDonDienTuId == x.RefId && x.ThaoTacLoi == ThaoTacLoi.KyDienTu))
+                .ToDictionaryAsync(x => x.RefId);
+
+            FileInfo file = new FileInfo(_path_sample);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // Open sheet1
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+
+                int totalRows = list.Count;
+
+                // Begin row
+                int begin_row = 2;
+
+                // Add Row
+                worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+
+                int idx = begin_row;
+                int count = 1;
+
+                foreach (var item in list)
+                {
+                    var moTaLoi = nhatKyThaoTacLois[item.HoaDonDienTuId];
+
+                    worksheet.Cells[idx, 1].Value = count;
+                    worksheet.Cells[idx, 2].Value = item.NgayHoaDon.Value.ToString("dd/MM/yyyy");
+                    worksheet.Cells[idx, 3].Value = item.SoHoaDon.HasValue ? item.SoHoaDon.ToString() : "<Chưa cấp số>";
+                    worksheet.Cells[idx, 4].Value = item.MauSo;
+                    worksheet.Cells[idx, 5].Value = item.KyHieu;
+                    worksheet.Cells[idx, 6].Value = item.MaKhachHang;
+                    worksheet.Cells[idx, 7].Value = item.TenKhachHang;
+                    worksheet.Cells[idx, 8].Value = item.MaSoThue;
+                    worksheet.Cells[idx, 9].Value = item.HoTenNguoiMuaHang;
+                    worksheet.Cells[idx, 10].Value = item.MaLoaiTien;
+                    worksheet.Cells[idx, 11].Value = item.TongTienThanhToan;
+                    worksheet.Cells[idx, 12].Value = $"Mô tả: {moTaLoi.MoTa} | Hướng dẫn xử lý: {moTaLoi.HuongDanXuLy}";
+
+                    count += 1;
+                    idx += 1;
+                }
+
+                package.SaveAs(new FileInfo(excelPath));
+            }
+
+            byte[] bytes = File.ReadAllBytes(excelPath);
+            if (File.Exists(excelPath))
+            {
+                File.Delete(excelPath);
+            }
+
+            return new FileReturn
+            {
+                Bytes = bytes,
+                ContentType = MimeTypes.GetMimeType(excelPath),
+                FileName = Path.GetFileName(excelPath),
+            };
+        }
+
+        public async Task<bool> PhatHanhHoaDonAsync(ParamPhatHanhHD @params)
+        {
+            try
+            {
+                var result = await GateForWebSocket(@params);
+                return result;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
