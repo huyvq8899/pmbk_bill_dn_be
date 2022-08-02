@@ -16052,7 +16052,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
 
             // Excel
-            string _sample = $"docs/HoaDonDienTu/PHAT_HANH_HOA_DON_LOI.xlsx";
+            string _sample = $"docs/HoaDonDienTu/HOA_DON_LOI.xlsx";
             string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
 
             //
