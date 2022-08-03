@@ -80,6 +80,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IThongTinHoaDonService _thongTinHoaDonService;
         private readonly INhatKyTruyCapService _nhatKyTruyCapService;
         private readonly ITVanService _tVanService;
+        private readonly IBienBanDieuChinhService _bienBanDieuChinhService;
         private int timeToListenResTCT = 0;
 
         public HoaDonDienTuService(
@@ -100,7 +101,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             IDonViTinhService donViTinhService,
             IThongTinHoaDonService thongTinHoaDonService,
             INhatKyTruyCapService nhatKyTruyCapService,
-            ITVanService tVanService
+            ITVanService tVanService,
+            IBienBanDieuChinhService bienBanDieuChinhService
         )
         {
             _db = datacontext;
@@ -121,6 +123,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _thongTinHoaDonService = thongTinHoaDonService;
             _nhatKyTruyCapService = nhatKyTruyCapService;
             _tVanService = tVanService;
+            _bienBanDieuChinhService = bienBanDieuChinhService;
         }
 
         private readonly List<TrangThai> TrangThaiHoaDons = new List<TrangThai>()
@@ -5679,6 +5682,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             if (!File.Exists(pdfFilePath))
                             {
                                 var binPDF = await _db.FileDatas.Where(x => x.RefId == bbdc.BienBanDieuChinhId && x.IsSigned == true).Select(x => x.Binary).FirstOrDefaultAsync();
+                                if (binPDF == null)
+                                {
+                                    await _bienBanDieuChinhService.PreviewBienBanAsync(bbdc.BienBanDieuChinhId);
+                                    binPDF = await _db.FileDatas.Where(x => x.RefId == bbdc.BienBanDieuChinhId && x.IsSigned == true).Select(x => x.Binary).FirstOrDefaultAsync();
+                                }
                                 File.WriteAllBytes(pdfFilePath, binPDF);
                                 pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
                             }
