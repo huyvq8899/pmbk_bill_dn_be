@@ -25,6 +25,9 @@ namespace Services.ViewModels.TienIch
         public string TenLoaiEmail { get; set; }
         public string TenNguoiGui { get; set; }
         public string NguoiThucHien { get; set; }
+
+        public NhatKyGuiEmailViewModel Child { get; set; }
+
         public ThongBaoSaiThongTin thongBaoSaiThongTin { get; set; }
     }
 }

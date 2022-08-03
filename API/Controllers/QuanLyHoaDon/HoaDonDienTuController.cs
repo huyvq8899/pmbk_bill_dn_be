@@ -1398,5 +1398,19 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.TaiTepPhatHanhHoaDonLoiAsync(list);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
+
+        [HttpPost("GetListHoaDonDeGuiEmailDongLoat")]
+        public async Task<IActionResult> GetListHoaDonDeGuiEmailDongLoat(HoaDonParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetListHoaDonDeGuiEmailDongLoatAsync(pagingParams);
+            return Ok(result);
+        }
+
+        [HttpPost("TaiTepGuiHoaDonLoi")]
+        public async Task<IActionResult> TaiTepGuiHoaDonLoi(List<HoaDonDienTuViewModel> list)
+        {
+            var result = await _hoaDonDienTuService.TaiTepGuiHoaDonLoiAsync(list);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
     }
 }

@@ -1561,5 +1561,11 @@ namespace ManagementServices.Helper
 
             return string.Join(";", list);
         }
+
+        public static string GetMainEmailFromDairy(string email)
+        {
+            var list = email.Split(";").Where(x => !(x.StartsWith("(CC)") || x.StartsWith("(BCC)"))).ToArray();
+            return string.Join(";", list);
+        }
     }
 }
