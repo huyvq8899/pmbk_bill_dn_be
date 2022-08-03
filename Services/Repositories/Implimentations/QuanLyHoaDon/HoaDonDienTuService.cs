@@ -5685,7 +5685,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     binPDF = await _db.FileDatas.Where(x => x.RefId == bbdc.BienBanDieuChinhId && x.IsSigned == true).Select(x => x.Binary).FirstOrDefaultAsync();
                                 }
                                 File.WriteAllBytes(pdfFilePath, binPDF);
-                                pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
                             }
                         }
                     }
@@ -15808,7 +15807,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             var model = await GetBBDCByIdAsync(id);
 
-            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}";
             string filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
             var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == model.BienBanDieuChinhId);
@@ -15876,7 +15875,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<CustomerRepresentative>", model.DaiDienBenB ?? string.Empty, true, true);
             doc.Replace("<CustomerPosition>", model.ChucVuBenB ?? string.Empty, true, true);
 
-            model.HoaDonBiDieuChinh = await _hoaDonDienTuService.GetByIdAsync(model.HoaDonBiDieuChinhId);
+            model.HoaDonBiDieuChinh = await GetByIdAsync(model.HoaDonBiDieuChinhId);
             if (model.HoaDonBiDieuChinh == null)
             {
                 model.HoaDonBiDieuChinh = await _thongTinHoaDonService.GetById(model.HoaDonBiDieuChinhId);
@@ -15956,7 +15955,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             if (model.TrangThaiBienBan < 2)
                 model.FileChuaKy = fileName;
             else model.FileDaKy = fileName;
-            await UpdateAsync(model);
+            await UpdateBBDCAsync(model);
 
             if (fileData == null && model.TrangThaiBienBan >= 2)
             {
@@ -15976,11 +15975,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return Path.Combine(folderPath, fileName);
         }
 
+        private async Task<bool> UpdateBBDCAsync(BienBanDieuChinhViewModel model)
+        {
+            model.HoaDonBiDieuChinh = null;
+            var entity = await _db.BienBanDieuChinhs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == model.BienBanDieuChinhId);
+            _db.Entry(entity).CurrentValues.SetValues(model);
+
+            var result = await _db.SaveChangesAsync() > 0;
+            return result;
+        }
+
+
         private async Task<BienBanDieuChinhViewModel> GetBBDCByIdAsync(string id)
         {
             try
             {
-                string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string folder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
 
                 var query = from bbdc in _db.BienBanDieuChinhs
@@ -16048,7 +16058,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                        TenGoc = tldk.TenGoc,
                                                        TenGuid = tldk.TenGuid,
                                                        CreatedDate = tldk.CreatedDate,
-                                                       Link = _httpContextAccessor.GetDomain() + Path.Combine(folder, tldk.TenGuid),
+                                                       Link = _IHttpContextAccessor.GetDomain() + Path.Combine(folder, tldk.TenGuid),
                                                        Status = tldk.Status
                                                    })
                                                    .ToList(),
