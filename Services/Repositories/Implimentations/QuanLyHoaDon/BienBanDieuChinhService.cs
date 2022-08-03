@@ -263,6 +263,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}";
             string filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
+            var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == model.BienBanDieuChinhId);
             if (model.TrangThaiBienBan >= 2)
             {
                 string fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
@@ -274,8 +275,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string fullPath = Path.Combine(_hostingEnvironment.WebRootPath, filePath);
                 if (!File.Exists(fullPath))
                 {
-                    var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == model.BienBanDieuChinhId);
-                    filePath = fileData != null ? filePath : null;
+                   filePath = fileData != null ? filePath : null;
                    if(fileData != null) File.WriteAllBytes(fullPath, fileData.Binary);
                 }
                 if(filePath != null)  return filePath;
@@ -409,6 +409,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 model.FileChuaKy = fileName;
             else model.FileDaKy = fileName;
             await UpdateAsync(model);
+
+            if (fileData == null && model.TrangThaiBienBan >= 2)
+            {
+                fileData = new FileData
+                {
+                    RefId = model.BienBanDieuChinhId,
+                    Binary = File.ReadAllBytes(filePath),
+                    FileName = model.FileDaKy,
+                    DateTime = DateTime.Now,
+                    IsSigned = true
+                };
+
+                await _db.FileDatas.AddAsync(fileData);
+                await _db.SaveChangesAsync();
+            }
 
             return Path.Combine(folderPath, fileName);
         }
