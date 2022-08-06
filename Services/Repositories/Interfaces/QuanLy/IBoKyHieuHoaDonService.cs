@@ -3,6 +3,7 @@ using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.QuanLy;
 using Services.ViewModels.QuanLy;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using System.Collections.Generic;
 using System.Numerics;
@@ -38,5 +39,7 @@ namespace Services.Repositories.Interfaces.QuanLy
         Task<BoKyHieuHoaDonViewModel> GetThongTinTuToKhaiMoiNhatAsync();
         Task<bool> HasChuyenTheoBangTongHopDuLieuHDDTAsync(string id);
         Task<NhatKyXacThucBoKyHieuViewModel> CheckTrangThaiSuDungTruocKhiSuaAsync(string id);
+        Task<string> CheckBoKyHieuDangPhatHanhAsync(List<string> boKyHieuHoaDonIds);
+        Task<bool> ClearBoKyHieuDaPhatHanhAsync();
     }
 }

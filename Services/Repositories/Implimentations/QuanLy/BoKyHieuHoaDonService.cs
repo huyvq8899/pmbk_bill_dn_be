@@ -1385,5 +1385,51 @@ namespace Services.Repositories.Implimentations.QuanLy
 
             return result;
         }
+
+        /// <summary>
+        /// kiểm tra bộ ký hiệu có đang đc phát hành hay chưa
+        /// </summary>
+        /// <param name="boKyHieuHoaDonIds"></param>
+        /// <returns></returns>
+        public async Task<string> CheckBoKyHieuDangPhatHanhAsync(List<string> boKyHieuHoaDonIds)
+        {
+            var listResult = await (from bkhhd in _db.BoKyHieuHoaDons
+                                    join bkhdph in _db.BoKyHieuDangPhatHanhs on bkhhd.BoKyHieuHoaDonId equals bkhdph.BoKyHieuHoaDonId
+                                    where boKyHieuHoaDonIds.Contains(bkhhd.BoKyHieuHoaDonId)
+                                    orderby bkhhd.KyHieu
+                                    select bkhhd.KyHieu)
+                                    .Distinct()
+                                    .ToListAsync();
+
+            if (listResult.Any())
+            {
+                return $"Bộ ký hiệu <span class='colorChuYTrongThongBao'><b>{string.Join(",", listResult)}</b></span> đang được phát hành đồng loạt. Vui lòng chờ!";
+            }
+            else
+            {
+                var listAdded = boKyHieuHoaDonIds.Distinct()
+                    .Select(x => new BoKyHieuDangPhatHanh
+                    {
+                        BoKyHieuHoaDonId = x
+                    })
+                    .ToList();
+
+                await _db.BoKyHieuDangPhatHanhs.AddRangeAsync(listAdded);
+                await _db.SaveChangesAsync();
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// xóa hết bộ ký hiệu sau khi phát hành
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> ClearBoKyHieuDaPhatHanhAsync()
+        {
+            var listAll = await _db.BoKyHieuDangPhatHanhs.ToListAsync();
+            _db.BoKyHieuDangPhatHanhs.RemoveRange(listAll);
+            var result = await _db.SaveChangesAsync();
+            return result > 0;
+        }
     }
 }

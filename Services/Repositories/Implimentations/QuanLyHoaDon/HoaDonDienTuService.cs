@@ -15885,6 +15885,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                               .ToList()
                         };
 
+            if (pagingParams.HoaDonDienTuIds.Any())
+            {
+                query = query.Where(x => pagingParams.HoaDonDienTuIds.Contains(x.HoaDonDienTuId));
+            }
+
             if (pagingParams.TimKiemTheo != null)
             {
                 var timKiemTheo = pagingParams.TimKiemTheo;

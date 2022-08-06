@@ -7,6 +7,7 @@ using Services.Helper.Params.QuanLy;
 using Services.Repositories.Interfaces.QuanLy;
 using Services.ViewModels.QuanLy;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers.QuanLy
@@ -198,6 +199,20 @@ namespace API.Controllers.QuanLy
         public async Task<IActionResult> CheckTrangThaiSuDungTruocKhiSua(string id)
         {
             var result = await _boKyHieuHoaDonService.CheckTrangThaiSuDungTruocKhiSuaAsync(id);
+            return Ok(result);
+        }
+
+        [HttpPost("CheckBoKyHieuDangPhatHanh")]
+        public async Task<IActionResult> CheckBoKyHieuDangPhatHanh(List<string> boKyHieuHoaDonIds)
+        {
+            var result = await _boKyHieuHoaDonService.CheckBoKyHieuDangPhatHanhAsync(boKyHieuHoaDonIds);
+            return Ok(new { message = result });
+        }
+
+        [HttpDelete("ClearBoKyHieuDaPhatHanh")]
+        public async Task<IActionResult> ClearBoKyHieuDaPhatHanh()
+        {
+            var result = await _boKyHieuHoaDonService.ClearBoKyHieuDaPhatHanhAsync();
             return Ok(result);
         }
     }
