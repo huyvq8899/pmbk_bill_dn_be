@@ -1412,5 +1412,40 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.TaiTepGuiHoaDonLoiAsync(list);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
+
+        [HttpPost("CheckMultiHoaDonPhatHanh")]
+        public async Task<IActionResult> CheckMultiHoaDonPhatHanh(List<ParamPhatHanhHD> @params)
+        {
+            var result = await _hoaDonDienTuService.CheckMultiHoaDonPhatHanhAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpPost("GetMultiTrangThaiQuyTrinhById")]
+        public async Task<IActionResult> GetMultiTrangThaiQuyTrinhById(List<string> ids)
+        {
+            var result = await _hoaDonDienTuService.GetMultiTrangThaiQuyTrinhByIdAsync(ids);
+            return Ok(result);
+        }
+
+        [HttpPost("GetMultiById")]
+        public async Task<IActionResult> GetMultiById(List<string> ids)
+        {
+            var result = await _hoaDonDienTuService.GetMultiByIdAsync(ids);
+            return Ok(result);
+        }
+
+        [HttpPost("WaitMultiForTCTResonse")]
+        public async Task<IActionResult> WaitMultiForTCTResonse(List<string> ids)
+        {
+            var result = await _hoaDonDienTuService.WaitMultiForTCTResonseAsync(ids);
+            return Ok(result);
+        }
+
+        [HttpPost("GetKetQuaThucHienPhatHanhDongLoat")]
+        public async Task<IActionResult> GetKetQuaThucHienPhatHanhDongLoat(List<string> ids)
+        {
+            var result = await _hoaDonDienTuService.GetKetQuaThucHienPhatHanhDongLoatAsync(ids);
+            return Ok(result);
+        }
     }
 }

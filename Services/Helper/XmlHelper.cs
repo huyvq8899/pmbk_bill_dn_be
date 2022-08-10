@@ -67,12 +67,22 @@ namespace Services.Helper
 
         public static T DeserializeStringToObject<T>(string dataXML) where T : class
         {
-            System.Xml.Serialization.XmlSerializer ser = new System.Xml.Serialization.XmlSerializer(typeof(T));
-
-            using (TextReader sr = new StringReader(dataXML))
+            try
             {
-                return (T)ser.Deserialize(sr);
+                System.Xml.Serialization.XmlSerializer ser = new System.Xml.Serialization.XmlSerializer(typeof(T));
+
+                using (TextReader sr = new StringReader(dataXML))
+                {
+                    return (T)ser.Deserialize(sr);
+                }
             }
+            catch (Exception e)
+            {
+                Tracert.WriteLog("DeserializeStringToObject", e);
+                Tracert.WriteLog("dataXML: " + dataXML);
+            }
+
+            return null;
         }
 
 

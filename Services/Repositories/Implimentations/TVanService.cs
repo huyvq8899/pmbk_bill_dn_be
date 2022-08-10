@@ -66,7 +66,7 @@ namespace Services.Repositories.Implimentations
 
                 // MNGui
                 XmlNode eleNode = doc.SelectSingleNode("/TDiep/TTChung/MNGui");
-                if(eleNode != null && eleNode.InnerText != "0200784873")
+                if (eleNode != null && eleNode.InnerText != "0200784873")
                 {
                     eleNode.InnerText = $"0200784873";
                 }
@@ -102,6 +102,8 @@ namespace Services.Repositories.Implimentations
                 // Write log response
                 if (!string.IsNullOrEmpty(strContent))
                 {
+                    Tracert.WriteLog("strContent: " + strContent);
+
                     await _dataContext.AddTransferLog(strContent, 3);
                 }
             }
