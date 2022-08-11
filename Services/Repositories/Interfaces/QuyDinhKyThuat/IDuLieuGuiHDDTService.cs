@@ -20,9 +20,12 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         byte[] GuiThongDiepKiemTraKyThuat(ThongDiepParams @params);
         FileReturn CreateThongDiepPhanHoi(ThongDiepPhanHoiParams model);
         Task<TrangThaiQuyTrinh> GuiThongDiepDuLieuHDDTAsync(string id);
+        Task<TrangThaiQuyTrinh> GuiThongDiepDuLieuHDDTAsync2(ThongDiepChungViewModel model, string token);
         Task<string> GuiThongDiepDuLieuHDDTBackgroundAsync();
 
         Task<ThongDiepChungViewModel> InsertAsync(ThongDiepChungViewModel model);
+        Task<List<ThongDiepChungViewModel>> InsertAsync2(List<ThongDiepChungViewModel> models);
+
         Task<bool> UpdateAsync(DuLieuGuiHDDTViewModel model);
         Task<bool> UpdateTrangThaiGuiAsync(DuLieuGuiHDDTViewModel model);
         Task<List<TrangThaiQuyTrinh>> InsertRangeAsync(List<ThongDiepChungViewModel> models);

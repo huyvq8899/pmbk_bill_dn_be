@@ -2,8 +2,10 @@
 using DLL;
 using DLL.Constants;
 using DLL.Entity;
+using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
+using EFCore.BulkExtensions;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -397,6 +399,117 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return result;
         }
 
+        public async Task<List<ThongDiepChungViewModel>> InsertAsync2(List<ThongDiepChungViewModel> models)
+        {
+            // add du lieu gui hddt
+            List<DuLieuGuiHDDT> lstDuLieuGuiHDDTs = new List<DuLieuGuiHDDT>();
+            foreach (var model in models)
+            {
+                DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
+                {
+                    DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
+                    HoaDonDienTuId = model.DuLieuGuiHDDT.HoaDonDienTuId,
+                };
+                model.IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId;
+                model.ThongDiepChungId = Guid.NewGuid().ToString();
+
+                lstDuLieuGuiHDDTs.Add(duLieuGuiHDDT);
+            }
+            await _db.BulkInsertAsync(lstDuLieuGuiHDDTs);
+
+            // get MaThongDiep from HoaDon
+            // Get list FileDatas
+            List<string> lstHoaDonDienTuIds = models.Select(o => o.DuLieuGuiHDDT.HoaDonDienTuId).ToList();
+
+            var fileHoaDons = await _db.FileDatas.AsNoTracking().Where(x => x.IsSigned == true && x.Type == 1 && lstHoaDonDienTuIds.Contains(x.RefId)).ToListAsync();
+
+            List<FileData> lstFileDatas = new List<FileData>();
+            List<ThongDiepChung> lstthongDiep999s = new List<ThongDiepChung>();
+            List<ThongDiepChung> lstthongDiep200s = new List<ThongDiepChung>();
+
+            foreach (var fileHoaDon in fileHoaDons)
+            {
+                var model = models.Where(o => o.DuLieuGuiHDDT.HoaDonDienTuId == fileHoaDon.RefId).FirstOrDefault();
+                if (model == null)
+                {
+                    continue;
+                }
+
+                MemoryStream stream = new MemoryStream(fileHoaDon.Binary);
+                XmlDocument doc = new XmlDocument();
+                doc.Load(stream);
+                var mTDiep = doc.SelectSingleNode("//TDiep/TTChung/MTDiep")?.InnerText;
+                if (!string.IsNullOrEmpty(mTDiep))
+                {
+                    model.MaThongDiep = mTDiep;
+                }
+
+                string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
+                string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+                if (!Directory.Exists(fullFolderPath))
+                {
+                    Directory.CreateDirectory(fullFolderPath);
+                }
+
+                string fileName = $"TD-{Guid.NewGuid()}.xml";
+                string filePath = Path.Combine(fullFolderPath, fileName);
+                await File.WriteAllBytesAsync(filePath, fileHoaDon.Binary);
+
+                // Set for models
+                model.DataXML = Encoding.UTF8.GetString(fileHoaDon.Binary);
+
+                // add filedata for thongdiep
+                var fileData = new FileData
+                {
+                    FileDataId = Guid.NewGuid().ToString(),
+                    RefId = model.ThongDiepChungId,
+                    Type = 1,
+                    IsSigned = true,
+                    DateTime = DateTime.Now,
+                    Binary = fileHoaDon.Binary,
+                    FileName = fileName
+                };
+                lstFileDatas.Add(fileData);
+
+                // add thongdiep 200 | 203
+                //model.IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId;
+                model.NgayGui = DateTime.Now;
+                model.HinhThuc = 0;
+                model.TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi;
+                model.ThongDiepGuiDi = true;
+
+                ThongDiepChung entity = _mp.Map<ThongDiepChung>(model);
+                lstthongDiep200s.Add(entity);
+
+                // add thongdiep 999
+                var thongDiep999 = new ThongDiepChung
+                {
+                    ThongDiepChungId = Guid.NewGuid().ToString(),
+                    PhienBan = model.PhienBan,
+                    MaNoiGui = model.MaNoiNhan,
+                    MaNoiNhan = model.MaNoiGui,
+                    MaLoaiThongDiep = 999,
+                    MaThongDiepThamChieu = model.MaThongDiep,
+                    MaSoThue = model.MaSoThue,
+                    SoLuong = model.SoLuong,
+                    ThongDiepGuiDi = false,
+                    TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
+                    Status = true,
+                };
+
+                lstthongDiep999s.Add(thongDiep999);
+            }
+
+            await _db.BulkInsertAsync(lstFileDatas);
+
+            await _db.BulkInsertAsync(lstthongDiep200s);
+
+            await _db.BulkInsertAsync(lstthongDiep999s);
+
+            return models;
+        }
+
         //public string CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
         //{
         //    string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
@@ -729,6 +842,184 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             // save db
             await _db.SaveChangesAsync();
             return status;
+        }
+
+        public async Task<TrangThaiQuyTrinh> GuiThongDiepDuLieuHDDTAsync2(ThongDiepChungViewModel model, string token)
+        {
+            var status = TrangThaiQuyTrinh.GuiLoi;
+
+            // Send to TVAN
+            string strContent = await _ITVanService.TVANSendData2(_db, "api/invoice/send", model.DataXML, token);
+
+            if (!string.IsNullOrEmpty(strContent))
+            {
+                var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(strContent);
+                if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.KhongLoi)
+                {
+                    status = TrangThaiQuyTrinh.GuiKhongLoi;
+                }
+
+                model.DataXML999 = strContent;
+
+                //// update thongdiep 999
+                //var tDiepChung999 = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == 999 && x.MaThongDiepThamChieu == tDiep999.TTChung.MTDTChieu);
+                //if (tDiepChung999 != null)
+                //{
+                //    tDiepChung999.MaThongDiep = tDiep999.TTChung.MTDiep;
+                //    tDiepChung999.TrangThaiGui = tDiep999.DLieu.TBao.TTTNhan == (int)TTTNhan.KhongLoi ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi;
+                //    tDiepChung999.NgayThongBao = DateTime.Now;
+
+                //    var fileData999 = new FileData
+                //    {
+                //        RefId = tDiepChung999.ThongDiepChungId,
+                //        Type = 1,
+                //        DateTime = DateTime.Now,
+                //        Binary = Encoding.UTF8.GetBytes(strContent),
+                //        Content = strContent,
+                //    };
+
+                //    //await _db.FileDatas.AddAsync(fileData999);
+                //    model.DataXML999 = fileData999;
+                //}
+            }
+            else
+            {
+                status = TrangThaiQuyTrinh.GuiTCTNLoi;
+            }
+
+            model.TrangThai = status;
+            //// set TrangThaiQuyTrinh cho HoaDon
+            //var hoaDonDienTuId = await (from dlghhdt in _db.DuLieuGuiHDDTs
+            //                            join tdg in _db.ThongDiepChungs on dlghhdt.DuLieuGuiHDDTId equals tdg.IdThamChieu
+            //                            where tdg.ThongDiepChungId == id
+            //                            select dlghhdt.HoaDonDienTuId).FirstOrDefaultAsync();
+            //var hoaDon = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hoaDonDienTuId);
+            //if (hoaDon.TrangThaiQuyTrinh <= (int)TrangThaiQuyTrinh.GuiKhongLoi)
+            //{
+            //    hoaDon.TrangThaiQuyTrinh = (int)status;
+
+            //    // set TrangThaiGui cho ThongDiepGui
+            //    TrangThaiGuiThongDiep trangThaiGui = TrangThaiGuiThongDiep.ChoPhanHoi;
+            //    switch (status)
+            //    {
+            //        case TrangThaiQuyTrinh.GuiTCTNLoi:
+            //            trangThaiGui = TrangThaiGuiThongDiep.GuiTCTNLoi;
+            //            break;
+            //        case TrangThaiQuyTrinh.GuiKhongLoi:
+            //            trangThaiGui = TrangThaiGuiThongDiep.GuiKhongLoi;
+            //            break;
+            //        case TrangThaiQuyTrinh.GuiLoi:
+            //            trangThaiGui = TrangThaiGuiThongDiep.GuiLoi;
+            //            break;
+            //        default:
+            //            break;
+            //    }
+            //    var thongDiepGui = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == id);
+            //    thongDiepGui.TrangThaiGui = (int)trangThaiGui;
+            //}
+
+            //// save db
+            //await _db.SaveChangesAsync();
+            return status;
+        }
+
+        public async Task<List<TrangThaiQuyTrinh>> GuiThongDiepDuLieuHDDTAsync3(List<ThongDiepChungViewModel> models)
+        {
+            List<TrangThaiQuyTrinh> result = new List<TrangThaiQuyTrinh>();
+
+            var lstThongDiep999 = new List<FileData>();
+            var lstHoaDon = new List<HoaDonDienTu>();
+            var lstThongDiepChung = new List<ThongDiepChung>();
+
+            // set TrangThaiQuyTrinh cho HoaDon
+            var hoaDonDienTuId = await (from dlghhdt in _db.DuLieuGuiHDDTs
+                                        join tdg in _db.ThongDiepChungs on dlghhdt.DuLieuGuiHDDTId equals tdg.IdThamChieu
+                                        where models.Select(x => x.ThongDiepChungId).Contains(tdg.ThongDiepChungId)
+                                        select dlghhdt.HoaDonDienTuId).ToListAsync();
+
+            var hoaDons = await _db.HoaDonDienTus.Where(x => hoaDonDienTuId.Contains(x.HoaDonDienTuId)).ToListAsync();
+            var thongDiepGuis = await _db.ThongDiepChungs
+                .Where(x => models.Select(y => y.ThongDiepChungId).Contains(x.ThongDiepChungId) || (models.Select(y => y.MaThongDiep).Contains(x.MaThongDiepThamChieu) && x.MaLoaiThongDiep == 999))
+                .ToListAsync();
+
+            foreach (var model in models)
+            {
+                var status = TrangThaiQuyTrinh.GuiLoi;
+
+                if (!string.IsNullOrEmpty(model.DataXML999))
+                {
+                    var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(model.DataXML999);
+                    if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.KhongLoi)
+                    {
+                        status = TrangThaiQuyTrinh.GuiKhongLoi;
+                    }
+
+                    // update thongdiep 999
+                    var tDiepChung999 = thongDiepGuis.FirstOrDefault(x => x.MaLoaiThongDiep == 999 && x.MaThongDiepThamChieu == tDiep999.TTChung.MTDTChieu);
+                    if (tDiepChung999 != null)
+                    {
+                        tDiepChung999.MaThongDiep = tDiep999.TTChung.MTDiep;
+                        tDiepChung999.TrangThaiGui = tDiep999.DLieu.TBao.TTTNhan == (int)TTTNhan.KhongLoi ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi;
+                        tDiepChung999.NgayThongBao = DateTime.Now;
+
+                        var fileData999 = new FileData
+                        {
+                            FileDataId = Guid.NewGuid().ToString(),
+                            RefId = tDiepChung999.ThongDiepChungId,
+                            Type = 1,
+                            DateTime = DateTime.Now,
+                            Binary = Encoding.UTF8.GetBytes(model.DataXML999),
+                            Content = model.DataXML999,
+                        };
+
+                        lstThongDiep999.Add(fileData999);
+                        lstThongDiepChung.Add(tDiepChung999);
+                    }
+                }
+                else
+                {
+                    status = TrangThaiQuyTrinh.GuiTCTNLoi;
+                }
+
+                var hoaDon = hoaDons.FirstOrDefault(x => x.HoaDonDienTuId == model.DuLieuGuiHDDT.HoaDonDienTuId);
+                if (hoaDon.TrangThaiQuyTrinh <= (int)TrangThaiQuyTrinh.GuiKhongLoi)
+                {
+                    hoaDon.TrangThaiQuyTrinh = (int)status;
+
+                    // set TrangThaiGui cho ThongDiepGui
+                    TrangThaiGuiThongDiep trangThaiGui = TrangThaiGuiThongDiep.ChoPhanHoi;
+                    switch (status)
+                    {
+                        case TrangThaiQuyTrinh.GuiTCTNLoi:
+                            trangThaiGui = TrangThaiGuiThongDiep.GuiTCTNLoi;
+                            break;
+                        case TrangThaiQuyTrinh.GuiKhongLoi:
+                            trangThaiGui = TrangThaiGuiThongDiep.GuiKhongLoi;
+                            break;
+                        case TrangThaiQuyTrinh.GuiLoi:
+                            trangThaiGui = TrangThaiGuiThongDiep.GuiLoi;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    var thongDiepGui = thongDiepGuis.FirstOrDefault(x => x.ThongDiepChungId == model.ThongDiepChungId);
+                    thongDiepGui.TrangThaiGui = (int)trangThaiGui;
+
+                    lstHoaDon.Add(hoaDon);
+                    lstThongDiepChung.Add(thongDiepGui);
+                }
+
+                result.Add(status);
+            }
+
+            await _db.BulkInsertAsync(lstThongDiep999);
+
+            await _db.BulkUpdateAsync(lstHoaDon);
+
+            await _db.BulkUpdateAsync(lstThongDiepChung);
+
+            return result;
         }
 
         public FileReturn CreateThongDiepPhanHoi(ThongDiepPhanHoiParams model)
@@ -1323,18 +1614,45 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<List<TrangThaiQuyTrinh>> InsertRangeAsync(List<ThongDiepChungViewModel> models)
         {
+            //var result = new List<TrangThaiQuyTrinh>();
+
+            //foreach (var thongDiep in models)
+            //{
+            //    if (thongDiep.MaLoaiThongDiep == 200)
+            //    {
+            //        // Log thông điệp
+            //        var rsInsertThongDiep = await InsertAsync(thongDiep);
+
+            //        // Gửi cơ quan thuế
+            //        var rsSendCQT = await GuiThongDiepDuLieuHDDTAsync(rsInsertThongDiep.ThongDiepChungId);
+            //        result.Add(rsSendCQT);
+
+            //        //result.Add(TrangThaiQuyTrinh.GuiKhongLoi);
+            //    }
+            //}
+
             var result = new List<TrangThaiQuyTrinh>();
 
-            foreach (var thongDiep in models)
+            // Log thông điệp
+            var rsInsertThongDieps = await InsertAsync2(models);
+
+            // Get token
+            string token = await _ITVanService.GetToken2();
+            if (string.IsNullOrEmpty(token))
             {
-                if (thongDiep.MaLoaiThongDiep == 200)
-                {
-                    var rsInsertThongDiep = await InsertAsync(thongDiep);
-                    var rsSendCQT = await GuiThongDiepDuLieuHDDTAsync(rsInsertThongDiep.ThongDiepChungId);
-                    result.Add(rsSendCQT);
-                    //result.Add(TrangThaiQuyTrinh.GuiKhongLoi);
-                }
+                return result;
             }
+
+            // 
+            List<Task<TrangThaiQuyTrinh>> lstTasks = new List<Task<TrangThaiQuyTrinh>>();
+            foreach (var thongDiep in rsInsertThongDieps)
+            {
+                lstTasks.Add(GuiThongDiepDuLieuHDDTAsync2(thongDiep, token));
+            }
+            result = (await Task.WhenAll(lstTasks)).ToList();
+
+            // Handle hóa đơn
+            result = await GuiThongDiepDuLieuHDDTAsync3(rsInsertThongDieps);
 
             return result;
         }

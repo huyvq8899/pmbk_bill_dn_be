@@ -16012,11 +16012,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     continue;
                 }
 
+                // ký điện tử
                 var rsKyDienTu = await PhatHanhHoaDonAsync(param);
                 if (param.TypeOfError == 0 && rsKyDienTu)
                 {
-                    // ký điện tử
-                    await GateForWebSocket(param);
                     await _nhatKyTruyCapService.InsertAsync(new NhatKyTruyCapViewModel
                     {
                         LoaiHanhDong = LoaiHanhDong.PhatHanhHoaDonThanhCong,

@@ -41,6 +41,8 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public string Key { get; set; }
         public List<ThongDiepChungViewModel> Children { get; set; }
         public string DataXML { get; set; }
+        public string DataXML999 { get; set; }
+        public TrangThaiQuyTrinh TrangThai { get; set; }
     }
 
     public class ThongKeSoLuongThongDiepViewModel
