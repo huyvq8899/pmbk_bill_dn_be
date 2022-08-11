@@ -662,11 +662,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             var status = TrangThaiQuyTrinh.GuiLoi;
 
-            if (fileData == null)
-            {
-                Tracert.WriteLog("GuiThongDiepDuLieuHDDTAsync: " + id);
-            }
-
             // Send to TVAN
             string strContent = await _ITVanService.TVANSendData("api/invoice/send", fileBody);
             if (!string.IsNullOrEmpty(strContent))
