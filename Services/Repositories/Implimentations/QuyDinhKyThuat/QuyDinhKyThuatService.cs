@@ -134,6 +134,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = "CQT không tiếp nhận" });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChapNhan, Name = TrangThaiGuiThongDiep.ChapNhan.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.KhongChapNhan, Name = TrangThaiGuiThongDiep.KhongChapNhan.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiTCTNLoi, Name = TrangThaiGuiThongDiep.GuiTCTNLoi.GetDescription() });
+
                         if (maLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
                             result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CoUNCQTKhongChapNhan, Name = TrangThaiGuiThongDiep.CoUNCQTKhongChapNhan.GetDescription() });
 
