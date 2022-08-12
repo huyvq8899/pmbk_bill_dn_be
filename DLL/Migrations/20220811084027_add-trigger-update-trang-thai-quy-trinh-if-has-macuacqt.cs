@@ -20,7 +20,7 @@ namespace DLL.Migrations
                                         BEGIN
                                             UPDATE HoaDonDienTus
 	                                        SET TrangThaiQuyTrinh = 9
-	                                        WHERE MaCuaCQT IS NOT NULL
+	                                        WHERE MaCuaCQT IS NOT NULL AND TrangThaiQuyTrinh != 9
                                         END
                                     END");
         }

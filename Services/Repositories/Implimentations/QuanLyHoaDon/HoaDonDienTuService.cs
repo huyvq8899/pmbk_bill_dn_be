@@ -15987,63 +15987,53 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// </summary>
         /// <param name="params"></param>
         /// <returns></returns>
-        public async Task<List<HoaDonDienTuViewModel>> PhatHanhHoaDonDongLoatAsync(List<ParamPhatHanhHD> @params)
+        public async Task<HoaDonDienTuViewModel> PhatHanhHoaDonDongLoatAsync(ParamPhatHanhHD @param)
         {
-            var result = new List<HoaDonDienTuViewModel>();
+            var result = new HoaDonDienTuViewModel();
 
-            var hoaDonDienTus = await _db.HoaDonDienTus
-                .Where(x => @params.Select(y => y.HoaDonDienTuId).Contains(x.HoaDonDienTuId))
-                .Select(x => new HoaDonDienTuViewModel
-                {
-                    HoaDonDienTuId = x.HoaDonDienTuId,
-                    TrangThaiQuyTrinh = x.TrangThaiQuyTrinh
-                })
-                .ToDictionaryAsync(x => x.HoaDonDienTuId);
+            var hoaDonDienTu = await _db.HoaDonDienTus
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.HoaDonDienTuId == @param.HoaDonDienTuId);
 
-            foreach (var param in @params)
+            // check trường hợp liên tục vào socket thì check nếu ko đúng trạng thái quy trình thì block
+            var currentTrangThaiQuyTrinh = (TrangThaiQuyTrinh)hoaDonDienTu.TrangThaiQuyTrinh;
+            if (currentTrangThaiQuyTrinh != TrangThaiQuyTrinh.ChuaKyDienTu &&
+                currentTrangThaiQuyTrinh != TrangThaiQuyTrinh.DangKyDienTu &&
+                currentTrangThaiQuyTrinh != TrangThaiQuyTrinh.KyDienTuLoi &&
+                currentTrangThaiQuyTrinh != TrangThaiQuyTrinh.GuiTCTNLoi)
             {
-                // check trường hợp liên tục vào socket thì check nếu ko đúng trạng thái quy trình thì block
-                var currentTrangThaiQuyTrinh = (TrangThaiQuyTrinh)hoaDonDienTus[param.HoaDonDienTuId].TrangThaiQuyTrinh;
-                if (currentTrangThaiQuyTrinh != TrangThaiQuyTrinh.ChuaKyDienTu &&
-                    currentTrangThaiQuyTrinh != TrangThaiQuyTrinh.DangKyDienTu &&
-                    currentTrangThaiQuyTrinh != TrangThaiQuyTrinh.KyDienTuLoi &&
-                    currentTrangThaiQuyTrinh != TrangThaiQuyTrinh.GuiTCTNLoi)
-                {
-                    continue;
-                }
-
-                // ký điện tử
-                var rsKyDienTu = await PhatHanhHoaDonAsync(param);
-                if (param.TypeOfError == 0 && rsKyDienTu)
-                {
-                    await _nhatKyTruyCapService.InsertAsync(new NhatKyTruyCapViewModel
-                    {
-                        LoaiHanhDong = LoaiHanhDong.PhatHanhHoaDonThanhCong,
-                        DoiTuongThaoTac = "empty",
-                        RefType = RefType.HoaDonDienTu,
-                        ThamChieu = $"Hóa đơn {param.HoaDon.SoHoaDon} - {param.HoaDon.MauSo} - {param.HoaDon.KyHieu} - {param.HoaDon.MaTraCuu}",
-                        MoTaChiTiet = $"Phát hành HĐ {param.HoaDon.SoHoaDon} - {param.HoaDon.MauSo} - {param.HoaDon.KyHieu} - {param.HoaDon.MaTraCuu}",
-                        RefId = param.HoaDonDienTuId
-                    });
-                    param.HoaDon.HasError = false;
-                }
-                else // ký không thành công
-                {
-                    await UpdateTrangThaiQuyTrinhAsync(param.HoaDonDienTuId, TrangThaiQuyTrinh.KyDienTuLoi);
-                    await _nhatKyThaoTacLoiService.InsertAsync(new NhatKyThaoTacLoiViewModel
-                    {
-                        MoTa = rsKyDienTu ? "Lỗi hệ thống" : param.MoTa,
-                        HuongDanXuLy = rsKyDienTu ? "Vui lòng liên hệ với bộ phận hỗ trợ để được trợ giúp" : param.HuongDanXuLy,
-                        RefId = param.HoaDonDienTuId,
-                        ThaoTacLoi = ThaoTacLoi.KyDienTu
-                    });
-                    param.HoaDon.HasError = true;
-                }
-
-                result.Add(param.HoaDon);
+                return param.HoaDon;
             }
 
-            return result;
+            // ký điện tử
+            var rsKyDienTu = await PhatHanhHoaDonAsync(param);
+            if (param.TypeOfError == 0 && rsKyDienTu)
+            {
+                await _nhatKyTruyCapService.InsertAsync(new NhatKyTruyCapViewModel
+                {
+                    LoaiHanhDong = LoaiHanhDong.PhatHanhHoaDonThanhCong,
+                    DoiTuongThaoTac = "empty",
+                    RefType = RefType.HoaDonDienTu,
+                    ThamChieu = $"Hóa đơn {param.HoaDon.SoHoaDon} - {param.HoaDon.MauSo} - {param.HoaDon.KyHieu} - {param.HoaDon.MaTraCuu}",
+                    MoTaChiTiet = $"Phát hành HĐ {param.HoaDon.SoHoaDon} - {param.HoaDon.MauSo} - {param.HoaDon.KyHieu} - {param.HoaDon.MaTraCuu}",
+                    RefId = param.HoaDonDienTuId
+                });
+                param.HoaDon.HasError = false;
+            }
+            else // ký không thành công
+            {
+                await UpdateTrangThaiQuyTrinhAsync(param.HoaDonDienTuId, TrangThaiQuyTrinh.KyDienTuLoi);
+                await _nhatKyThaoTacLoiService.InsertAsync(new NhatKyThaoTacLoiViewModel
+                {
+                    MoTa = rsKyDienTu ? "Lỗi hệ thống" : param.MoTa,
+                    HuongDanXuLy = rsKyDienTu ? "Vui lòng liên hệ với bộ phận hỗ trợ để được trợ giúp" : param.HuongDanXuLy,
+                    RefId = param.HoaDonDienTuId,
+                    ThaoTacLoi = ThaoTacLoi.KyDienTu
+                });
+                param.HoaDon.HasError = true;
+            }
+
+            return param.HoaDon;
         }
 
         public async Task<FileReturn> TaiTepPhatHanhHoaDonLoiAsync(List<HoaDonDienTuViewModel> list)

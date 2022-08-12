@@ -860,27 +860,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
 
                 model.DataXML999 = strContent;
-
-                //// update thongdiep 999
-                //var tDiepChung999 = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == 999 && x.MaThongDiepThamChieu == tDiep999.TTChung.MTDTChieu);
-                //if (tDiepChung999 != null)
-                //{
-                //    tDiepChung999.MaThongDiep = tDiep999.TTChung.MTDiep;
-                //    tDiepChung999.TrangThaiGui = tDiep999.DLieu.TBao.TTTNhan == (int)TTTNhan.KhongLoi ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi;
-                //    tDiepChung999.NgayThongBao = DateTime.Now;
-
-                //    var fileData999 = new FileData
-                //    {
-                //        RefId = tDiepChung999.ThongDiepChungId,
-                //        Type = 1,
-                //        DateTime = DateTime.Now,
-                //        Binary = Encoding.UTF8.GetBytes(strContent),
-                //        Content = strContent,
-                //    };
-
-                //    //await _db.FileDatas.AddAsync(fileData999);
-                //    model.DataXML999 = fileData999;
-                //}
             }
             else
             {
@@ -888,38 +867,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
 
             model.TrangThai = status;
-            //// set TrangThaiQuyTrinh cho HoaDon
-            //var hoaDonDienTuId = await (from dlghhdt in _db.DuLieuGuiHDDTs
-            //                            join tdg in _db.ThongDiepChungs on dlghhdt.DuLieuGuiHDDTId equals tdg.IdThamChieu
-            //                            where tdg.ThongDiepChungId == id
-            //                            select dlghhdt.HoaDonDienTuId).FirstOrDefaultAsync();
-            //var hoaDon = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hoaDonDienTuId);
-            //if (hoaDon.TrangThaiQuyTrinh <= (int)TrangThaiQuyTrinh.GuiKhongLoi)
-            //{
-            //    hoaDon.TrangThaiQuyTrinh = (int)status;
-
-            //    // set TrangThaiGui cho ThongDiepGui
-            //    TrangThaiGuiThongDiep trangThaiGui = TrangThaiGuiThongDiep.ChoPhanHoi;
-            //    switch (status)
-            //    {
-            //        case TrangThaiQuyTrinh.GuiTCTNLoi:
-            //            trangThaiGui = TrangThaiGuiThongDiep.GuiTCTNLoi;
-            //            break;
-            //        case TrangThaiQuyTrinh.GuiKhongLoi:
-            //            trangThaiGui = TrangThaiGuiThongDiep.GuiKhongLoi;
-            //            break;
-            //        case TrangThaiQuyTrinh.GuiLoi:
-            //            trangThaiGui = TrangThaiGuiThongDiep.GuiLoi;
-            //            break;
-            //        default:
-            //            break;
-            //    }
-            //    var thongDiepGui = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == id);
-            //    thongDiepGui.TrangThaiGui = (int)trangThaiGui;
-            //}
-
-            //// save db
-            //await _db.SaveChangesAsync();
             return status;
         }
 
@@ -1614,23 +1561,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<List<TrangThaiQuyTrinh>> InsertRangeAsync(List<ThongDiepChungViewModel> models)
         {
-            //var result = new List<TrangThaiQuyTrinh>();
-
-            //foreach (var thongDiep in models)
-            //{
-            //    if (thongDiep.MaLoaiThongDiep == 200)
-            //    {
-            //        // Log thông điệp
-            //        var rsInsertThongDiep = await InsertAsync(thongDiep);
-
-            //        // Gửi cơ quan thuế
-            //        var rsSendCQT = await GuiThongDiepDuLieuHDDTAsync(rsInsertThongDiep.ThongDiepChungId);
-            //        result.Add(rsSendCQT);
-
-            //        //result.Add(TrangThaiQuyTrinh.GuiKhongLoi);
-            //    }
-            //}
-
             var result = new List<TrangThaiQuyTrinh>();
 
             // Log thông điệp
@@ -1649,7 +1579,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 lstTasks.Add(GuiThongDiepDuLieuHDDTAsync2(thongDiep, token));
             }
-            result = (await Task.WhenAll(lstTasks)).ToList();
+
+            // send async
+            var rs = await Task.WhenAll(lstTasks);
 
             // Handle hóa đơn
             result = await GuiThongDiepDuLieuHDDTAsync3(rsInsertThongDieps);

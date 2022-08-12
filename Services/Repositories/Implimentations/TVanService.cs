@@ -122,8 +122,6 @@ namespace Services.Repositories.Implimentations
 
             try
             {
-                Tracert.WriteLog("body: " + body);
-
                 // Re-check MNGui, MNNhan
                 // Get MST
                 XmlDocument doc = new XmlDocument();
@@ -158,20 +156,20 @@ namespace Services.Repositories.Implimentations
                 //var request = CreateRequest(action, method);
                 var request = new RestRequest(action, method)
                 {
-                    Timeout = 5000 //
+                    Timeout = 5000,
+                    RequestFormat = DataFormat.Json
                 };
-                request.RequestFormat = DataFormat.Json;
                 request.AddHeader("Content-Type", "application/json");
                 request.AddHeader("Authorization", "Bearer " + token);
                 request.AddBody(data);
 
                 // Get response
-                var response = client.Execute(request);
+                var response = await client.ExecuteAsync(request);
                 strContent = response.Content;
             }
             catch (Exception ex)
             {
-                Tracert.WriteLog(string.Empty, ex);
+                Tracert.WriteLog("TVANSendData2", ex);
             }
 
             return strContent;
@@ -200,7 +198,7 @@ namespace Services.Repositories.Implimentations
                     password,
                 });
                 request.AddJsonBody(body);
-                var response = client.Execute(request);
+                var response = await client.ExecuteAsync(request);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     if (!string.IsNullOrWhiteSpace(response.Content))
@@ -209,13 +207,13 @@ namespace Services.Repositories.Implimentations
                         return content["token"].ToString();
                     }
                 }
-
-                return string.Empty;
             }
             catch (Exception ex)
             {
-                throw ex;
+                Tracert.WriteLog("GetToken2", ex);
             }
+
+            return string.Empty;
         }
 
         public string GetToken()

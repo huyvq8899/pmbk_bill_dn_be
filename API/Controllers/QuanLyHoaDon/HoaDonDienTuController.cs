@@ -1373,13 +1373,13 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpPost("PhatHanhHoaDonDongLoat")]
-        public async Task<IActionResult> PhatHanhHoaDonDongLoat(List<ParamPhatHanhHD> @params)
+        public async Task<IActionResult> PhatHanhHoaDonDongLoat(ParamPhatHanhHD @param)
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 try
                 {
-                    var result = await _hoaDonDienTuService.PhatHanhHoaDonDongLoatAsync(@params);
+                    var result = await _hoaDonDienTuService.PhatHanhHoaDonDongLoatAsync(@param);
                     transaction.Commit();
                     return Ok(result);
                 }
