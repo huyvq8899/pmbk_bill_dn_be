@@ -62,7 +62,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public List<CityParam> GetListCoQuanThueCapCuc()
         {
-            var list = _db.CoQuanThues.Where(x => string.IsNullOrEmpty(x.MaCQTCapCuc) || x.MaCQTCapCuc == x.Ma)
+            var list = _db.CoQuanThues.Where(x => x.MaCQTCapCuc == x.Ma)
                                       .Select(x => new CityParam
                                       {
                                           code = x.Ma,

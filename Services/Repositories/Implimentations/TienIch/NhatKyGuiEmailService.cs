@@ -86,14 +86,14 @@ namespace Services.Repositories.Implimentations.TienIch
                     worksheet.Cells[idx, 2].Value = _it.KyHieu;
                     worksheet.Cells[idx, 3].Value = !string.IsNullOrEmpty(_it.So) ? _it.So : "<Chưa cấp số>";
                     worksheet.Cells[idx, 4].Value = _it.Ngay.Value.ToString("dd/MM/yyyy");
-                    worksheet.Cells[idx, 5].Value = _it.TenTrangThaiGuiEmail;
-                    worksheet.Cells[idx, 6].Value = _it.NguoiThucHien;
-                    worksheet.Cells[idx, 7].Value = _it.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm:ss");
-                    worksheet.Cells[idx, 8].Value = _it.TenNguoiGui;
-                    worksheet.Cells[idx, 9].Value = _it.EmailGui;
-                    worksheet.Cells[idx, 10].Value = _it.TenNguoiNhan;
-                    worksheet.Cells[idx, 11].Value = _it.EmailNguoiNhan;
-                    worksheet.Cells[idx, 12].Value = _it.TenLoaiEmail;
+                    worksheet.Cells[idx, 5].Value = _it.TenLoaiEmail;
+                    worksheet.Cells[idx, 6].Value = _it.TenTrangThaiGuiEmail;
+                    worksheet.Cells[idx, 7].Value = _it.NguoiThucHien;
+                    worksheet.Cells[idx, 8].Value = _it.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm:ss");
+                    worksheet.Cells[idx, 9].Value = _it.TenNguoiGui;
+                    worksheet.Cells[idx, 10].Value = _it.EmailGui;
+                    worksheet.Cells[idx, 11].Value = _it.TenNguoiNhan;
+                    worksheet.Cells[idx, 12].Value = _it.EmailNguoiNhan;
                     worksheet.Cells[idx, 13].Value = _it.TieuDeEmail;
                     idx += 1;
                 }
