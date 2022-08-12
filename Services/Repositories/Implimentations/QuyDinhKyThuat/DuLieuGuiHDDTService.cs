@@ -849,7 +849,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var status = TrangThaiQuyTrinh.GuiLoi;
 
             // Send to TVAN
-            string strContent = await _ITVanService.TVANSendData2(_db, "api/invoice/send", model.DataXML, token);
+            string strContent = await _ITVanService.TVANSendData2("api/invoice/send", model.DataXML, token);
 
             if (!string.IsNullOrEmpty(strContent))
             {

@@ -16114,12 +16114,102 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             };
         }
 
-        public async Task<bool> PhatHanhHoaDonAsync(ParamPhatHanhHD @params)
+        public async Task<bool> PhatHanhHoaDonAsync(ParamPhatHanhHD param)
         {
             try
             {
-                var result = await GateForWebSocket(@params);
-                return result;
+                if (!string.IsNullOrEmpty(param.HoaDonDienTuId))
+                {
+                    var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+
+                    //var _objHDDT = await GetByIdAsync(param.HoaDonDienTuId);
+                    var _objHDDT = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == param.HoaDonDienTuId);
+                    var boKyHieuHoaDon = await _db.BoKyHieuHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == _objHDDT.BoKyHieuHoaDonId);
+
+                    if (_objHDDT != null && boKyHieuHoaDon != null)
+                    {
+                        #region clear old files
+                        string oldSignedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{_objHDDT.XMLDaKy}");
+                        if (File.Exists(oldSignedXmlPath))
+                        {
+                            File.Delete(oldSignedXmlPath);
+                        }
+
+                        string newXmlFileName = $"{boKyHieuHoaDon.KyHieu}-{param.HoaDon.SoHoaDon}-{Guid.NewGuid()}.xml";
+                        string newSignedXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
+                        if (!Directory.Exists(newSignedXmlFolder))
+                        {
+                            Directory.CreateDirectory(newSignedXmlFolder);
+                        }
+                        #endregion
+
+                        //xml
+                        string xmlDeCode = TextHelper.Decompress(@param.DataXML);
+                        string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
+                        File.WriteAllText(newSignedXmlFullPath, xmlDeCode);
+
+                        _objHDDT.XMLDaKy = newXmlFileName;
+                        _objHDDT.NgayKy = DateTime.Now;
+                        _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
+                        _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
+                        _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
+                        _objHDDT.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.DaKyDienTu;
+                        await _db.SaveChangesAsync(); // save to prevent null sohoadon
+
+                        if (param.IsBuyerSigned != true)
+                        {
+                            //thêm bản ghi vào bảng xóa bỏ hóa đơn đối với cấp mã cho hóa đơn thay thế
+                            if (!string.IsNullOrWhiteSpace(_objHDDT.ThayTheChoHoaDonId) && _objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu)
+                            {
+                                var _objHDDTBiThayThe = await GetByIdAsync(_objHDDT.ThayTheChoHoaDonId);
+                                if (_objHDDTBiThayThe != null)
+                                {
+                                    if (_objHDDTBiThayThe.HinhThucXoabo == null && _objHDDTBiThayThe.TrangThai != 2)
+                                    {
+                                        var lydoxoabo = string.IsNullOrEmpty(_objHDDT.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(_objHDDT.LyDoThayThe);
+
+                                        _objHDDTBiThayThe.NgayXoaBo = DateTime.Now;
+                                        _objHDDTBiThayThe.LyDoXoaBo = lydoxoabo.LyDo;
+                                        _objHDDTBiThayThe.IsNotCreateThayThe = null;
+                                        if (_objHDDTBiThayThe.TrangThai == 1) //hóa đơn gốc
+                                        {
+                                            _objHDDTBiThayThe.HinhThucXoabo = 2;
+                                        }
+                                        else if (_objHDDTBiThayThe.TrangThai == 3) //hóa đơn thay thế
+                                        {
+                                            _objHDDTBiThayThe.HinhThucXoabo = 5;
+                                        }
+                                        else
+                                        {
+                                            _objHDDTBiThayThe.HinhThucXoabo = 2;
+                                        }
+                                        _objHDDTBiThayThe.BackUpTrangThai = _objHDDTBiThayThe.TrangThai;
+                                        _objHDDTBiThayThe.SoCTXoaBo = "XHD-" + (_objHDDTBiThayThe.MauSo ?? "") + "-" + (_objHDDTBiThayThe.KyHieu ?? "") + "-" + (_objHDDTBiThayThe.SoHoaDon + "") + "-" + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss");
+
+                                        //nếu nó chưa bị xóa bỏ
+                                        //thì thực hiện xóa bỏ hóa đơn cho nó
+                                        ParamXoaBoHoaDon paramXoaBoHoaDon = new ParamXoaBoHoaDon
+                                        {
+                                            HoaDon = _objHDDTBiThayThe,
+                                            OptionalSend = 1
+                                        };
+
+                                        await XoaBoHoaDon(paramXoaBoHoaDon);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _objHDDT.XMLDaKy = newXmlFileName;
+                            _objHDDT.IsBuyerSigned = true;
+                        }
+
+                        await UpdateFileDataXmlForHDDT(_objHDDT.HoaDonDienTuId, newSignedXmlFullPath);
+                    }
+                }
+
+                return true;
             }
             catch (Exception)
             {

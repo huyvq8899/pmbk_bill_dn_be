@@ -116,7 +116,7 @@ namespace Services.Repositories.Implimentations
         }
 
         [Obsolete]
-        public async Task<string> TVANSendData2(Datacontext db, string action, string body, string token, Method method = Method.POST)
+        public async Task<string> TVANSendData2(string action, string body, string token, Method method = Method.POST)
         {
             string strContent = string.Empty;
 
@@ -166,6 +166,11 @@ namespace Services.Repositories.Implimentations
                 // Get response
                 var response = await client.ExecuteAsync(request);
                 strContent = response.Content;
+
+                if (!string.IsNullOrEmpty(strContent))
+                {
+                    Tracert.WriteLog("strContent: " + strContent);
+                }
             }
             catch (Exception ex)
             {

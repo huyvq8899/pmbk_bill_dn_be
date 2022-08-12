@@ -14,6 +14,7 @@ using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLy;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLy;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System;
@@ -62,7 +63,10 @@ namespace Services.Repositories.Implimentations.QuanLy
                 // nếu số lượng hiện tại ở bộ ký hiệu khác số hiện tại trên hóa đơn thì update
                 if (entity.SoLonNhatDaLapDenHienTai != soHoaDon && soHoaDon > (entity.SoLonNhatDaLapDenHienTai ?? 0))
                 {
-                    entity.SoLonNhatDaLapDenHienTai = soHoaDon;
+                    if (soHoaDon > entity.SoLonNhatDaLapDenHienTai)
+                    {
+                        entity.SoLonNhatDaLapDenHienTai = soHoaDon;
+                    }
 
                     if (entity.TrangThaiSuDung != TrangThaiSuDung.HetHieuLuc)
                     {
@@ -1430,6 +1434,55 @@ namespace Services.Repositories.Implimentations.QuanLy
             _db.BoKyHieuDangPhatHanhs.RemoveRange(listAll);
             var result = await _db.SaveChangesAsync();
             return result > 0;
+        }
+
+        /// <summary>
+        /// Check xem đã hêt số lượng hóa đơn và xác thực bộ ký hiệu
+        /// </summary>
+        /// <param name="hoaDon"></param>
+        /// <returns></returns>
+        public async Task CheckDaHetSoLuongHoaDonVaXacThucAsync(HoaDonDienTuViewModel hoaDon)
+        {
+            HoaDonDienTuViewModel maxHoaDon = null;
+
+            var hoaDonDienTuIds = hoaDon.Children.Select(x => x.HoaDonDienTuId).ToList();
+
+            var hoaDonDienTus = await _db.HoaDonDienTus
+                .Where(x => hoaDonDienTuIds.Contains(x.HoaDonDienTuId) && (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu))
+                .Select(x => new HoaDonDienTuViewModel
+                {
+                    HoaDonDienTuId = x.HoaDonDienTuId
+                })
+                .ToDictionaryAsync(x => x.HoaDonDienTuId);
+
+            foreach (var item in hoaDon.Children)
+            {
+                if (!hoaDonDienTus.ContainsKey(item.HoaDonDienTuId))
+                {
+                    continue;
+                }
+
+                if (maxHoaDon == null || item.SoHoaDon > maxHoaDon.SoHoaDon)
+                {
+                    maxHoaDon = item;
+                }
+            }
+
+            if (maxHoaDon != null)
+            {
+                var checkDaDungHetSLHD = await CheckDaHetSoLuongHoaDonAsync(maxHoaDon.BoKyHieuHoaDonId, maxHoaDon.SoHoaDon);
+                if (checkDaDungHetSLHD) // đã dùng hết
+                {
+                    await XacThucBoKyHieuHoaDonAsync(new NhatKyXacThucBoKyHieuViewModel
+                    {
+                        BoKyHieuHoaDonId = maxHoaDon.BoKyHieuHoaDonId,
+                        TrangThaiSuDung = TrangThaiSuDung.HetHieuLuc,
+                        LoaiHetHieuLuc = LoaiHetHieuLuc.XuatHetSoHoaDon,
+                        SoLuongHoaDon = maxHoaDon.SoHoaDon,
+                        NgayHoaDon = maxHoaDon.NgayHoaDon
+                    });
+                }
+            }
         }
     }
 }

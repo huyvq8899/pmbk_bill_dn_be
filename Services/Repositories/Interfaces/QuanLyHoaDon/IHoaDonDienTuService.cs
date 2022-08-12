@@ -125,7 +125,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<HoaDonDienTuViewModel>> GetListHoaDonDeGuiEmailDongLoatAsync(HoaDonParams pagingParams);
         Task<List<HoaDonDienTuViewModel>> GroupListDeXemDuLieuPhatHanhDongLoatAsync(List<HoaDonDienTuViewModel> list);
         Task<HoaDonDienTuViewModel> PhatHanhHoaDonDongLoatAsync(ParamPhatHanhHD @param);
-        Task<bool> PhatHanhHoaDonAsync(ParamPhatHanhHD @params);
+        Task<bool> PhatHanhHoaDonAsync(ParamPhatHanhHD param);
         Task<FileReturn> TaiTepPhatHanhHoaDonLoiAsync(List<HoaDonDienTuViewModel> list);
         Task<FileReturn> TaiTepGuiHoaDonLoiAsync(List<HoaDonDienTuViewModel> list);
         Task<List<KetQuaThucHienPhatHanhDongLoat>> GetKetQuaThucHienPhatHanhDongLoatAsync(List<string> ids);
