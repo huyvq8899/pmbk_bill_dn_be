@@ -721,4 +721,11 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string SoHoaDon { get; set; }
         public string NgayHoaDon { get; set; }
     }
+
+    public class KetQuaThucHienPhatHanhDongLoat
+    {
+        public int? TrangThaiQuyTrinh { get; set; }
+        public string TenTrangThaiQuyTrinh { get; set; }
+        public List<string> HoaDonDienTuIds { get; set; }
+    }
 }

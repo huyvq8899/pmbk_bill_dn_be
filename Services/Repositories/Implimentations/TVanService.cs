@@ -1,15 +1,13 @@
 ﻿using DLL;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using Services.Helper;
 using Services.Repositories.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using System.Xml;
 
 namespace Services.Repositories.Implimentations
@@ -56,6 +54,8 @@ namespace Services.Repositories.Implimentations
 
             try
             {
+                Tracert.WriteLog("body: " + body);
+
                 // Write log to send
                 await _dataContext.AddTransferLog(body);
 
@@ -66,7 +66,7 @@ namespace Services.Repositories.Implimentations
 
                 // MNGui
                 XmlNode eleNode = doc.SelectSingleNode("/TDiep/TTChung/MNGui");
-                if(eleNode != null && eleNode.InnerText != "0200784873")
+                if (eleNode != null && eleNode.InnerText != "0200784873")
                 {
                     eleNode.InnerText = $"0200784873";
                 }
@@ -102,6 +102,7 @@ namespace Services.Repositories.Implimentations
                 // Write log response
                 if (!string.IsNullOrEmpty(strContent))
                 {
+                    Tracert.WriteLog("strContent: " + strContent);
                     await _dataContext.AddTransferLog(strContent, 3);
                 }
             }

@@ -655,7 +655,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// <returns></returns>
         public async Task<TrangThaiQuyTrinh> GuiThongDiepDuLieuHDDTAsync(string id)
         {
-            var fileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.Type == 1 && x.RefId == id);
+            var fileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.Type == 1 && x.RefId == id && x.IsSigned == true);
 
             // get xml content of thongdiep
             string fileBody = Encoding.UTF8.GetString(fileData.Binary);
