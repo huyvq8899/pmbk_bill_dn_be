@@ -422,8 +422,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                 lstDuLieuGuiHDDTs.Add(duLieuGuiHDDT);
             }
-            await _db.BulkInsertAsync(lstDuLieuGuiHDDTs);
-            // await _db.DuLieuGuiHDDTs.AddRangeAsync(lstDuLieuGuiHDDTs);
+            // await _db.BulkInsertAsync(lstDuLieuGuiHDDTs);
+            await _db.DuLieuGuiHDDTs.AddRangeAsync(lstDuLieuGuiHDDTs);
 
             // get MaThongDiep from HoaDon
             // Get list FileDatas
