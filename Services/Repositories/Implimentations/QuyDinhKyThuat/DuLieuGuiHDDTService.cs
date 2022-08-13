@@ -530,21 +530,23 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 lstthongDiep999s.Add(thongDiep999);
             }
 
-            await _db.BulkInsertAsync(lstFileDatas);
+            //await _db.BulkInsertAsync(lstFileDatas);
 
-            await _db.BulkInsertAsync(lstthongDiep200s);
+            //await _db.BulkInsertAsync(lstthongDiep200s);
 
-            await _db.BulkInsertAsync(lstthongDiep999s);
+            //await _db.BulkInsertAsync(lstthongDiep999s);
 
-            await _db.BulkInsertAsync(lstTransferLog200203);
+            //await _db.BulkInsertAsync(lstTransferLog200203);
 
-            //await _db.FileDatas.AddRangeAsync(lstFileDatas);
+            await _db.FileDatas.AddRangeAsync(lstFileDatas);
 
-            //await _db.ThongDiepChungs.AddRangeAsync(lstthongDiep200s);
+            await _db.ThongDiepChungs.AddRangeAsync(lstthongDiep200s);
 
-            //await _db.ThongDiepChungs.AddRangeAsync(lstthongDiep999s);
+            await _db.ThongDiepChungs.AddRangeAsync(lstthongDiep999s);
 
-            //await _db.SaveChangesAsync();
+            await _db.TransferLogs.AddRangeAsync(lstTransferLog200203);
+
+            await _db.SaveChangesAsync();
 
             return models;
         }
@@ -1011,15 +1013,15 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 result.Add(status);
             }
 
-            await _db.BulkInsertAsync(lstFileData);
+            //await _db.BulkInsertAsync(lstFileData);
 
-            await _db.BulkUpdateAsync(lstHoaDon);
+            //await _db.BulkUpdateAsync(lstHoaDon);
 
-            await _db.BulkUpdateAsync(lstThongDiepChung);
+            //await _db.BulkUpdateAsync(lstThongDiepChung);
 
-            //await _db.FileDatas.AddRangeAsync(lstFileData);
+            await _db.FileDatas.AddRangeAsync(lstFileData);
 
-            //await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
 
             return result;
         }
@@ -1629,6 +1631,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 return result;
             }
 
+            #region test
+            //var rsInsertThongDieps = new List<ThongDiepChungViewModel>();
+            //var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == "95fe6698-a53d-4705-8a78-f54cc83c4f2f");
+            //for (int i = 0; i < 50; i++)
+            //{
+            //    rsInsertThongDieps.Add(new ThongDiepChungViewModel
+            //    {
+            //        DataXML = Encoding.UTF8.GetString(fileData.Binary)
+            //    });
+            //}
+            #endregion
+
             // 
             List<Task<string>> lstTasks = new List<Task<string>>();
             foreach (var thongDiep in rsInsertThongDieps)
@@ -1671,9 +1685,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
             }
 
-            await _db.BulkInsertAsync(transferLog);
+            //await _db.BulkInsertAsync(transferLog);
 
-            //Tracert.WriteLog("lstXml999: " + string.Join("\n", lstXml999));
+            await _db.TransferLogs.AddRangeAsync(transferLog);
+
+            Tracert.WriteLog($"lstXml999NotEmmpty {DateTime.Now:dd/MM/yyyy HH:mm:ss}: " + lstXml999.Count(x => !string.IsNullOrEmpty(x)));
+            Tracert.WriteLog($"lstXml999 {DateTime.Now:dd/MM/yyyy HH:mm:ss}: " + string.Join("\n", lstXml999));
 
             // Handle hóa đơn
             result = await GuiThongDiepDuLieuHDDTAsync3(rsInsertThongDieps);
