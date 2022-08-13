@@ -166,15 +166,10 @@ namespace Services.Repositories.Implimentations
                 // Get response
                 var response = await client.ExecuteAsync(request);
                 strContent = response.Content;
-
-                if (!string.IsNullOrEmpty(strContent))
-                {
-                    Tracert.WriteLog("strContent: " + strContent);
-                }
             }
             catch (Exception ex)
             {
-                Tracert.WriteLog("TVANSendData2", ex);
+                strContent = ex.Message;
             }
 
             return strContent;

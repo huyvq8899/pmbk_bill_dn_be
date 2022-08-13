@@ -197,9 +197,16 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpPost("InsertRange")]
         public async Task<IActionResult> InsertRange(List<ThongDiepChungViewModel> models)
         {
-            var result = await _thongDiepGuiHDDTKhongMaService.InsertRangeAsync(models);
-
-            return Ok(result);
+            try
+            {
+                var result = await _thongDiepGuiHDDTKhongMaService.InsertRangeAsync(models);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                Tracert.WriteLog("InsertRange", e);
+                return Ok(null);
+            }
         }
     }
 }
