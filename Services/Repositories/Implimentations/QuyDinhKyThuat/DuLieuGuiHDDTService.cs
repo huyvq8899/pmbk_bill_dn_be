@@ -1616,6 +1616,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return result;
         }
 
+        /// <summary>
+        /// Tạo nhiều thông điệp và gửi thông điệp tới cqt
+        /// </summary>
+        /// <param name="models"></param>
+        /// <returns></returns>
         public async Task<List<TrangThaiQuyTrinh>> InsertRangeAsync(List<ThongDiepChungViewModel> models)
         {
             var result = new List<TrangThaiQuyTrinh>();
@@ -1634,7 +1639,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             #region test
             //var rsInsertThongDieps = new List<ThongDiepChungViewModel>();
             //var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == "95fe6698-a53d-4705-8a78-f54cc83c4f2f");
-            //for (int i = 0; i < 50; i++)
+            //for (int i = 0; i < 101; i++)
             //{
             //    rsInsertThongDieps.Add(new ThongDiepChungViewModel
             //    {
@@ -1643,16 +1648,28 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             //}
             #endregion
 
-            // 
-            List<Task<string>> lstTasks = new List<Task<string>>();
-            foreach (var thongDiep in rsInsertThongDieps)
+            // send multi task concurrently
+            var lstXml999 = new List<string>();
+            var lengthThongDiep = Math.Ceiling(rsInsertThongDieps.Count / 25d);
+            for (int i = 0; i < lengthThongDiep; i++)
             {
-                lstTasks.Add(GuiThongDiepDuLieuHDDTAsync2(thongDiep, token));
+                List<Task<string>> lstTasks = new List<Task<string>>();
+
+                var rsThongDiepSlices = rsInsertThongDieps.Skip(i * 25).Take(25).ToList();
+                for (int j = 0; j < rsThongDiepSlices.Count; j++)
+                {
+                    var thongDiep = rsThongDiepSlices[j];
+                    lstTasks.Add(GuiThongDiepDuLieuHDDTAsync2(thongDiep, token));
+
+                    if (j == (rsThongDiepSlices.Count - 1))
+                    {
+                        var rsXml999 = await Task.WhenAll(lstTasks);
+                        lstXml999.AddRange(rsXml999);
+                    }
+                }
             }
 
-            // send async
-            var lstXml999 = await Task.WhenAll(lstTasks);
-
+            // create transferlog
             foreach (var item in rsInsertThongDieps)
             {
                 transferLog.Add(new TransferLog

@@ -2831,6 +2831,9 @@ namespace Services.Helper
             SetPdfMargins(pdfDoc);
 
             pdfDoc.SaveToFile(pdfPath);
+
+            doc.Dispose();
+            pdfDoc.Dispose();
         }
 
         public static void CreatePreviewFileDoc(Document doc, MauHoaDonViewModel mauHoaDon, IHttpContextAccessor accessor)
