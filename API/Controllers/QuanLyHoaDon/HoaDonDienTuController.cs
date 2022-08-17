@@ -1389,6 +1389,11 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Rollback();
                     return Ok(null);
                 }
+                finally
+                {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                }
             }
         }
 

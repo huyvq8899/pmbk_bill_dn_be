@@ -69,6 +69,11 @@ namespace API.Controllers.QuyDinhKyThuat
                 Tracert.WriteLog(ex.Message);
                 return Ok(false);
             }
+            finally
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
         }
 
         [HttpPost("GetNoiDungThongDiepPhanHoi")]
