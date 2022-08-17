@@ -1232,7 +1232,7 @@ namespace Services.Repositories.Implimentations.TienIch
         {
             var query = from nktc in _db.NhatKyTruyCaps
                         join u in _db.Users on nktc.CreatedBy equals u.UserId
-                        where nktc.RefId == id
+                        where nktc.RefId == id || nktc.RefId.Contains(id)
                         orderby nktc.CreatedDate descending
                         select new NhatKyTruyCapViewModel
                         {

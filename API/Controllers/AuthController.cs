@@ -128,7 +128,7 @@ namespace API.Controllers
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddDays(1),
-                //Expires = DateTime.Now.AddMinutes(30),
+                //Expires = DateTime.Now.AddSeconds(10),
                 SigningCredentials = creds
             };
 

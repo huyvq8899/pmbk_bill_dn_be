@@ -620,6 +620,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 query = query.Where(x => x.TrangThaiQuyTrinh == pagingParams.TrangThaiPhatHanh);
             }
 
+            if (!pagingParams.TrangThaiPhatHanhs.Any(x => x == -1))
+            {
+                query = query.Where(x => pagingParams.TrangThaiPhatHanhs.Contains(x.TrangThaiQuyTrinh.Value));
+            }
+
             if (pagingParams.TrangThaiGuiHoaDon.HasValue && pagingParams.TrangThaiGuiHoaDon != -1)
             {
                 query = query.Where(x => x.TrangThaiGuiHoaDon == pagingParams.TrangThaiGuiHoaDon);
@@ -15990,6 +15995,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<List<HoaDonDienTuViewModel>> PhatHanhHoaDonDongLoatAsync(List<ParamPhatHanhHD> @params)
         {
             var result = new List<HoaDonDienTuViewModel>();
+            FileReturn fileError = null;
 
             var hoaDonDienTus = await _db.HoaDonDienTus
                 .Where(x => @params.Select(y => y.HoaDonDienTuId).Contains(x.HoaDonDienTuId))
@@ -16016,15 +16022,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var rsKyDienTu = await PhatHanhHoaDonAsync(param);
                 if (param.TypeOfError == 0 && rsKyDienTu)
                 {
-                    await _nhatKyTruyCapService.InsertAsync(new NhatKyTruyCapViewModel
-                    {
-                        LoaiHanhDong = LoaiHanhDong.PhatHanhHoaDonThanhCong,
-                        DoiTuongThaoTac = "empty",
-                        RefType = RefType.HoaDonDienTu,
-                        ThamChieu = $"Hóa đơn {param.HoaDon.SoHoaDon} - {param.HoaDon.MauSo} - {param.HoaDon.KyHieu} - {param.HoaDon.MaTraCuu}",
-                        MoTaChiTiet = $"Phát hành HĐ {param.HoaDon.SoHoaDon} - {param.HoaDon.MauSo} - {param.HoaDon.KyHieu} - {param.HoaDon.MaTraCuu}",
-                        RefId = param.HoaDonDienTuId
-                    });
                     param.HoaDon.HasError = false;
                 }
                 else // ký không thành công
@@ -16042,6 +16039,40 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 result.Add(param.HoaDon);
             }
+
+            List<string> moTaChiTiets = new List<string>();
+            if (@params.Any(x => x.HoaDon.HasError == false))
+            {
+                moTaChiTiets.Add($"- Phát hành thành công {@params.Count(x => x.HoaDon.HasError == false)}/{@params.Count} hóa đơn");
+
+                var hoaDons = @params.Select(x => x.HoaDon)
+                    .Where(x => x.HasError == false)
+                    .OrderBy(x => x.KyHieuHoaDon)
+                    .ThenBy(x => x.SoHoaDon)
+                    .ToList();
+
+                foreach (var item in hoaDons)
+                {
+                    moTaChiTiets.Add($"Phát hành HĐ {item.SoHoaDon} - {item.MauSo} - {item.KyHieu} - {item.MaTraCuu}");
+                }
+            }
+            if (@params.Any(x => x.HoaDon.HasError == true))
+            {
+                moTaChiTiets.Add($"- Phát hành không thành công {@params.Count(x => x.HoaDon.HasError == true)}/{@params.Count} hóa đơn");
+
+                fileError = await TaiTepPhatHanhHoaDonLoiAsync(@params.Select(x => x.HoaDon).Where(x => x.HasError == true).ToList());
+            }
+
+            await _nhatKyTruyCapService.InsertAsync(new NhatKyTruyCapViewModel
+            {
+                LoaiHanhDong = LoaiHanhDong.PhatHanhHoaDonDongLoat,
+                DoiTuongThaoTac = "empty",
+                RefType = RefType.HoaDonDienTu,
+                ThamChieu = $"Phát hành đồng loạt {@params.Count} hóa đơn",
+                MoTaChiTiet = string.Join("\n", moTaChiTiets),
+                RefId = string.Join(";", @params.Select(x => x.HoaDonDienTuId).ToList()),
+                RefFile = fileError?.Base64
+            });
 
             return result;
         }
@@ -16119,6 +16150,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return new FileReturn
             {
                 Bytes = bytes,
+                Base64 = Convert.ToBase64String(bytes),
                 ContentType = MimeTypes.GetMimeType(excelPath),
                 FileName = Path.GetFileName(excelPath),
             };
