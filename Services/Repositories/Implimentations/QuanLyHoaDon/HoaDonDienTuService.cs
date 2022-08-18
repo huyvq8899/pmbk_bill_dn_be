@@ -2251,6 +2251,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MauSo = bkhhd.KyHieuMauSoHoaDon.ToString(),
                             KyHieu = bkhhd.KyHieuHoaDon,
                             KhachHangId = hd.KhachHangId ?? string.Empty,
+                            DiaChi= hd.DiaChi,
                             TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                             KhachHang = new DoiTuongViewModel
                             {
@@ -2479,6 +2480,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MauSo = bkhhd.KyHieuMauSoHoaDon.ToString(),
                             KyHieu = bkhhd.KyHieuHoaDon,
                             KhachHangId = hd.KhachHangId ?? string.Empty,
+                            DiaChi= hd.DiaChi,
                             TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                             KhachHang = new DoiTuongViewModel
                             {
@@ -2717,6 +2719,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MauSo = bkhhd.KyHieuMauSoHoaDon.ToString(),
                             KyHieu = bkhhd.KyHieuHoaDon,
                             KhachHangId = hd.KhachHangId ?? string.Empty,
+                            DiaChi= hd.DiaChi,
                             TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                             KhachHang = new DoiTuongViewModel
                             {
