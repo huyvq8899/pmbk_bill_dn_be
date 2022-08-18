@@ -207,11 +207,6 @@ namespace API.Controllers.QuyDinhKyThuat
                 Tracert.WriteLog("InsertRange", e);
                 return Ok(null);
             }
-            finally
-            {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-            }
         }
     }
 }
