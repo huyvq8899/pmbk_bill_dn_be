@@ -15823,7 +15823,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// </summary>
         /// <param name="pagingParams"></param>
         /// <returns></returns>
-        public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonDePhatHanhDongLoatAsync(HoaDonParams pagingParams)
+        public async Task<PagedList<HoaDonDienTuViewModel>> GetListHoaDonDePhatHanhDongLoatAsync(HoaDonParams pagingParams)
         {
             DateTime? fromDate = !string.IsNullOrEmpty(pagingParams.FromDate) ? DateTime.Parse(pagingParams.FromDate) : (DateTime?)null;
             DateTime? toDate = !string.IsNullOrEmpty(pagingParams.ToDate) ? DateTime.Parse(pagingParams.ToDate) : (DateTime?)null;
@@ -15935,7 +15935,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
 
-            var result = await query.ToListAsync();
+            if (pagingParams.PageSize == -1)
+            {
+                pagingParams.PageSize = await query.CountAsync();
+            }
+
+            var result = await PagedList<HoaDonDienTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
             return result;
         }
 
