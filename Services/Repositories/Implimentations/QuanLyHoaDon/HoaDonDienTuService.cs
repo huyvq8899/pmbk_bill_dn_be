@@ -3451,7 +3451,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (File.Exists(pathFilePDF)) File.Delete(pathFilePDF);
                     var binPDF = await _db.FileDatas.Where(x => x.RefId == hd.HoaDonDienTuId && x.IsSigned == true && x.Type == 2).Select(x => x.Binary).FirstOrDefaultAsync();
                     File.WriteAllBytes(pathFilePDF, binPDF);
-                    await addTextDelete(pathFilePDF);
+                    await addTextDelete("","",pathFilePDF);
                 }
                 if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && hd.BuyerSigned != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi) && (!string.IsNullOrEmpty(hd.FileDaKy) && !string.IsNullOrEmpty(hd.XMLDaKy)))
                 {
@@ -7499,7 +7499,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                }).ToList();
             return enums;
         }
-        public async Task<bool> addTextDelete(string pdfFilePath)
+        public async Task<bool> addTextDelete(string pdfFileNameNew, string pdfPath, string pdfFilePath)
         {
             //thêm ảnh đã bị xóa vào file pdf
             if (@File.Exists(pdfFilePath))
@@ -7517,8 +7517,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     page.Canvas.DrawImage(image, new PointF(130, 270), new SizeF(350, 350));
                 }
 
-                pdfDoc.SaveToFile(pdfFilePath);
-                pdfDoc.Close();
+                if (pdfFileNameNew != "" && pdfPath != "")
+                {
+                    var pdfPathNew = Path.Combine(pdfPath, pdfFileNameNew);
+
+                    pdfDoc.SaveToFile(pdfPathNew);
+                    pdfDoc.Close();
+                }
+                else
+                {
+                    pdfDoc.SaveToFile(pdfFilePath);
+                    pdfDoc.Close();
+                }
 
             }
             return true;
@@ -7536,7 +7546,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (@params.HoaDon.TrangThaiBienBanXoaBo == -10) _objHDDT.TrangThaiBienBanXoaBo = @params.HoaDon.TrangThaiBienBanXoaBo;
                 _objHDDT.BackUpTrangThai = @params.HoaDon.BackUpTrangThai;
                 _objHDDT.TrangThai = (int)TrangThaiHoaDon.HoaDonXoaBo;
-
+                var pdfFileNameNew = _objHDDT.FileDaKy.Split('.')[0] + "_X." + _objHDDT.FileDaKy.Split('.')[1];
                 if (await this.UpdateAsync(_objHDDT))
                 {
 
@@ -7546,10 +7556,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         string assetsFolder = $"FilesUpload/{databaseName}";
                         var pdfPath = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objHDDT.FileDaKy}");
                         string pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, pdfPath);
+                        var pdfPathNew = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}");
+                        string pdfFilePathNew = Path.Combine(_hostingEnvironment.WebRootPath, pdfPathNew);
                         if (!@File.Exists(pdfFilePath))
                             await RestoreFilesInvoiceSigned(_objHDDT.HoaDonDienTuId);
-
-                        await addTextDelete(pdfFilePath);
+                        await addTextDelete(pdfFileNameNew, pdfFilePathNew, pdfFilePath);
                     }
                     if (@params.OptionalSend == 1)
                     {
