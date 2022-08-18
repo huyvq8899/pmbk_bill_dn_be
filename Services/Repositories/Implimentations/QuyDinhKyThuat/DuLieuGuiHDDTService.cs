@@ -5,7 +5,6 @@ using DLL.Entity;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
-using EFCore.BulkExtensions;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
