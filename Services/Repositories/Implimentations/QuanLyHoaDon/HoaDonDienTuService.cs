@@ -972,6 +972,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var allHoaDonDienTuIds = query.Select(x => x.HoaDonDienTuId).ToList();
 
+            pagingParams.TongTienThanhToan = await query.SumAsync(x => x.TongTienThanhToan);
+
             var result = PagedList<HoaDonDienTuViewModel>.Create(query, pagingParams.PageNumber, pagingParams.PageSize);
             result.AllItemIds = allHoaDonDienTuIds;
 
