@@ -22,7 +22,7 @@ namespace Services.Enums
         In,
         [Description("Ký điện tử")]
         KyDienTu,
-        [Description("Phát hành hóa đơn thành công")]
+        [Description("Phát hành hóa đơn")]
         PhatHanhHoaDonThanhCong,
         [Description("Phát hành hóa đơn không thành công")]
         PhatHanhHoaDonThatBai,

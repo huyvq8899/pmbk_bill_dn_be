@@ -394,6 +394,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           TenTrangThaiQuyTrinh = ((TrangThaiQuyTrinh)hd.TrangThaiQuyTrinh).GetDescription(),
                                                           MaTraCuu = hd.MaTraCuu,
                                                           TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
+                                                          TrangThaiGuiHoaDonNhap = hd.TrangThaiGuiHoaDonNhap,
                                                           KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
                                                           SoLanChuyenDoi = hd.SoLanChuyenDoi ?? 0,
                                                           LyDoXoaBo = hd.LyDoXoaBo,
@@ -741,6 +742,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             break;
                         case nameof(pagingParams.Filter.TongTienThanhToan):
                             query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TongTienThanhToan, filterCol, FilterValueType.Decimal);
+                            break;
+                        case nameof(pagingParams.Filter.MaLoaiTien):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.LoaiTien.Ten, filterCol, FilterValueType.String);
                             break;
                         case nameof(pagingParams.Filter.MaTraCuu):
                             query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MaTraCuu, filterCol, FilterValueType.String);
