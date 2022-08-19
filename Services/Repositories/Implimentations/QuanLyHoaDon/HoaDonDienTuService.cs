@@ -15872,22 +15872,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             HinhThucHoaDon = (int)bkh.HinhThucHoaDon,
                             HoTenNguoiNhanHD = (kh != null && !string.IsNullOrEmpty(kh.HoTenNguoiNhanHD)) ? kh.HoTenNguoiNhanHD : hddt.HoTenNguoiNhanHD,
                             EmailNguoiNhanHD = (kh != null && !string.IsNullOrEmpty(kh.EmailNguoiNhanHD)) ? kh.EmailNguoiNhanHD : hddt.EmailNguoiNhanHD,
-                            HoaDonChiTiets = (from hdct in _db.HoaDonDienTuChiTiets
-                                              where hdct.HoaDonDienTuId == hddt.HoaDonDienTuId
-                                              orderby hdct.CreatedDate
-                                              select new HoaDonDienTuChiTietViewModel
-                                              {
-                                                  HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
-                                                  HoaDonDienTuId = hdct.HoaDonDienTuId,
-                                                  SoLuong = hdct.SoLuong,
-                                                  DonGia = hdct.DonGia,
-                                                  ThanhTien = hdct.ThanhTien,
-                                                  TyLeChietKhau = hdct.TyLeChietKhau,
-                                                  TienChietKhau = hdct.TienChietKhau,
-                                                  ThueGTGT = hdct.ThueGTGT,
-                                                  TienThueGTGT = hdct.TienThueGTGT
-                                              })
-                                              .ToList()
+                            HoaDonChiTiets = new List<HoaDonDienTuChiTietViewModel>()
                         };
 
             if (pagingParams.HoaDonDienTuIds.Any())
@@ -15941,6 +15926,31 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             var result = await PagedList<HoaDonDienTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+
+            var hoaDonDienTuIds = result.Items.Select(x => x.HoaDonDienTuId).ToList();
+
+            var hoaDonDienTuChiTiets = await _db.HoaDonDienTuChiTiets
+                .Where(x => hoaDonDienTuIds.Contains(x.HoaDonDienTuId))
+                .OrderBy(x => x.CreatedDate)
+                .Select(x => new HoaDonDienTuChiTietViewModel
+                {
+                    HoaDonDienTuChiTietId = x.HoaDonDienTuChiTietId,
+                    HoaDonDienTuId = x.HoaDonDienTuId,
+                    SoLuong = x.SoLuong,
+                    DonGia = x.DonGia,
+                    ThanhTien = x.ThanhTien,
+                    TyLeChietKhau = x.TyLeChietKhau,
+                    TienChietKhau = x.TienChietKhau,
+                    ThueGTGT = x.ThueGTGT,
+                    TienThueGTGT = x.TienThueGTGT
+                })
+                .ToListAsync();
+
+            foreach (var item in result.Items)
+            {
+                item.HoaDonChiTiets = hoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == item.HoaDonDienTuId).ToList();
+            }
+
             return result;
         }
 
