@@ -27,5 +27,6 @@ namespace Services.Helper.Params.HoaDon
         public List<HoaDonDienTuViewModel> HoaDonDienTus { get; set; }
         public string BoKyHieuHoaDonId { get; set; }
         public bool? IsBanNhap { get; set; }
+        public decimal? TongTienThanhToan { get; set; }
     }
 }
