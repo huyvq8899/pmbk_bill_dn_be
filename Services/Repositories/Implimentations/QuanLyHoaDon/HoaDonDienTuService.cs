@@ -972,7 +972,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var allHoaDonDienTuIds = query.Select(x => x.HoaDonDienTuId).ToList();
 
-            pagingParams.TongTienThanhToan = await query.SumAsync(x => x.TongTienThanhToan);
+            pagingParams.TongTienThanhToan = query.Sum(x => x.TongTienThanhToan);
 
             var result = PagedList<HoaDonDienTuViewModel>.Create(query, pagingParams.PageNumber, pagingParams.PageSize);
             result.AllItemIds = allHoaDonDienTuIds;
@@ -2253,7 +2253,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MauSo = bkhhd.KyHieuMauSoHoaDon.ToString(),
                             KyHieu = bkhhd.KyHieuHoaDon,
                             KhachHangId = hd.KhachHangId ?? string.Empty,
-                            DiaChi= hd.DiaChi,
+                            DiaChi = hd.DiaChi,
                             TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                             KhachHang = new DoiTuongViewModel
                             {
@@ -2482,7 +2482,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MauSo = bkhhd.KyHieuMauSoHoaDon.ToString(),
                             KyHieu = bkhhd.KyHieuHoaDon,
                             KhachHangId = hd.KhachHangId ?? string.Empty,
-                            DiaChi= hd.DiaChi,
+                            DiaChi = hd.DiaChi,
                             TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                             KhachHang = new DoiTuongViewModel
                             {
@@ -2721,7 +2721,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MauSo = bkhhd.KyHieuMauSoHoaDon.ToString(),
                             KyHieu = bkhhd.KyHieuHoaDon,
                             KhachHangId = hd.KhachHangId ?? string.Empty,
-                            DiaChi= hd.DiaChi,
+                            DiaChi = hd.DiaChi,
                             TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                             KhachHang = new DoiTuongViewModel
                             {
@@ -3451,7 +3451,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (File.Exists(pathFilePDF)) File.Delete(pathFilePDF);
                     var binPDF = await _db.FileDatas.Where(x => x.RefId == hd.HoaDonDienTuId && x.IsSigned == true && x.Type == 2).Select(x => x.Binary).FirstOrDefaultAsync();
                     File.WriteAllBytes(pathFilePDF, binPDF);
-                    await addTextDelete("","",pathFilePDF);
+                    await addTextDelete("", "", pathFilePDF);
                 }
                 if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && hd.BuyerSigned != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi) && (!string.IsNullOrEmpty(hd.FileDaKy) && !string.IsNullOrEmpty(hd.XMLDaKy)))
                 {
