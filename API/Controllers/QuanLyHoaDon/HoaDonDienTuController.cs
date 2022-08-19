@@ -68,8 +68,7 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetAllPaging(HoaDonParams pagingParams)
         {
             var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
-            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-            return Ok(new { paged.Items, paged.AllItemIds, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            return Ok(new { paged.Items, paged.AllItemIds, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages, pagingParams.TongTienThanhToan });
         }
 
         [HttpPost("GetAllPagingHoaDonThayThe")]
@@ -1361,8 +1360,8 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("GetListHoaDonDePhatHanhDongLoat")]
         public async Task<IActionResult> GetListHoaDonDePhatHanhDongLoat(HoaDonParams pagingParams)
         {
-            var result = await _hoaDonDienTuService.GetListHoaDonDePhatHanhDongLoatAsync(pagingParams);
-            return Ok(result);
+            var paged = await _hoaDonDienTuService.GetListHoaDonDePhatHanhDongLoatAsync(pagingParams);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
         [HttpPost("GroupListDeXemDuLieuPhatHanhDongLoat")]

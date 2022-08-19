@@ -91,6 +91,7 @@ namespace Services.Repositories.Implimentations
 
                 // Request
                 var request = CreateRequest(action, method);
+
                 request.RequestFormat = DataFormat.Json;
                 request.AddHeader("Content-Type", "application/json");
                 request.AddBody(data);
@@ -114,7 +115,108 @@ namespace Services.Repositories.Implimentations
             return strContent;
         }
 
-        private string GetToken()
+        [Obsolete]
+        public async Task<string> TVANSendData2(string action, string body, string token, Method method = Method.POST)
+        {
+            string strContent = string.Empty;
+
+            try
+            {
+                // Re-check MNGui, MNNhan
+                // Get MST
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(body);
+
+                // MNGui
+                XmlNode eleNode = doc.SelectSingleNode("/TDiep/TTChung/MNGui");
+                if (eleNode != null && eleNode.InnerText != "0200784873")
+                {
+                    eleNode.InnerText = $"0200784873";
+                }
+
+                // MNNhan
+                eleNode = doc.SelectSingleNode("/TDiep/TTChung/MNNhan");
+                if (eleNode != null && eleNode.InnerText != "V0200784873")
+                {
+                    eleNode.InnerText = $"V0200784873";
+                }
+
+                // Re-Get xml
+                body = doc.OuterXml;
+
+                // Send
+                var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(body);
+                var data = System.Convert.ToBase64String(plainTextBytes);
+
+                // Get Url
+                string url = iConfiguration["TVanAccount:Url"];
+                var client = new RestClient(url);
+
+                // Request
+                //var request = CreateRequest(action, method);
+                var request = new RestRequest(action, method)
+                {
+                    Timeout = 5000,
+                    RequestFormat = DataFormat.Json
+                };
+                request.AddHeader("Content-Type", "application/json");
+                request.AddHeader("Authorization", "Bearer " + token);
+                request.AddBody(data);
+
+                // Get response
+                var response = await client.ExecuteAsync(request);
+                strContent = response.Content;
+            }
+            catch (Exception ex)
+            {
+                strContent = ex.Message;
+            }
+
+            return strContent;
+        }
+
+        public async Task<string> GetToken2()
+        {
+            try
+            {
+                // Get value from configuration
+                string url = iConfiguration["TVanAccount:Url"];
+                string taxcode = iConfiguration["TVanAccount:TaxCode"];
+                string username = iConfiguration["TVanAccount:UserName"];
+                string password = iConfiguration["TVanAccount:PassWord"];
+
+                // Open client
+                var client = new RestClient(url);
+                var request = new RestRequest("api/authen/login", Method.POST)
+                {
+                    RequestFormat = DataFormat.Json
+                };
+                var body = JsonConvert.SerializeObject(new
+                {
+                    taxcode,
+                    username,
+                    password,
+                });
+                request.AddJsonBody(body);
+                var response = await client.ExecuteAsync(request);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    if (!string.IsNullOrWhiteSpace(response.Content))
+                    {
+                        var content = JObject.Parse(response.Content);
+                        return content["token"].ToString();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Tracert.WriteLog("GetToken2", ex);
+            }
+
+            return string.Empty;
+        }
+
+        public string GetToken()
         {
             try
             {

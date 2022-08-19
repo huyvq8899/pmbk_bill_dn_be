@@ -621,6 +621,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 query = query.Where(x => x.TrangThaiQuyTrinh == pagingParams.TrangThaiPhatHanh);
             }
 
+            if (!pagingParams.TrangThaiPhatHanhs.Any(x => x == -1))
+            {
+                query = query.Where(x => pagingParams.TrangThaiPhatHanhs.Contains(x.TrangThaiQuyTrinh.Value));
+            }
+
             if (pagingParams.TrangThaiGuiHoaDon.HasValue && pagingParams.TrangThaiGuiHoaDon != -1)
             {
                 query = query.Where(x => x.TrangThaiGuiHoaDon == pagingParams.TrangThaiGuiHoaDon);
@@ -970,6 +975,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             #endregion
 
             var allHoaDonDienTuIds = query.Select(x => x.HoaDonDienTuId).ToList();
+
+            pagingParams.TongTienThanhToan = await query.SumAsync(x => x.TongTienThanhToan);
 
             var result = PagedList<HoaDonDienTuViewModel>.Create(query, pagingParams.PageNumber, pagingParams.PageSize);
             result.AllItemIds = allHoaDonDienTuIds;
@@ -2250,6 +2257,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MauSo = bkhhd.KyHieuMauSoHoaDon.ToString(),
                             KyHieu = bkhhd.KyHieuHoaDon,
                             KhachHangId = hd.KhachHangId ?? string.Empty,
+                            DiaChi= hd.DiaChi,
                             TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                             KhachHang = new DoiTuongViewModel
                             {
@@ -2478,6 +2486,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MauSo = bkhhd.KyHieuMauSoHoaDon.ToString(),
                             KyHieu = bkhhd.KyHieuHoaDon,
                             KhachHangId = hd.KhachHangId ?? string.Empty,
+                            DiaChi= hd.DiaChi,
                             TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                             KhachHang = new DoiTuongViewModel
                             {
@@ -2716,6 +2725,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MauSo = bkhhd.KyHieuMauSoHoaDon.ToString(),
                             KyHieu = bkhhd.KyHieuHoaDon,
                             KhachHangId = hd.KhachHangId ?? string.Empty,
+                            DiaChi= hd.DiaChi,
                             TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                             KhachHang = new DoiTuongViewModel
                             {
@@ -2983,7 +2993,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.BoKyHieuHoaDon != null ? it.BoKyHieuHoaDon.KyHieuHoaDon : string.Empty);
                             worksheet.Cells[idx, 6].Value = !string.IsNullOrEmpty(it.MaKhachHang) ? it.MaKhachHang : (it.KhachHang != null ? it.KhachHang.Ma : string.Empty);
                             worksheet.Cells[idx, 7].Value = !string.IsNullOrEmpty(it.TenKhachHang) ? it.TenKhachHang : (it.KhachHang != null ? it.KhachHang.Ten : string.Empty);
-                            worksheet.Cells[idx, 8].Value = !string.IsNullOrEmpty(it.DiaChi) ? it.DiaChi : (it.KhachHang != null ? it.KhachHang.DiaChi : string.Empty);
+                            worksheet.Cells[idx, 8].Value = !string.IsNullOrEmpty(it.DiaChi) ? it.DiaChi : string.Empty;
                             worksheet.Cells[idx, 9].Value = !string.IsNullOrEmpty(it.MaSoThue) ? it.MaSoThue : (it.KhachHang != null ? it.KhachHang.MaSoThue : string.Empty);
                             worksheet.Cells[idx, 10].Value = !string.IsNullOrEmpty(it.HoTenNguoiMuaHang) ? it.HoTenNguoiMuaHang : (it.KhachHang != null ? it.KhachHang.HoTenNguoiMuaHang : string.Empty);
                             worksheet.Cells[idx, 11].Value = it.TenHinhThucThanhToan;
@@ -3445,7 +3455,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (File.Exists(pathFilePDF)) File.Delete(pathFilePDF);
                     var binPDF = await _db.FileDatas.Where(x => x.RefId == hd.HoaDonDienTuId && x.IsSigned == true && x.Type == 2).Select(x => x.Binary).FirstOrDefaultAsync();
                     File.WriteAllBytes(pathFilePDF, binPDF);
-                    await addTextDelete(pathFilePDF);
+                    await addTextDelete("","",pathFilePDF);
                 }
                 if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && hd.BuyerSigned != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi) && (!string.IsNullOrEmpty(hd.FileDaKy) && !string.IsNullOrEmpty(hd.XMLDaKy)))
                 {
@@ -7493,7 +7503,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                }).ToList();
             return enums;
         }
-        public async Task<bool> addTextDelete(string pdfFilePath)
+        public async Task<bool> addTextDelete(string pdfFileNameNew, string pdfPath, string pdfFilePath)
         {
             //thêm ảnh đã bị xóa vào file pdf
             if (@File.Exists(pdfFilePath))
@@ -7511,8 +7521,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     page.Canvas.DrawImage(image, new PointF(130, 270), new SizeF(350, 350));
                 }
 
-                pdfDoc.SaveToFile(pdfFilePath);
-                pdfDoc.Close();
+                if (pdfFileNameNew != "" && pdfPath != "")
+                {
+                    var pdfPathNew = Path.Combine(pdfPath, pdfFileNameNew);
+
+                    pdfDoc.SaveToFile(pdfPathNew);
+                    pdfDoc.Close();
+                }
+                else
+                {
+                    pdfDoc.SaveToFile(pdfFilePath);
+                    pdfDoc.Close();
+                }
 
             }
             return true;
@@ -7530,7 +7550,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (@params.HoaDon.TrangThaiBienBanXoaBo == -10) _objHDDT.TrangThaiBienBanXoaBo = @params.HoaDon.TrangThaiBienBanXoaBo;
                 _objHDDT.BackUpTrangThai = @params.HoaDon.BackUpTrangThai;
                 _objHDDT.TrangThai = (int)TrangThaiHoaDon.HoaDonXoaBo;
-
+                var pdfFileNameNew = _objHDDT.FileDaKy.Split('.')[0] + "_X." + _objHDDT.FileDaKy.Split('.')[1];
                 if (await this.UpdateAsync(_objHDDT))
                 {
 
@@ -7540,10 +7560,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         string assetsFolder = $"FilesUpload/{databaseName}";
                         var pdfPath = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objHDDT.FileDaKy}");
                         string pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, pdfPath);
+                        var pdfPathNew = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}");
+                        string pdfFilePathNew = Path.Combine(_hostingEnvironment.WebRootPath, pdfPathNew);
                         if (!@File.Exists(pdfFilePath))
                             await RestoreFilesInvoiceSigned(_objHDDT.HoaDonDienTuId);
-
-                        await addTextDelete(pdfFilePath);
+                        await addTextDelete(pdfFileNameNew, pdfFilePathNew, pdfFilePath);
                     }
                     if (@params.OptionalSend == 1)
                     {
@@ -15822,7 +15843,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// </summary>
         /// <param name="pagingParams"></param>
         /// <returns></returns>
-        public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonDePhatHanhDongLoatAsync(HoaDonParams pagingParams)
+        public async Task<PagedList<HoaDonDienTuViewModel>> GetListHoaDonDePhatHanhDongLoatAsync(HoaDonParams pagingParams)
         {
             DateTime? fromDate = !string.IsNullOrEmpty(pagingParams.FromDate) ? DateTime.Parse(pagingParams.FromDate) : (DateTime?)null;
             DateTime? toDate = !string.IsNullOrEmpty(pagingParams.ToDate) ? DateTime.Parse(pagingParams.ToDate) : (DateTime?)null;
@@ -15934,7 +15955,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
 
-            var result = await query.ToListAsync();
+            if (pagingParams.PageSize == -1)
+            {
+                pagingParams.PageSize = await query.CountAsync();
+            }
+
+            var result = await PagedList<HoaDonDienTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
             return result;
         }
 
@@ -15994,6 +16020,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<List<HoaDonDienTuViewModel>> PhatHanhHoaDonDongLoatAsync(List<ParamPhatHanhHD> @params)
         {
             var result = new List<HoaDonDienTuViewModel>();
+            FileReturn fileError = null;
 
             var hoaDonDienTus = await _db.HoaDonDienTus
                 .Where(x => @params.Select(y => y.HoaDonDienTuId).Contains(x.HoaDonDienTuId))
@@ -16016,20 +16043,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     continue;
                 }
 
+                // ký điện tử
                 var rsKyDienTu = await PhatHanhHoaDonAsync(param);
                 if (param.TypeOfError == 0 && rsKyDienTu)
                 {
-                    // ký điện tử
-                    await GateForWebSocket(param);
-                    await _nhatKyTruyCapService.InsertAsync(new NhatKyTruyCapViewModel
-                    {
-                        LoaiHanhDong = LoaiHanhDong.PhatHanhHoaDonThanhCong,
-                        DoiTuongThaoTac = "empty",
-                        RefType = RefType.HoaDonDienTu,
-                        ThamChieu = $"Hóa đơn {param.HoaDon.SoHoaDon} - {param.HoaDon.MauSo} - {param.HoaDon.KyHieu} - {param.HoaDon.MaTraCuu}",
-                        MoTaChiTiet = $"Phát hành HĐ {param.HoaDon.SoHoaDon} - {param.HoaDon.MauSo} - {param.HoaDon.KyHieu} - {param.HoaDon.MaTraCuu}",
-                        RefId = param.HoaDonDienTuId
-                    });
                     param.HoaDon.HasError = false;
                 }
                 else // ký không thành công
@@ -16047,6 +16064,40 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 result.Add(param.HoaDon);
             }
+
+            List<string> moTaChiTiets = new List<string>();
+            if (@params.Any(x => x.HoaDon.HasError == false))
+            {
+                moTaChiTiets.Add($"- Phát hành thành công {@params.Count(x => x.HoaDon.HasError == false)}/{@params.Count} hóa đơn");
+
+                var hoaDons = @params.Select(x => x.HoaDon)
+                    .Where(x => x.HasError == false)
+                    .OrderBy(x => x.KyHieuHoaDon)
+                    .ThenBy(x => x.SoHoaDon)
+                    .ToList();
+
+                foreach (var item in hoaDons)
+                {
+                    moTaChiTiets.Add($"Phát hành HĐ {item.SoHoaDon} - {item.MauSo} - {item.KyHieu} - {item.MaTraCuu}");
+                }
+            }
+            if (@params.Any(x => x.HoaDon.HasError == true))
+            {
+                moTaChiTiets.Add($"- Phát hành không thành công {@params.Count(x => x.HoaDon.HasError == true)}/{@params.Count} hóa đơn");
+
+                fileError = await TaiTepPhatHanhHoaDonLoiAsync(@params.Select(x => x.HoaDon).Where(x => x.HasError == true).ToList());
+            }
+
+            await _nhatKyTruyCapService.InsertAsync(new NhatKyTruyCapViewModel
+            {
+                LoaiHanhDong = LoaiHanhDong.PhatHanhHoaDonDongLoat,
+                DoiTuongThaoTac = "empty",
+                RefType = RefType.HoaDonDienTu,
+                ThamChieu = $"Phát hành đồng loạt {@params.Count} hóa đơn",
+                MoTaChiTiet = string.Join("\n", moTaChiTiets),
+                RefId = string.Join(";", @params.Select(x => x.HoaDonDienTuId).ToList()),
+                RefFile = fileError?.Base64
+            });
 
             return result;
         }
@@ -16124,17 +16175,108 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return new FileReturn
             {
                 Bytes = bytes,
+                Base64 = Convert.ToBase64String(bytes),
                 ContentType = MimeTypes.GetMimeType(excelPath),
                 FileName = Path.GetFileName(excelPath),
             };
         }
 
-        public async Task<bool> PhatHanhHoaDonAsync(ParamPhatHanhHD @params)
+        public async Task<bool> PhatHanhHoaDonAsync(ParamPhatHanhHD param)
         {
             try
             {
-                var result = await GateForWebSocket(@params);
-                return result;
+                if (!string.IsNullOrEmpty(param.HoaDonDienTuId))
+                {
+                    var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+
+                    //var _objHDDT = await GetByIdAsync(param.HoaDonDienTuId);
+                    var _objHDDT = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == param.HoaDonDienTuId);
+                    var boKyHieuHoaDon = await _db.BoKyHieuHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == _objHDDT.BoKyHieuHoaDonId);
+
+                    if (_objHDDT != null && boKyHieuHoaDon != null)
+                    {
+                        #region clear old files
+                        string oldSignedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{_objHDDT.XMLDaKy}");
+                        if (File.Exists(oldSignedXmlPath))
+                        {
+                            File.Delete(oldSignedXmlPath);
+                        }
+
+                        string newXmlFileName = $"{boKyHieuHoaDon.KyHieu}-{param.HoaDon.SoHoaDon}-{Guid.NewGuid()}.xml";
+                        string newSignedXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
+                        if (!Directory.Exists(newSignedXmlFolder))
+                        {
+                            Directory.CreateDirectory(newSignedXmlFolder);
+                        }
+                        #endregion
+
+                        //xml
+                        string xmlDeCode = TextHelper.Decompress(@param.DataXML);
+                        string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
+                        File.WriteAllText(newSignedXmlFullPath, xmlDeCode);
+
+                        _objHDDT.XMLDaKy = newXmlFileName;
+                        _objHDDT.NgayKy = DateTime.Now;
+                        _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
+                        _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
+                        _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
+                        _objHDDT.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.DaKyDienTu;
+                        await _db.SaveChangesAsync(); // save to prevent null sohoadon
+
+                        if (param.IsBuyerSigned != true)
+                        {
+                            //thêm bản ghi vào bảng xóa bỏ hóa đơn đối với cấp mã cho hóa đơn thay thế
+                            if (!string.IsNullOrWhiteSpace(_objHDDT.ThayTheChoHoaDonId) && _objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu)
+                            {
+                                var _objHDDTBiThayThe = await GetByIdAsync(_objHDDT.ThayTheChoHoaDonId);
+                                if (_objHDDTBiThayThe != null)
+                                {
+                                    if (_objHDDTBiThayThe.HinhThucXoabo == null && _objHDDTBiThayThe.TrangThai != 2)
+                                    {
+                                        var lydoxoabo = string.IsNullOrEmpty(_objHDDT.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(_objHDDT.LyDoThayThe);
+
+                                        _objHDDTBiThayThe.NgayXoaBo = DateTime.Now;
+                                        _objHDDTBiThayThe.LyDoXoaBo = lydoxoabo.LyDo;
+                                        _objHDDTBiThayThe.IsNotCreateThayThe = null;
+                                        if (_objHDDTBiThayThe.TrangThai == 1) //hóa đơn gốc
+                                        {
+                                            _objHDDTBiThayThe.HinhThucXoabo = 2;
+                                        }
+                                        else if (_objHDDTBiThayThe.TrangThai == 3) //hóa đơn thay thế
+                                        {
+                                            _objHDDTBiThayThe.HinhThucXoabo = 5;
+                                        }
+                                        else
+                                        {
+                                            _objHDDTBiThayThe.HinhThucXoabo = 2;
+                                        }
+                                        _objHDDTBiThayThe.BackUpTrangThai = _objHDDTBiThayThe.TrangThai;
+                                        _objHDDTBiThayThe.SoCTXoaBo = "XHD-" + (_objHDDTBiThayThe.MauSo ?? "") + "-" + (_objHDDTBiThayThe.KyHieu ?? "") + "-" + (_objHDDTBiThayThe.SoHoaDon + "") + "-" + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss");
+
+                                        //nếu nó chưa bị xóa bỏ
+                                        //thì thực hiện xóa bỏ hóa đơn cho nó
+                                        ParamXoaBoHoaDon paramXoaBoHoaDon = new ParamXoaBoHoaDon
+                                        {
+                                            HoaDon = _objHDDTBiThayThe,
+                                            OptionalSend = 1
+                                        };
+
+                                        await XoaBoHoaDon(paramXoaBoHoaDon);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _objHDDT.XMLDaKy = newXmlFileName;
+                            _objHDDT.IsBuyerSigned = true;
+                        }
+
+                        await UpdateFileDataXmlForHDDT(_objHDDT.HoaDonDienTuId, newSignedXmlFullPath);
+                    }
+                }
+
+                return true;
             }
             catch (Exception)
             {

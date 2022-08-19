@@ -30,6 +30,7 @@ namespace Services.Repositories.Interfaces.QuanLy
         Task<bool> CheckDaKySoBatDauAsync(string id);
         Task<string> GetNhatKyXacThucBoKyHieuIdForXemMauHoaDonAsync(string nhatKyXacThucBoKyHieuId);
         Task<string> CheckHasToKhaiMoiNhatAsync(BoKyHieuHoaDonViewModel model);
+        Task CheckDaHetSoLuongHoaDonVaXacThucAsync(HoaDonDienTuViewModel hoaDon);
 
         Task<BoKyHieuHoaDonViewModel> InsertAsync(BoKyHieuHoaDonViewModel model);
         Task<bool> UpdateAsync(BoKyHieuHoaDonViewModel model);

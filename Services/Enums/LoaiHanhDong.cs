@@ -51,6 +51,8 @@ namespace Services.Enums
         [Description("Gửi thông báo xóa bỏ hóa đơn")]
         GuiThongBaoXoaBoHoaDon,
         [Description("Gửi biên bản hủy hóa đơn")]
-        GuiBienBanHuyHoaDon
+        GuiBienBanHuyHoaDon,
+        [Description("Phát hành hóa đơn đồng loạt")]
+        PhatHanhHoaDonDongLoat
     }
 }
