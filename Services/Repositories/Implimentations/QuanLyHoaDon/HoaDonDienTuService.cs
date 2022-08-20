@@ -525,80 +525,96 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 query = query.Where(x => x.KhachHangId == pagingParams.KhachHangId);
             }
 
-            if (pagingParams.TrangThaiHoaDonDienTu.HasValue && pagingParams.TrangThaiHoaDonDienTu != -1)
+            if (pagingParams.TrangThaiHoaDonDienTus != null && !pagingParams.TrangThaiHoaDonDienTus.Any(x => x == -1))
             {
-                //không phải hoá đơn điều chỉnh, hoặc chọn từng loại hóa đơn điều chỉnh
-                switch (pagingParams.TrangThaiHoaDonDienTu)
-                {
-                    case 2:
-                        {
-                            query = query.Where(x => x.TrangThai == pagingParams.TrangThaiHoaDonDienTu && x.IsLapHoaDonThayThe != true && (x.HinhThucXoabo == 2 || x.HinhThucXoabo == 5));
-                            break;
-                        }
-                    case 1:
-                    case 3:
-                        {
-                            query = query.Where(x => x.TrangThai == pagingParams.TrangThaiHoaDonDienTu);
-                            break;
-                        }
-                    case 4:
-                        {
-                            query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh);
-                            break;
-                        }
-                    case 5:
-                        {
-                            query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhTang);
-                            break;
-                        }
-                    case 6:
-                        {
-                            query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam);
-                            break;
-                        }
-                    case 7:
-                        {
-                            query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin);
-                            break;
-                        }
-                    case 8:
-                        {
-                            query = query.Where(x => x.DaBiDieuChinh == true);
-                            break;
-                        }
-                    case 9:
-                        {
-                            query = query.Where(x => x.IsLapHoaDonThayThe == true);
-                            break;
-                        }
-                    case 10:
-                        {
-                            query = query.Where(x => x.IsLapHoaDonThayThe == true && string.IsNullOrEmpty(x.ThayTheChoHoaDonId));
-                            break;
-                        }
-                    case 11:
-                        {
-                            query = query.Where(x => x.IsLapHoaDonThayThe == true && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId));
-                            break;
-                        }
-                    case 12:
-                        {
-                            query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4));
-                            break;
-                        }
-                    case 13:
-                        {
-                            query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && string.IsNullOrEmpty(x.ThayTheChoHoaDonId));
-                            break;
-                        }
-                    case 14:
-                        {
-                            query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId));
-                            break;
-                        }
-                    default: break;
-                }
+                query = query.Where(x => (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 2) && x.TrangThai == 2 && x.IsLapHoaDonThayThe != true && (x.HinhThucXoabo == 2 || x.HinhThucXoabo == 5)) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 1) && x.TrangThai == 1) || ((pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 3) && x.TrangThai == 3)) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 4) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 5) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhTang) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 6) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 7) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 8) && x.DaBiDieuChinh == true) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 9) && x.IsLapHoaDonThayThe == true) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 10) && x.IsLapHoaDonThayThe == true && string.IsNullOrEmpty(x.ThayTheChoHoaDonId)) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 11) && x.IsLapHoaDonThayThe == true && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId)) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 12) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4)) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 13) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && string.IsNullOrEmpty(x.ThayTheChoHoaDonId)) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 14) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId)));
             }
+            //if (pagingParams.TrangThaiHoaDonDienTu.HasValue && pagingParams.TrangThaiHoaDonDienTu != -1)
+            //{
+            //    //không phải hoá đơn điều chỉnh, hoặc chọn từng loại hóa đơn điều chỉnh
+            //    switch (pagingParams.TrangThaiHoaDonDienTu)
+            //    {
+            //        case 2:
+            //            {
+            //                query = query.Where(x => x.TrangThai == pagingParams.TrangThaiHoaDonDienTu && x.IsLapHoaDonThayThe != true && (x.HinhThucXoabo == 2 || x.HinhThucXoabo == 5));
+            //                break;
+            //            }
+            //        case 1:
+            //        case 3:
+            //            {
+            //                query = query.Where(x => x.TrangThai == pagingParams.TrangThaiHoaDonDienTu);
+            //                break;
+            //            }
+            //        case 4:
+            //            {
+            //                query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh);
+            //                break;
+            //            }
+            //        case 5:
+            //            {
+            //                query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhTang);
+            //                break;
+            //            }
+            //        case 6:
+            //            {
+            //                query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam);
+            //                break;
+            //            }
+            //        case 7:
+            //            {
+            //                query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin);
+            //                break;
+            //            }
+            //        case 8:
+            //            {
+            //                query = query.Where(x => x.DaBiDieuChinh == true);
+            //                break;
+            //            }
+            //        case 9:
+            //            {
+            //                query = query.Where(x => x.IsLapHoaDonThayThe == true);
+            //                break;
+            //            }
+            //        case 10:
+            //            {
+            //                query = query.Where(x => x.IsLapHoaDonThayThe == true && string.IsNullOrEmpty(x.ThayTheChoHoaDonId));
+            //                break;
+            //            }
+            //        case 11:
+            //            {
+            //                query = query.Where(x => x.IsLapHoaDonThayThe == true && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId));
+            //                break;
+            //            }
+            //        case 12:
+            //            {
+            //                query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4));
+            //                break;
+            //            }
+            //        case 13:
+            //            {
+            //                query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && string.IsNullOrEmpty(x.ThayTheChoHoaDonId));
+            //                break;
+            //            }
+            //        case 14:
+            //            {
+            //                query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId));
+            //                break;
+            //            }
+            //        default: break;
+            //    }
+            //}
 
             if (pagingParams.HinhThucHoaDon.HasValue && pagingParams.HinhThucHoaDon != -1)
             {
@@ -620,7 +636,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 query = query.Where(x => x.TrangThaiQuyTrinh == pagingParams.TrangThaiPhatHanh);
             }
 
-            if (!pagingParams.TrangThaiPhatHanhs.Any(x => x == -1))
+            if (pagingParams.TrangThaiPhatHanhs != null && !pagingParams.TrangThaiPhatHanhs.Any(x => x == -1))
             {
                 query = query.Where(x => pagingParams.TrangThaiPhatHanhs.Contains(x.TrangThaiQuyTrinh.Value));
             }
