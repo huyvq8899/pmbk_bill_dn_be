@@ -11,6 +11,7 @@ namespace Services.Helper.Params.HoaDon
         public int? UyNhiemLapHoaDon { get; set; }
         public int? LoaiHoaDon { get; set; }
         public int? TrangThaiHoaDonDienTu { get; set; }
+        public List<int> TrangThaiHoaDonDienTus { get; set; }
         public int? TrangThaiPhatHanh { get; set; }
         public List<int> TrangThaiPhatHanhs { get; set; }
         public int? TrangThaiGuiHoaDon { get; set; }
