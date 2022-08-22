@@ -749,7 +749,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TongTienThanhToan, filterCol, FilterValueType.Decimal);
                             break;
                         case nameof(pagingParams.Filter.MaLoaiTien):
-                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.LoaiTien.Ten, filterCol, FilterValueType.String);
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MaLoaiTien, filterCol, FilterValueType.String);
                             break;
                         case nameof(pagingParams.Filter.MaTraCuu):
                             query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MaTraCuu, filterCol, FilterValueType.String);
@@ -976,7 +976,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var allHoaDonDienTuIds = query.Select(x => x.HoaDonDienTuId).ToList();
 
-            pagingParams.TongTienThanhToan = await query.SumAsync(x => x.TongTienThanhToan);
+            //pagingParams.TongTienThanhToan = await query.SumAsync(x => x.TongTienThanhToan);
 
             var result = PagedList<HoaDonDienTuViewModel>.Create(query, pagingParams.PageNumber, pagingParams.PageSize);
             result.AllItemIds = allHoaDonDienTuIds;
