@@ -4,8 +4,10 @@ using DLL;
 using DLL.Constants;
 using DLL.Entity;
 using DLL.Entity.DanhMuc;
+using DLL.Entity.QuanLy;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.QuyDinhKyThuat;
+using DLL.Entity.TienIch;
 using DLL.Enums;
 using MailKit.Net.Smtp;
 using ManagementServices.Helper;
@@ -27,6 +29,7 @@ using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLy;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.Repositories.Interfaces.TienIch;
+using Services.ViewModels;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.FormActions;
@@ -37,7 +40,6 @@ using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.TienIch;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
-using Services.ViewModels;
 using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
@@ -50,14 +52,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Authentication;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using System.Security.Authentication;
-using DLL.Entity.TienIch;
-using DLL.Entity.QuanLy;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -14546,10 +14545,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return null;
         }
 
+        /// <summary>
+        /// Update hóa đơn có ngày hóa đơn nhỏ hơn hóa đơn đang phát hành
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task<(bool, List<HoaDonDienTuViewModel>)> UpdateNgayHoaDonBangNgayHoaDonPhatHanhAsync(HoaDonDienTuViewModel model)
         {
             var listHoaDonCoNgayHDNhoHon = await _db.HoaDonDienTus
-                .Where(x => x.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId && !x.SoHoaDon.HasValue && x.NgayHoaDon.Value.Date < model.NgayHoaDon)
+                .Where(x => (model.Children == null || model.Children.Select(y => y.HoaDonDienTuId).Contains(x.HoaDonDienTuId)) && x.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId && (!x.SoHoaDon.HasValue || (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.ChuaKyDienTu) || (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KyDienTuLoi)) && x.NgayHoaDon.Value.Date < model.NgayHoaDon)
                 .ToListAsync();
 
             var _tuyChons = await _TuyChonService.GetAllAsync();
@@ -15957,6 +15961,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 pagingParams.PageSize = await query.CountAsync();
             }
 
+            var boKyHieuHoaDonIds = await query.Select(x => x.BoKyHieuHoaDonId).Distinct().ToListAsync();
+            var groupHoaDonCoMaMoiNhat = await _db.HoaDonDienTus
+                .Where(x => boKyHieuHoaDonIds.Contains(x.BoKyHieuHoaDonId) && (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa))
+                .GroupBy(x => x.BoKyHieuHoaDonId)
+                .Select(x => new HoaDonDienTuViewModel
+                {
+                    BoKyHieuHoaDonId = x.Key,
+                    NgayHoaDon = x.Max(y => y.NgayHoaDon)
+                })
+                .ToDictionaryAsync(x => x.BoKyHieuHoaDonId);
+
+            if (groupHoaDonCoMaMoiNhat.Any())
+            {
+                query = query
+                   .Where(x => (x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi) ||
+                                ((x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiTCTNLoi) && groupHoaDonCoMaMoiNhat.ContainsKey(x.BoKyHieuHoaDonId) && x.NgayHoaDon >= groupHoaDonCoMaMoiNhat[x.BoKyHieuHoaDonId].NgayHoaDon));
+            }
+
             var result = await PagedList<HoaDonDienTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
 
             var hoaDonDienTuIds = result.Items.Select(x => x.HoaDonDienTuId).ToList();
@@ -15998,11 +16020,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 .Where(x => list.Any(y => y.BoKyHieuHoaDonId == x.BoKyHieuHoaDonId))
                 .ToListAsync();
 
-            var groups = list.GroupBy(x => x.KyHieuHoaDon)
+            var groups = list.GroupBy(x => x.BoKyHieuHoaDonId)
                 .Select(x => new HoaDonDienTuViewModel
                 {
                     Key = Guid.NewGuid().ToString(),
-                    KyHieuHoaDon = x.Key,
+                    BoKyHieuHoaDonId = x.Key,
+                    KyHieuHoaDon = x.First().KyHieuHoaDon,
                     Children = x.ToList()
                 })
                 .OrderBy(x => x.KyHieuHoaDon)
@@ -16011,6 +16034,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             foreach (var group in groups)
             {
                 long? soHoaDon = null;
+
+                group.NgayHoaDon = group.Children.Max(x => x.NgayHoaDon);
+
+                // Có ngày khác nhau
+                if (group.Children.Select(x => x.NgayHoaDon).Distinct().Count() > 1)
+                {
+                    group.HasHoaDonKhacNhau = true;
+                }
+                else
+                {
+                    // Có hóa đơn có ngày nhỏ hơn hóa đơn đang phát hành
+                    group.HasHoaDonNhoHon = await _db.HoaDonDienTus.AnyAsync(x => x.BoKyHieuHoaDonId == group.BoKyHieuHoaDonId && ((x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.ChuaKyDienTu) || (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KyDienTuLoi)) && x.NgayHoaDon.Value.Date < group.Children.Max(y => y.NgayHoaDon));
+                }
 
                 foreach (var child in group.Children)
                 {
@@ -16839,15 +16875,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<List<int>> GetMultiTrangThaiQuyTrinhByIdAsync(List<string> ids)
         {
-            var tasks = new List<Task<int>>();
+            var result = await _db.HoaDonDienTus
+                .Where(x => ids.Contains(x.HoaDonDienTuId))
+                .Select(x => x.TrangThaiQuyTrinh ?? 0)
+                .ToListAsync();
 
-            foreach (var id in ids)
-            {
-                tasks.Add(GetTrangThaiQuyTrinhByIdAsync(id));
-            }
-
-            var result = await Task.WhenAll(tasks);
-            return result.ToList();
+            return result;
         }
 
         public async Task<List<HoaDonDienTuViewModel>> GetMultiByIdAsync(List<string> ids)
@@ -17081,6 +17114,59 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 .ToListAsync();
 
             return hoaDons;
+        }
+
+        /// <summary>
+        /// Update ngày hóa đơn về ngày hiện tại
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task UpdateRangeNgayHoaDonVeNgayHienTaiAsync(List<string> ids)
+        {
+            var listHoaDon = await _db.HoaDonDienTus
+                .Where(x => ids.Contains(x.HoaDonDienTuId) && x.NgayHoaDon.Value.Date != DateTime.Now.Date)
+                .ToListAsync();
+
+            var _tuyChons = await _TuyChonService.GetAllAsync();
+
+            // get dictionary LoaiTien from list HoaDonDienTu
+            var loaiTiens = await _db.LoaiTiens
+                .Where(x => listHoaDon.Select(y => y.LoaiTienId).Contains(x.LoaiTienId))
+                .Select(x => new LoaiTienViewModel
+                {
+                    LoaiTienId = x.LoaiTienId,
+                    Ma = x.Ma
+                })
+                .ToDictionaryAsync(x => x.LoaiTienId);
+
+            var boKyHieuHoaDons = await _db.BoKyHieuHoaDons
+                .Where(x => listHoaDon.Select(y => y.BoKyHieuHoaDonId).Contains(x.BoKyHieuHoaDonId))
+                .Select(x => new BoKyHieuHoaDonViewModel
+                {
+                    BoKyHieuHoaDonId = x.BoKyHieuHoaDonId,
+                    KyHieu = x.KyHieu
+                })
+                .ToDictionaryAsync(x => x.BoKyHieuHoaDonId);
+
+            foreach (var item in listHoaDon)
+            {
+                var tongTienThanhToan = item.TongTienThanhToan.Value.FormatNumberByTuyChon(_tuyChons, loaiTiens[item.LoaiTienId].Ma == "VND" ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+
+                // add to nhatky
+                await _nhatKyTruyCapService.InsertAsync(new NhatKyTruyCapViewModel
+                {
+                    LoaiHanhDong = LoaiHanhDong.CapNhatNgayHoaDon,
+                    RefType = RefType.HoaDonDienTu,
+                    ThamChieu = $"Số hóa đơn {(item.SoHoaDon.HasValue ? item.SoHoaDon.ToString() : "<Chưa cấp số>")}\nNgày hóa đơn {item.NgayHoaDon.Value:dd/MM/yyyy}",
+                    MoTaChiTiet = $"Cập nhật ngày hóa đơn từ {item.NgayHoaDon.Value:dd/MM/yyyy} về ngày {DateTime.Now:dd/MM/yyyy} khi phát hành hóa đơn có ký hiệu {boKyHieuHoaDons[item.BoKyHieuHoaDonId].KyHieu} ngày {DateTime.Now:dd/MM/yyyy} tổng tiền thanh toán {tongTienThanhToan}",
+                    RefId = item.HoaDonDienTuId
+                });
+
+                item.NgayHoaDon = DateTime.Now.Date;
+            }
+
+            await _db.SaveChangesAsync();
         }
     }
 }

@@ -105,6 +105,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<KetQuaCapSoHoaDon> CheckHoaDonPhatHanhAsync(ParamPhatHanhHD @param);
         Task<List<KetQuaCapSoHoaDon>> CheckMultiHoaDonPhatHanhAsync(List<ParamPhatHanhHD> @params);
         Task<(bool, List<HoaDonDienTuViewModel>)> UpdateNgayHoaDonBangNgayHoaDonPhatHanhAsync(HoaDonDienTuViewModel model);
+        Task UpdateRangeNgayHoaDonVeNgayHienTaiAsync(List<string> ids);
         Task<List<HoaDonDienTuViewModel>> GetListHoaDonSaiSotCanThayTheAsync(HoaDonThayTheParams @params);
         Task<ThongKeSoLuongHoaDonCoSaiSotViewModel> ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(byte coThongKeSoLuong);
         Task<int> KiemTraSoLanGuiEmailSaiSotAsync(string hoaDonDienTuId, byte loaiSaiSot);

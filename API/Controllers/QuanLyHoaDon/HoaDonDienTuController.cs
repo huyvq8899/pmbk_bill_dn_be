@@ -1446,5 +1446,24 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.GetKetQuaThucHienPhatHanhDongLoatAsync(ids);
             return Ok(result);
         }
+
+        [HttpPost("UpdateRangeNgayHoaDonVeNgayHienTai")]
+        public async Task<IActionResult> UpdateRangeNgayHoaDonVeNgayHienTai(List<string> ids)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _hoaDonDienTuService.UpdateRangeNgayHoaDonVeNgayHienTaiAsync(ids);
+                    transaction.Commit();
+                    return Ok(true);
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
+        }
     }
 }

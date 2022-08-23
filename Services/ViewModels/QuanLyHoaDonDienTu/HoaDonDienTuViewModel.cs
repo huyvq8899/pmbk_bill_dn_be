@@ -659,6 +659,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool HasError { get; set; }
+
+        [IgnoreLogging]
+        public bool HasHoaDonNhoHon { get; set; }
+
+        [IgnoreLogging]
+        public bool HasHoaDonKhacNhau { get; set; }
     }
 
     public class CotThongBaoSaiSotViewModel
