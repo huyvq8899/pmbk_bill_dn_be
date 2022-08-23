@@ -10153,7 +10153,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.IsNotCreateThayThe == true || (x.HinhThucXoabo != 2 && x.HinhThucXoabo != 5)));
                     }
-
                 }
 
                 if (pagingParams.TimKiemTheo != null)
