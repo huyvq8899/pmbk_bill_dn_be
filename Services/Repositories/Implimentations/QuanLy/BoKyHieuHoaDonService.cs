@@ -1200,6 +1200,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                 if (ndtKhai.LHDSDung.CTu == 1)
                 {
                     result.LoaiHoaDons.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
+                    result.LoaiHoaDons.Add(LoaiHoaDon.PXKHangGuiBanDaiLy);
+                    result.LoaiHoaDons.Add(LoaiHoaDon.PXKKiemVanChuyenNoiBo);
                 }
             }
 
