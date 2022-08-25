@@ -29,6 +29,17 @@ namespace DLL.Configurations.QuanLyHoaDonDienTu
             entity.Property(r => r.TongTienGiamQuyDoi).HasColumnType("decimal(21,6)");
             entity.Property(c => c.EmailTBaoSaiSotKhongPhaiLapHDId).HasMaxLength(36);
             entity.Property(c => c.MaLoaiTien).HasMaxLength(3);
+
+            entity.Property(c => c.CanCuSo).HasMaxLength(255);
+            entity.Property(c => c.Cua).HasMaxLength(400);
+            entity.Property(c => c.DienGiai).HasMaxLength(400);
+            entity.Property(c => c.DiaChiKhoXuatHang).HasMaxLength(400);
+            entity.Property(c => c.HoTenNguoiXuatHang).HasMaxLength(100);
+            entity.Property(c => c.HopDongVanChuyenSo).HasMaxLength(255);
+            entity.Property(c => c.TenNguoiVanChuyen).HasMaxLength(100);
+            entity.Property(c => c.PhuongThucVanChuyen).HasMaxLength(50);
+            entity.Property(c => c.DiaChiKhoNhanHang).HasMaxLength(400);
+            entity.Property(c => c.HoTenNguoiNhanHang).HasMaxLength(100);
         }
     }
 }

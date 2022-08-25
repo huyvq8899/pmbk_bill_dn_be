@@ -56,6 +56,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public decimal? SoLuong { get; set; }
 
         [Currency]
+        [Display(Name = "Số lượng thực nhập")]
+        public decimal? SoLuongNhap { get; set; }
+
+        [Currency]
         [Display(Name = "Đơn giá")]
         public decimal? DonGia { get; set; }
 

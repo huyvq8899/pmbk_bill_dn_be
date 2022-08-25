@@ -115,6 +115,32 @@
         DongTienThanhToan,
         TyGiaHHDV,
         ///////////////////////
-        TongTienChiuThueSuat8
+        TongTienChiuThueSuat8,
+        ///////////////////////
+        CanCuSo,
+        Cua,
+        DiaChiKhoNhanHang,
+        DiaChiKhoXuatHang,
+        VeViecDienGiai,
+        HoTenNguoiNhanHang,
+        HoTenNguoiXuatHang,
+        HopDongVanChuyenSo,
+        NgayCanCu,
+        PhuongThucVanChuyen,
+        TenNguoiVanChuyen,
+        SoLuongNhapXuat,
+        SoLuongNhap,
+        TieuDeKyNguoiLapPhieu,
+        KyGhiRoHoTenNguoiLapPhieu,
+        TieuDeKyNguoiNhanHang,
+        KyGhiRoHoTenNguoiNhanHang,
+        TieuDeKyThuKhoXuat,
+        KyGhiRoHoTenThuKhoXuat,
+        TieuDeKyNguoiVanChuyen,
+        KyGhiRoHoTenNguoiVanChuyen,
+        TieuDeKyThuKhoNhap,
+        KyGhiRoHoTenThuKhoNhap,
+        TieuDeKyThuTruongDonVi,
+        KyGhiRoHoTenThuTruongDonVi
     }
 }

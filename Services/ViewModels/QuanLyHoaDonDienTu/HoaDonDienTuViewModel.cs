@@ -324,7 +324,28 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool? IsLapHoaDonThayThe { get; set; }
-
+        //////////////////////////////////////////////
+        // Phiếu xuất kho
+        public string CanCuSo { get; set; }
+        [Display(Name = "Ngày")]
+        public DateTime? NgayCanCu { get; set; }
+        [Display(Name = "Của")]
+        public string Cua { get; set; }
+        public string DienGiai { get; set; }
+        [Display(Name = "Địa chỉ kho nhận hàng")]
+        public string DiaChiKhoNhanHang { get; set; }
+        [Display(Name = "Họ tên người nhận hàng")]
+        public string HoTenNguoiNhanHang { get; set; }
+        [Display(Name = "Địa chỉ kho xuất hàng")]
+        public string DiaChiKhoXuatHang { get; set; }
+        [Display(Name = "Họ tên người xuất hàng")]
+        public string HoTenNguoiXuatHang { get; set; }
+        [Display(Name = "Hợp đồng vận chuyển số")]
+        public string HopDongVanChuyenSo { get; set; }
+        [Display(Name = "Tên người vận chuyển")]
+        public string TenNguoiVanChuyen { get; set; }
+        [Display(Name = "Phương thức vận chuyển")]
+        public string PhuongThucVanChuyen { get; set; }
         ////////////////////////////////////////////////
         [Currency]
         [Display(Name = "Tổng tiền hàng")]

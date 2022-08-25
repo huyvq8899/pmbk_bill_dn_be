@@ -1,12 +1,7 @@
 ﻿using DLL.Enums;
-using ManagementServices.Helper;
-using Microsoft.AspNetCore.Hosting;
 using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
-using Spire.Pdf;
-using Spire.Pdf.General.Find;
-using Spire.Pdf.Graphics;
 using System;
 using System.Drawing;
 using System.Drawing.Text;
@@ -379,23 +374,11 @@ namespace Services.Helper
         {
             bool isSongNgu = loaiNgonNgu == LoaiNgonNgu.SongNguVA;
 
-            string code = $@"
-                <table border=""1"" style=""border: 1px solid green; width: {(isSongNgu ? 215 : 160)}px; font-size: 11px; margin-left: {(isSongNgu ? 0 : 40)}px;"">
-                    <tr>
-                        <td style=""color: green; padding: 5px; position: relative;"">
-                            <div>Signature Valid</div>
-                            <div>Ký bởi<span style=""font-style: italic; font-size: 10px; display: {(isSongNgu ? "initial" : "none")}"">&nbsp;(Signed By)</span>:</div>
-                            <div>Ký ngày<span style=""font-style: italic; font-size: 10px; display: {(isSongNgu ? "initial" : "none")}"">&nbsp;(Signing Date)</span>:</div>
-                        </td>
-                    </tr>
-                </table>
-            ";
-
             TextSelection selection = doc.FindString(isDigitalSignatureBuyer ? "<digitalSignature_Buyer>" : "<digitalSignature>", true, true);
-            TextRange range = selection.GetAsOneRange();
-            Paragraph paragraph = range.OwnerParagraph;
-            paragraph.ChildObjects.Clear();
-            paragraph.AppendHTML(code);
+            if (selection != null)
+            {
+                CreateSignatureTable(doc, selection, isSongNgu, true);
+            }
         }
 
         /// <summary>
@@ -408,25 +391,12 @@ namespace Services.Helper
         public static void CreateSignatureBox(Document doc, string tenDonVi, LoaiNgonNgu loaiNgonNgu, DateTime? ngayKy, bool isDigitalSignatureBuyer = false)
         {
             bool isSongNgu = loaiNgonNgu == LoaiNgonNgu.SongNguVA;
-            string strNgayKy = (ngayKy ?? DateTime.Now).ToString("yyyy-MM-dd HH:mm:ss");
-
-            string code = $@"
-                <table border=""1"" style=""border: 1px solid green; width: {(isSongNgu ? 215 : 160)}px; font-size: 11px; margin-left: {(isSongNgu ? 0 : 40)}px;"">
-                    <tr>
-                        <td style=""color: green; padding: 5px; position: relative;"">
-                            <div>Signature Valid</div>
-                            <div>Ký bởi<span style=""font-style: italic; font-size: 10px; display: {(isSongNgu ? "initial" : "none")}"">&nbsp;(Signed By)</span>: {tenDonVi}</div>
-                            <div>Ký ngày<span style=""font-style: italic; font-size: 10px; display: {(isSongNgu ? "initial" : "none")}"">&nbsp;(Signing Date)</span>: {strNgayKy}</div>
-                        </td>
-                    </tr>
-                </table>
-            ";
 
             TextSelection selection = doc.FindString(isDigitalSignatureBuyer ? "<digitalSignature_Buyer>" : "<digitalSignature>", true, true);
-            TextRange range = selection.GetAsOneRange();
-            Paragraph paragraph = range.OwnerParagraph;
-            paragraph.ChildObjects.Clear();
-            paragraph.AppendHTML(code);
+            if (selection != null)
+            {
+                CreateSignatureTable(doc, selection, isSongNgu, false, tenDonVi, ngayKy);
+            }
         }
 
         /// <summary>
@@ -438,28 +408,80 @@ namespace Services.Helper
         /// <param name="ngayKy"></param>
         public static void CreateSignatureBox(Document doc, string tenDonVi, DateTime? ngayKy, string keyToReplace)
         {
-            string strNgayKy = (ngayKy ?? DateTime.Now).ToString("yyyy-MM-dd HH:mm:ss");
-
-            string code = $@"
-                <table border=""1"" style=""border: 1px solid green; width: 160px; font-size: 11px; margin-left: 80px;"">
-                    <tr>
-                        <td style=""color: green; padding: 5px; position: relative;"">
-                            <div>Signature Valid</div>
-                            <div>Ký bởi: {tenDonVi}</div>
-                            <div>Ký ngày: {strNgayKy}</div>
-                        </td>
-                    </tr>
-                </table>
-            ";
-
             TextSelection selection = doc.FindString(keyToReplace, true, true);
             if (selection != null)
             {
-                TextRange range = selection.GetAsOneRange();
-                Paragraph paragraph = range.OwnerParagraph;
-                paragraph.ChildObjects.Clear();
-                paragraph.AppendHTML(code);
+                CreateSignatureTable(doc, selection, false, false, tenDonVi, ngayKy);
             }
+        }
+
+        private static void CreateSignatureTable(Document doc, TextSelection selection, bool isSongNgu, bool isEmpty, string tenDonVi = null, DateTime? ngayKy = null)
+        {
+            TextRange range = selection.GetAsOneRange();
+            Paragraph paragraph = range.OwnerParagraph;
+
+            ParagraphStyle style = new ParagraphStyle(doc)
+            {
+                Name = $"FontStyle-{Guid.NewGuid()}"
+            };
+            style.CharacterFormat.FontSize = 9;
+            style.CharacterFormat.TextColor = Color.Green;
+            doc.Styles.Add(style);
+
+            int index = paragraph.Owner.ChildObjects.IndexOf(paragraph);
+            Table table = new Table(doc, true);
+            table.ResetCells(1, 1);
+            var cell = table.Rows[0].Cells[0];
+            cell.Width = isSongNgu ? 180 : 135;
+            cell.Paragraphs.Clear();
+            for (int i = 1; i <= 3; i++)
+            {
+                var childPar = cell.AddParagraph();
+                childPar.ApplyStyle(style.Name);
+
+                if (i == 1)
+                {
+                    childPar.AppendText("Signature Valid");
+                }
+                else if (i == 2)
+                {
+                    childPar.AppendText("Ký bởi");
+                    if (isSongNgu)
+                    {
+                        TextRange textRange = childPar.AppendText(" (Signed By)");
+                        textRange.CharacterFormat.Italic = true;
+                        textRange.CharacterFormat.FontSize = 8;
+                    }
+                    childPar.AppendText(": ");
+                    if (!string.IsNullOrEmpty(tenDonVi))
+                    {
+                        childPar.AppendText(tenDonVi);
+                    }
+                }
+                else
+                {
+                    childPar.AppendText("Ký ngày");
+                    if (isSongNgu)
+                    {
+                        TextRange textRange = childPar.AppendText(" (Signing Date)");
+                        textRange.CharacterFormat.Italic = true;
+                        textRange.CharacterFormat.FontSize = 8;
+                    }
+                    childPar.AppendText(": ");
+                    if (!isEmpty)
+                    {
+                        string strNgayKy = (ngayKy ?? DateTime.Now).ToString("yyyy-MM-dd HH:mm:ss");
+                        childPar.AppendText(strNgayKy);
+                    }
+                }
+            }
+
+            table.TableFormat.HorizontalAlignment = RowAlignment.Center;
+            table.TableFormat.Borders.Color = Color.Green;
+            table.TableFormat.Paddings.Top = 3;
+            table.TableFormat.Paddings.Bottom = 3;
+            paragraph.Owner.ChildObjects.Insert(index, table);
+            paragraph.Owner.ChildObjects.RemoveAt(index + 1);
         }
     }
 }

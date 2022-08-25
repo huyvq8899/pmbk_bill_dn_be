@@ -1324,6 +1324,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             //LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
                             LyDoThayTheModel = string.IsNullOrEmpty(hd.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe),
                             GhiChuThayTheSaiSot = hd.GhiChuThayTheSaiSot,
+                            // pxk
+                            CanCuSo = hd.CanCuSo,
+                            NgayCanCu = hd.NgayCanCu,
+                            Cua = hd.Cua,
+                            DienGiai = hd.DienGiai,
+                            DiaChiKhoNhanHang = hd.DiaChiKhoNhanHang,
+                            HoTenNguoiNhanHang = hd.HoTenNguoiNhanHang,
+                            DiaChiKhoXuatHang = hd.DiaChiKhoXuatHang,
+                            HoTenNguoiXuatHang = hd.HoTenNguoiXuatHang,
+                            HopDongVanChuyenSo = hd.HopDongVanChuyenSo,
+                            TenNguoiVanChuyen = hd.TenNguoiVanChuyen,
+                            PhuongThucVanChuyen = hd.PhuongThucVanChuyen,
                             HoaDonChiTiets = (
                                                from hdct in _db.HoaDonDienTuChiTiets
                                                join hd in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hd.HoaDonDienTuId into tmpHoaDons
@@ -1363,6 +1375,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                        Ten = dvt.Ten
                                                    } : null,
                                                    SoLuong = hdct.SoLuong,
+                                                   SoLuongNhap = hdct.SoLuongNhap,
                                                    DonGia = hdct.DonGia,
                                                    DonGiaSauThue = hdct.DonGiaSauThue,
                                                    DonGiaQuyDoi = hdct.DonGiaQuyDoi,
@@ -3524,6 +3537,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MaTraCuu.GenerateKeyTag(), hd.MaTraCuu ?? string.Empty, true, true);
 
+                // PXK
+                doc.Replace(LoaiChiTietTuyChonNoiDung.CanCuSo.GenerateKeyTag(), hd.CanCuSo ?? string.Empty, true, true);
+                doc.Replace("<ddPXK>", hd.NgayCanCu.HasValue ? hd.NgayCanCu.Value.Day.ToString() : string.Empty, true, true);
+                doc.Replace("<mmPXK>", hd.NgayCanCu.HasValue ? hd.NgayCanCu.Value.Month.ToString() : string.Empty, true, true);
+                doc.Replace("<yyyyPXK>", hd.NgayCanCu.HasValue ? hd.NgayCanCu.Value.Year.ToString() : string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.Cua.GenerateKeyTag(), hd.Cua ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.VeViecDienGiai.GenerateKeyTag(), hd.DienGiai ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.TenNguoiVanChuyen.GenerateKeyTag(), hd.TenNguoiVanChuyen ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.HopDongVanChuyenSo.GenerateKeyTag(), hd.HopDongVanChuyenSo ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.PhuongThucVanChuyen.GenerateKeyTag(), hd.PhuongThucVanChuyen ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiKhoXuatHang.GenerateKeyTag(), hd.DiaChiKhoXuatHang ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiKhoNhanHang.GenerateKeyTag(), hd.DiaChiKhoNhanHang ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiXuatHang.GenerateKeyTag(), hd.HoTenNguoiXuatHang ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiNhanHang.GenerateKeyTag(), hd.HoTenNguoiNhanHang ?? string.Empty, true, true);
+
                 if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true)
                 {
                     if (hd.IsCapMa == true || hd.IsPhatHanh == true)
@@ -3938,8 +3966,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                                 else
                                 {
+                                    par.SetValuePar2(models[i].MaHang, LoaiChiTietTuyChonNoiDung.MaHang);
                                     par.SetValuePar2(models[i].TenDonViTinh, LoaiChiTietTuyChonNoiDung.DonViTinh);
                                     par.SetValuePar2(models[i].SoLuong.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG), LoaiChiTietTuyChonNoiDung.SoLuong);
+                                    par.SetValuePar2((models[i].SoLuongNhap ?? 0).FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG), LoaiChiTietTuyChonNoiDung.SoLuongNhap);
                                     par.SetValuePar2(models[i].DonGia.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.DonGia);
                                     par.SetValuePar2(models[i].ThanhTien.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.ThanhTien);
                                     par.SetValuePar2(models[i].TyLeChietKhau.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE), LoaiChiTietTuyChonNoiDung.TyLeChietKhauHHDV);
@@ -4242,6 +4272,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace(LoaiChiTietTuyChonNoiDung.DongTienThanhToan.GenerateKeyTag(), maLoaiTien, true, true);
 
             doc.Replace(LoaiChiTietTuyChonNoiDung.MaTraCuu.GenerateKeyTag(), hd.MaTraCuu ?? string.Empty, true, true);
+
+            // PXK
+            doc.Replace(LoaiChiTietTuyChonNoiDung.CanCuSo.GenerateKeyTag(), hd.CanCuSo ?? string.Empty, true, true);
+            doc.Replace("<ddPXK>", hd.NgayCanCu.HasValue ? hd.NgayCanCu.Value.Day.ToString() : string.Empty, true, true);
+            doc.Replace("<mmPXK>", hd.NgayCanCu.HasValue ? hd.NgayCanCu.Value.Month.ToString() : string.Empty, true, true);
+            doc.Replace("<yyyyPXK>", hd.NgayCanCu.HasValue ? hd.NgayCanCu.Value.Year.ToString() : string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.Cua.GenerateKeyTag(), hd.Cua ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.VeViecDienGiai.GenerateKeyTag(), hd.DienGiai ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.TenNguoiVanChuyen.GenerateKeyTag(), hd.TenNguoiVanChuyen ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.HopDongVanChuyenSo.GenerateKeyTag(), hd.HopDongVanChuyenSo ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.PhuongThucVanChuyen.GenerateKeyTag(), hd.PhuongThucVanChuyen ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiKhoXuatHang.GenerateKeyTag(), hd.DiaChiKhoXuatHang ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiKhoNhanHang.GenerateKeyTag(), hd.DiaChiKhoNhanHang ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiXuatHang.GenerateKeyTag(), hd.HoTenNguoiXuatHang ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiNhanHang.GenerateKeyTag(), hd.HoTenNguoiNhanHang ?? string.Empty, true, true);
 
             doc.Replace("<convertor>", @params.NguoiChuyenDoi ?? string.Empty, true, true);
             doc.Replace("<conversionDateValue>", @params.NgayChuyenDoi.Value.ToString("dd/MM/yyyy") ?? string.Empty, true, true);
@@ -4626,8 +4671,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                         else
                         {
+                            par.SetValuePar2(models[i].MaHang, LoaiChiTietTuyChonNoiDung.MaHang);
                             par.SetValuePar2(models[i].TenDonViTinh, LoaiChiTietTuyChonNoiDung.DonViTinh);
                             par.SetValuePar2(models[i].SoLuong.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG), LoaiChiTietTuyChonNoiDung.SoLuong);
+                            par.SetValuePar2((models[i].SoLuongNhap ?? 0).FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG), LoaiChiTietTuyChonNoiDung.SoLuongNhap);
                             par.SetValuePar2(models[i].DonGia.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.DonGia);
                             par.SetValuePar2(models[i].ThanhTien.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.ThanhTien);
                             par.SetValuePar2(models[i].TyLeChietKhau.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE), LoaiChiTietTuyChonNoiDung.TyLeChietKhauHHDV);
@@ -14460,6 +14507,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             $"{kyKeKhai} {currentKy}. Vui lòng kiểm tra lại!"
                         };
                     }
+                }
+
+                if (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8)
+                {
+                    hoaDon.LoaiHoaDon = 6;
                 }
 
                 // get thông tin hóa đơn

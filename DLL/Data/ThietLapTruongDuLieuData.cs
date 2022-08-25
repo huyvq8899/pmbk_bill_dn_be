@@ -1196,6 +1196,1077 @@ namespace DLL.Data
             return data;
         }
 
+        public List<ThietLapTruongDuLieu> InitDataPXK()
+        {
+            HoaDonDienTu hoaDonDienTu = new HoaDonDienTu();
+            HoaDonDienTuChiTiet hoaDonDienTuChiTiet = new HoaDonDienTuChiTiet();
+            const string SoNgay = "SoNgay";
+            const string KhachHang = "KhachHang";
+            const string HinhThucUyNhiemLapHoaDon = "HinhThucUyNhiemLapHoaDon";
+            const string PhuongThucChuyenDuLieu = "PhuongThucChuyenDuLieu";
+            const string ThongTinTaoCapNhat = "ThongTinTaoCapNhat";
+            const string NhanVienBanHang = "NhanVienBanHang";
+            const string DonViTinh = nameof(DonViTinh);
+            const string HinhThucHoaDon = nameof(HinhThucHoaDon);
+            const string UyNhiemLapHoaDon = nameof(UyNhiemLapHoaDon);
+            const string HinhThucDieuChinh = nameof(HinhThucDieuChinh);
+            const string TrangThaiThoaThuan = nameof(TrangThaiThoaThuan);
+            const string ThongTinTao = nameof(ThongTinTao);
+            const string ThongTinCapNhat = nameof(ThongTinCapNhat);
+            const string ThongTinSaiSot = nameof(ThongTinSaiSot);
+            const string LenhDieuDongHopDongKinhTe = nameof(LenhDieuDongHopDongKinhTe);
+            const string VeViecDienGiai = nameof(VeViecDienGiai);
+            const string ThongTinXuatHang = nameof(ThongTinXuatHang);
+            const string ThongTinVanChuyen = nameof(ThongTinVanChuyen);
+
+            #region data
+            List<ThietLapTruongDuLieu> data = new List<ThietLapTruongDuLieu>
+            {
+                new ThietLapTruongDuLieu
+                 {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.KyHieu),
+                    TenTruong = "Ký hiệu mẫu số hóa đơn/Ký hiệu hóa đơn",
+                    TenTruongHienThi = "Ký hiệu",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 100,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = SoNgay,
+                    TenTruong = "Số hóa đơn/Ngày hóa đơn",
+                    TenTruongHienThi = "Số/Ngày",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.None,
+                    GhiChu = null,
+                    DoRong = 130,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.MaKhachHang),
+                    TenTruong = "Mã khách hàng",
+                    TenTruongHienThi = "Mã đơn vị nhận hàng/Mã đại lý",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 140,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = KhachHang,
+                    TenTruong = "Người mua hàng/Mã số thuế/Tên khách hàng",
+                    TenTruongHienThi = "Đơn vị nhận hàng/Đại lý",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 450,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.DiaChi),
+                    TenTruong = "Địa chỉ",
+                    TenTruongHienThi = "Địa chỉ kho nhận hàng",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 200,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TrangThai),
+                    TenTruong = "Trạng thái hóa đơn/Mã tra cứu",
+                    TenTruongHienThi = "Trạng thái PXK",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 250,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TrangThaiQuyTrinh),
+                    TenTruong = "Trạng thái quy trình/Mã CQT cấp",
+                    TenTruongHienThi = "Trạng thái quy trình",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 210,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TongTienThanhToan),
+                    TenTruong = "Tổng tiền thanh toán/Loại tiền",
+                    TenTruongHienThi = "Tổng tiền thanh toán",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.None,
+                    GhiChu = null,
+                    DoRong = 170,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TrangThaiGuiHoaDon),
+                    TenTruong = "Trạng thái gửi hóa đơn",
+                    TenTruongHienThi = "Gửi PXK",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 100,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.HoTenNguoiNhanHD),
+                    TenTruong = "Tên người nhận",
+                    TenTruongHienThi = "Tên người nhận",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 180,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.EmailNguoiNhanHD),
+                    TenTruong = "Email người nhận",
+                    TenTruongHienThi = "Email người nhận",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 180,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.SoDienThoaiNguoiNhanHD),
+                    TenTruong = "Số điện thoại người nhận",
+                    TenTruongHienThi = "Số điện thoại người nhận",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 180,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.SoLanChuyenDoi),
+                    TenTruong = "Số lần chuyển thành hóa đơn giấy",
+                    TenTruongHienThi = "Chuyển đổi",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.SoLuong,
+                    GhiChu = null,
+                    DoRong = 120,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TaiLieuDinhKem),
+                    TenTruong = "Đính kèm",
+                    TenTruongHienThi = "Đính kèm",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 80,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.LyDoXoaBo),
+                    TenTruong = "Lý do xóa bỏ",
+                    TenTruongHienThi = "Lý do xóa bỏ",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 150,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(ThongTinSaiSot),
+                    TenTruong = "Thông báo hóa đơn điện tử có sai sót",
+                    TenTruongHienThi = "Thông báo PXK điện tử có sai sót",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 380,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = NhanVienBanHang,
+                    TenTruong = "NV bán hàng",
+                    TenTruongHienThi = "NV bán hàng",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 130,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = HinhThucUyNhiemLapHoaDon,
+                    TenTruong = "Hình thức hóa đơn/Ủy nhiệm lập hóa đơn",
+                    TenTruongHienThi = "Hình thức/Ủy nhiệm lập PXK",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 200,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = PhuongThucChuyenDuLieu,
+                    TenTruong = "Phương thức chuyển dữ liệu",
+                    TenTruongHienThi = "Phương thức chuyển dữ liệu",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 230,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.LoaiHoaDon),
+                    TenTruong = "Loại hóa đơn",
+                    TenTruongHienThi = "Loại PXK",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 150,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = LenhDieuDongHopDongKinhTe,
+                    TenTruong = "Lệnh điều động/Hợp đồng kinh tế",
+                    TenTruongHienThi = "Lệnh điều động/Hợp đồng kinh tế",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 200,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = VeViecDienGiai,
+                    TenTruong = "Về việc/Diễn giải",
+                    TenTruongHienThi = "Về việc/Diễn giải",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 200,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = ThongTinXuatHang,
+                    TenTruong = "Thông tin xuất hàng",
+                    TenTruongHienThi = "Thông tin xuất hàng",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 200,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = ThongTinVanChuyen,
+                    TenTruong = "Thông tin vận chuyển",
+                    TenTruongHienThi = "Thông tin vận chuyển",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 200,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.LoaiChungTu),
+                    TenTruong = "Loại chứng từ",
+                    TenTruongHienThi = "Loại chứng từ",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 150,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = ThongTinTaoCapNhat,
+                    TenTruong = "Thông tin tạo/Thông tin cập nhật",
+                    TenTruongHienThi = "Thông tin tạo/cập nhật",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Ngay,
+                    GhiChu = null,
+                    DoRong = 170,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung1),
+                    TenTruong = "Trường thông tin bổ sung 1",
+                    TenTruongHienThi = "Trường thông tin bổ sung 1",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 180,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung2),
+                    TenTruong = "Trường thông tin bổ sung 2",
+                    TenTruongHienThi = "Trường thông tin bổ sung 2",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 180,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung3),
+                    TenTruong = "Trường thông tin bổ sung 3",
+                    TenTruongHienThi = "Trường thông tin bổ sung 3",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 180,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung4),
+                    TenTruong = "Trường thông tin bổ sung 4",
+                    TenTruongHienThi = "Trường thông tin bổ sung 4",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 180,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung5),
+                    TenTruong = "Trường thông tin bổ sung 5",
+                    TenTruongHienThi = "Trường thông tin bổ sung 5",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 180,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung6),
+                    TenTruong = "Trường thông tin bổ sung 6",
+                    TenTruongHienThi = "Trường thông tin bổ sung 6",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 180,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung7),
+                    TenTruong = "Trường thông tin bổ sung 7",
+                    TenTruongHienThi = "Trường thông tin bổ sung 7",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 180,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung8),
+                    TenTruong = "Trường thông tin bổ sung 8",
+                    TenTruongHienThi = "Trường thông tin bổ sung 8",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 180,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung9),
+                    TenTruong = "Trường thông tin bổ sung 9",
+                    TenTruongHienThi = "Trường thông tin bổ sung 9",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 180,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung10),
+                    TenTruong = "Trường thông tin bổ sung 10",
+                    TenTruongHienThi = "Trường thông tin bổ sung 10",
+                    LoaiHoaDon = LoaiHoaDon.PhieuXuatKho,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 180,
+                    HienThi = false
+                },
+                //-------------------------- thong tin bo sung ----------------------------
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung1),
+                    TenTruong = "Trường thông tin bổ sung 1",
+                    TenTruongHienThi = "Trường thông tin bổ sung 1",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = null,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung2),
+                    TenTruong = "Trường thông tin bổ sung 2",
+                    TenTruongHienThi = "Trường thông tin bổ sung 2",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = null,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung3),
+                    TenTruong = "Trường thông tin bổ sung 3",
+                    TenTruongHienThi = "Trường thông tin bổ sung 3",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = null,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung4),
+                    TenTruong = "Trường thông tin bổ sung 4",
+                    TenTruongHienThi = "Trường thông tin bổ sung 4",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = null,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung5),
+                    TenTruong = "Trường thông tin bổ sung 5",
+                    TenTruongHienThi = "Trường thông tin bổ sung 5",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = null,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung6),
+                    TenTruong = "Trường thông tin bổ sung 6",
+                    TenTruongHienThi = "Trường thông tin bổ sung 6",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = null,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung7),
+                    TenTruong = "Trường thông tin bổ sung 7",
+                    TenTruongHienThi = "Trường thông tin bổ sung 7",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = null,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung8),
+                    TenTruong = "Trường thông tin bổ sung 8",
+                    TenTruongHienThi = "Trường thông tin bổ sung 8",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = null,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung9),
+                    TenTruong = "Trường thông tin bổ sung 9",
+                    TenTruongHienThi = "Trường thông tin bổ sung 9",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = null,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung10),
+                    TenTruong = "Trường thông tin bổ sung 10",
+                    TenTruongHienThi = "Trường thông tin bổ sung 10",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = null,
+                    HienThi = true
+                },
+                // ---------------------------- thong tin mo rong ---------------------------------
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.STT),
+                    TenTruong = "STT",
+                    TenTruongHienThi = "STT",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.SoLuong,
+                    GhiChu = null,
+                    DoRong = 50,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.MaHang),
+                    TenTruong = "Mã hàng",
+                    TenTruongHienThi = "Mã hàng",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 130,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.TenHang),
+                    TenTruong = "Tên hàng",
+                    TenTruongHienThi = "Tên hàng",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 170,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.TinhChat),
+                    TenTruong = "Tính chất",
+                    TenTruongHienThi = "Tính chất",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.SoLuong,
+                    GhiChu = null,
+                    DoRong = 140,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.MaQuyCach),
+                    TenTruong = "Mã quy cách",
+                    TenTruongHienThi = "Mã quy cách",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 100,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = DonViTinh,
+                    TenTruong = "ĐVT",
+                    TenTruongHienThi = "ĐVT",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 100,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.SoLuong),
+                    TenTruong = "Số lượng thực xuất",
+                    TenTruongHienThi = "Số lượng thực xuất",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.SoLuong,
+                    GhiChu = null,
+                    DoRong = 150,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.SoLuongNhap),
+                    TenTruong = "Số lượng thực nhập",
+                    TenTruongHienThi = "Số lượng thực nhập",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.SoLuong,
+                    GhiChu = null,
+                    DoRong = 150,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.DonGia),
+                    TenTruong = "Đơn giá",
+                    TenTruongHienThi = "Đơn giá",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.TienTe,
+                    GhiChu = null,
+                    DoRong = 130,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.ThanhTien),
+                    TenTruong = "Thành tiền",
+                    TenTruongHienThi = "Thành tiền",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.TienTe,
+                    GhiChu = null,
+                    DoRong = 150,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.ThanhTienQuyDoi),
+                    TenTruong = "Thành tiền quy đổi",
+                    TenTruongHienThi = "Thành tiền quy đổi",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.TienTe,
+                    GhiChu = null,
+                    DoRong = 150,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.SoLo),
+                    TenTruong = "Số lô",
+                    TenTruongHienThi = "Số lô",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 130,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.HanSuDung),
+                    TenTruong = "Hạn sử dụng",
+                    TenTruongHienThi = "Hạn sử dụng",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Ngay,
+                    GhiChu = null,
+                    DoRong = 130,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.SoKhung),
+                    TenTruong = "Số khung",
+                    TenTruongHienThi = "Số khung",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 130,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.SoMay),
+                    TenTruong = "Số máy",
+                    TenTruongHienThi = "Số máy",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 130,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.XuatBanPhi),
+                    TenTruong = "Xuất bản phí",
+                    TenTruongHienThi = "Xuất bản phí",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 130,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.GhiChu),
+                    TenTruong = "Ghi chú",
+                    TenTruongHienThi = "Ghi chú",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 150,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.TruongMoRongChiTiet1),
+                    TenTruong = "Trường mở rộng chi tiết số 1",
+                    TenTruongHienThi = "Trường mở rộng chi tiết số 1",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 170,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.TruongMoRongChiTiet2),
+                    TenTruong = "Trường mở rộng chi tiết số 2",
+                    TenTruongHienThi = "Trường mở rộng chi tiết số 2",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 170,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.TruongMoRongChiTiet3),
+                    TenTruong = "Trường mở rộng chi tiết số 3",
+                    TenTruongHienThi = "Trường mở rộng chi tiết số 3",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 170,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.TruongMoRongChiTiet4),
+                    TenTruong = "Trường mở rộng chi tiết số 4",
+                    TenTruongHienThi = "Trường mở rộng chi tiết số 4",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 170,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.TruongMoRongChiTiet5),
+                    TenTruong = "Trường mở rộng chi tiết số 5",
+                    TenTruongHienThi = "Trường mở rộng chi tiết số 5",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 170,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.TruongMoRongChiTiet6),
+                    TenTruong = "Trường mở rộng chi tiết số 6",
+                    TenTruongHienThi = "Trường mở rộng chi tiết số 6",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 170,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.TruongMoRongChiTiet7),
+                    TenTruong = "Trường mở rộng chi tiết số 7",
+                    TenTruongHienThi = "Trường mở rộng chi tiết số 7",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 170,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.TruongMoRongChiTiet8),
+                    TenTruong = "Trường mở rộng chi tiết số 8",
+                    TenTruongHienThi = "Trường mở rộng chi tiết số 8",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 170,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.TruongMoRongChiTiet9),
+                    TenTruong = "Trường mở rộng chi tiết số 9",
+                    TenTruongHienThi = "Trường mở rộng chi tiết số 9",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 170,
+                    HienThi = false
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    TenCot = nameof(hoaDonDienTuChiTiet.TruongMoRongChiTiet10),
+                    TenTruong = "Trường mở rộng chi tiết số 10",
+                    TenTruongHienThi = "Trường mở rộng chi tiết số 10",
+                    LoaiHoaDon = LoaiHoaDon.PXKKiemVanChuyenNoiBo,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 170,
+                    HienThi = false
+                },
+            };
+            #endregion
+
+            // Nhóm bảng kê
+            var nhomBangKes = data.Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomBangKe).ToList();
+            for (int i = 1; i <= nhomBangKes.Count; i++)
+            {
+                nhomBangKes[i - 1].STT = i;
+            }
+
+            // Nhóm tab
+            var nhomThongTinNguoiMuaGTGTs = data.Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomThongTinNguoiMua).ToList();
+            for (int i = 1; i <= nhomThongTinNguoiMuaGTGTs.Count; i++)
+            {
+                ThietLapTruongDuLieu item = nhomThongTinNguoiMuaGTGTs[i - 1];
+                item.STT = i;
+
+                var cloneGuiBanDaiLy = (ThietLapTruongDuLieu)item.Clone();
+                cloneGuiBanDaiLy.ThietLapTruongDuLieuId = Guid.NewGuid().ToString();
+                cloneGuiBanDaiLy.LoaiHoaDon = LoaiHoaDon.PXKHangGuiBanDaiLy;
+                data.Add(cloneGuiBanDaiLy);
+            }
+
+            // Nhóm hàng hóa dịch vụ
+            var nhomHHDVGTGTs = data.Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomHangHoaDichVu && x.TenCot != nameof(hoaDonDienTuChiTiet.SoLuongNhap)).ToList();
+            for (int i = 1; i <= nhomHHDVGTGTs.Count; i++)
+            {
+                ThietLapTruongDuLieu item = nhomHHDVGTGTs[i - 1];
+                item.MaTruong = $"HHDV {i}";
+                item.STT = i;
+
+                var cloneGuiBanDaiLy = (ThietLapTruongDuLieu)item.Clone();
+                cloneGuiBanDaiLy.ThietLapTruongDuLieuId = Guid.NewGuid().ToString();
+                cloneGuiBanDaiLy.LoaiHoaDon = LoaiHoaDon.PXKHangGuiBanDaiLy;
+
+                if (cloneGuiBanDaiLy.TenCot == nameof(hoaDonDienTuChiTiet.SoLuong))
+                {
+                    cloneGuiBanDaiLy.TenCot = "Số lượng";
+                    cloneGuiBanDaiLy.TenTruongHienThi = "Số lượng";
+                    cloneGuiBanDaiLy.DoRong = 100;
+                }
+
+                data.Add(cloneGuiBanDaiLy);
+            }
+
+            return data;
+        }
+
         public string QueryInsertIsMatHangDuocGiam()
         {
             var hoaDonDienTuChiTiet = new HoaDonDienTuChiTiet();
@@ -1224,6 +2295,13 @@ namespace DLL.Data
         public string QueryInsertData()
         {
             var list = InitData();
+            var result = Query(list);
+            return result;
+        }
+
+        public string QueryInsertDataPXK()
+        {
+            var list = InitDataPXK();
             var result = Query(list);
             return result;
         }

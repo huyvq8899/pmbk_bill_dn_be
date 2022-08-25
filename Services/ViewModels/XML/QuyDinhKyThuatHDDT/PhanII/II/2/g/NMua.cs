@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g
 {
     public partial class NMua
     {

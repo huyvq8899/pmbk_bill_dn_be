@@ -1,9 +1,10 @@
-﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a;
+﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.c
 {
     public partial class TTChung
     {
@@ -55,7 +56,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         /// </summary>
         [Required]
         [MaxLength(8)]
-        public long? SHDon { get; set; }
+        public int? SHDon { get; set; }
 
         /// <summary>
         /// <para>Ngày lập</para>
@@ -85,13 +86,31 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         public decimal? TGia { get; set; }
 
         /// <summary>
-        /// <para>Mã số thuế tổ chức cung cấp giải pháp hóa đơn điện tử</para>
+        /// <para>Hình thức thanh toán</para>
+        /// <para>Độ dài tối đa: 1</para>
+        /// <para>Kiểu dữ liệu: Số (Chi tiết tại Phụ lục XI kèm theo Quy định này)</para>
+        /// <para>Không bắt buộc</para>
+        /// </summary>
+        [MaxLength(1)]
+        public HTTToan HTTToan { get; set; }
+
+        /// <summary>
+        /// <para>Tên hình thức thanh toán khác</para>
+        /// <para>Độ dài tối đa: 50</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Không bắt buộc (Bắt buộc trong trường hợp hình thức thanh toán là khác)</para>
+        /// </summary>
+        [MaxLength(50)]
+        public string THTTTKhac { get; set; }
+
+        /// <summary>
+        /// <para>Mã số thuế đơn vị cung cấp hóa đơn điện tử</para>
         /// <para>Độ dài tối đa: 14</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
         [MaxLength(14)]
-        public string MSTTCGP { get; set; }
+        public string MSTDVCCHDDTu { get; set; }
 
         public TTHDLQuan TTHDLQuan { get; set; }
 

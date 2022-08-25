@@ -7,10 +7,10 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
     public partial class NMua
     {
         /// <summary>
-        /// <para>Tên (Người mua tài sản NN)</para>
+        /// <para>Tên</para>
         /// <para>Độ dài tối đa: 400</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc (Đối với trường hợp  người mua là cơ quan, tổ chức, đơn vị, doanh nghiệp)</para>
+        /// <para>Bắt buộc (Đối với trường hợp quy định tại điểm a, khoản 5 Điều 10, Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
         [MaxLength(400)]
         public string Ten { get; set; }
@@ -19,25 +19,16 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         /// <para>Mã số thuế</para>
         /// <para>Độ dài tối đa: 14</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc (Đối với trường hợp  người mua là cơ quan, tổ chức, đơn vị, doanh nghiệp không có Mã đơn vị quan hệ ngân sách)</para>
+        /// <para>Bắt buộc (Đối với trường hợp quy định tại điểm a, khoản 5 Điều 10, Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
         [MaxLength(14)]
         public string MST { get; set; }
 
         /// <summary>
-        /// <para>Mã đơn vị quan hệ ngân sách (Mã số đơn vị có quan hệ với ngân sách của đơn vị)</para>
-        /// <para>Độ dài tối đa: 7</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc (Đối với trường hợp  người mua là cơ quan, tổ chức, đơn vị, doanh nghiệp không có Mã số thuế)</para>
-        /// </summary>
-        [MaxLength(7)]
-        public string MDVQHNSach { get; set; }
-
-        /// <summary>
         /// <para>Địa chỉ</para>
         /// <para>Độ dài tối đa: 400</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc (Đối với trường hợp người mua là cơ quan, tổ chức, đơn vị, doanh nghiệp)</para>
+        /// <para>Bắt buộc (Đối với trường hợp quy định tại điểm a, khoản 5 Điều 10, Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
         [MaxLength(400)]
         public string DChi { get; set; }
@@ -64,10 +55,19 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         /// <para>Họ và tên người mua hàng</para>
         /// <para>Độ dài tối đa: 100</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc (Đối với trường hợp  người mua với tư cách cá nhân)</para>
+        /// <para>Bắt buộc (Đối với trường hợp người mua không có mã số thuế)</para>
         /// </summary>
         [MaxLength(100)]
         public string HVTNMHang { get; set; }
+
+        /// <summary>
+        /// <para>Số CMND/CCCD/ Hộ chiếu</para>
+        /// <para>Độ dài tối đa: 20</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc (Đối với trường hợp người mua không có Mã số thuế)</para>
+        /// </summary>
+        [MaxLength(20)]
+        public string CMND { get; set; }
 
         /// <summary>
         /// <para>Số tài khoản ngân hàng</para>
@@ -86,29 +86,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         /// </summary>
         [MaxLength(400)]
         public string TNHang { get; set; }
-
-        /// <summary>
-        /// <para>Địa điểm vận chuyển hàng đến</para>
-        /// <para>Độ dài tối đa: 400</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc (Đối với trường hợp  tài sản là hàng hóa nhập khẩu bị tịch thu)</para>
-        /// </summary>
-        [MaxLength(400)]
-        public string DDVCHDen { get; set; }
-
-        /// <summary>
-        /// <para>Thời gian vận chuyển hàng đến từ</para>
-        /// <para>Kiểu dữ liệu: Ngày</para>
-        /// <para>Bắt buộc (Đối với trường hợp  tài sản là hàng hóa nhập khẩu bị tịch thu)</para>
-        /// </summary>
-        public string TGVCHDTu { get; set; }
-
-        /// <summary>
-        /// <para>Thời gian vận chuyển hàng đến đến</para>
-        /// <para>Kiểu dữ liệu: Ngày</para>
-        /// <para>Bắt buộc (Đối với trường hợp  tài sản là hàng hóa nhập khẩu bị tịch thu)</para>
-        /// </summary>
-        public string TGVCHDDen { get; set; }
 
         public List<TTin> TTKhac { get; set; }
     }
