@@ -1109,6 +1109,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpPost("ImportPhieuXuatKho")]
+        public async Task<IActionResult> ImportPhieuXuatKho([FromForm] NhapKhauParams @params)
+        {
+            var result = await _hoaDonDienTuService.ImportPhieuXuatKhoAsync(@params);
+            return Ok(result);
+        }
+
         [HttpPost("InsertImportHoaDon")]
         public async Task<IActionResult> InsertImportHoaDon(List<HoaDonDienTuImport> data)
         {

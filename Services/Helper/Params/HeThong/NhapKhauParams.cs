@@ -13,6 +13,99 @@ namespace Services.Helper.Params.HeThong
         public int? FileType { get; set; } // Loại file import: 1 or NULL: excel, 2: xml
         public string BoKyHieuHoaDonId { get; set; }
         public int? LoaiHoaDon { get; set; }
+
+        public List<ImportExcelModel> PXKVanChuyenNoiBos = new List<ImportExcelModel>
+        {
+            new ImportExcelModel { MaCot="NGAYHOADON", TenCot = "NgayHoaDon", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 1", TenCot = "CanCuSo", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 2", TenCot = "NgayCanCu", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 3", TenCot = "Cua", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 4", TenCot = "DienGiai", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 5", TenCot = "DiaChiKhoXuatHang", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 6", TenCot = "HoTenNguoiXuatHang", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 7", TenCot = "HopDongVanChuyenSo", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 8", TenCot = "TenNguoiVanChuyen", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 9", TenCot = "PhuongThucVanChuyen", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 10", TenCot = "MaKhachHang", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 11", TenCot = "TenKhachHang", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 12", TenCot = "MaSoThue", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 13", TenCot = "DiaChiKhoNhanHang", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 14", TenCot = "HoTenNguoiNhanHang", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="LOAITIEN", TenCot = "LoaiTienId", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="TYGIA", TenCot = "TyGia", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="HHDV 2", TenCot = "MaHang", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 3", TenCot = "TenHang", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 4", TenCot = "TinhChat", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 5", TenCot = "MaQuyCach", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 6", TenCot = "DonViTinhId", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 7", TenCot = "SoLuong", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 8", TenCot = "SoLuongNhap", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 9", TenCot = "DonGia", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 10", TenCot = "ThanhTien", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 11", TenCot = "ThanhTienQuyDoi", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 12", TenCot = "SoLo", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 13", TenCot = "HanSuDung", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 14", TenCot = "SoKhung", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 15", TenCot = "SoMay", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 16", TenCot = "XuatBanPhi", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 17", TenCot = "GhiChu", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 18", TenCot = "TruongMoRongChiTiet1", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 19", TenCot = "TruongMoRongChiTiet2", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 20", TenCot = "TruongMoRongChiTiet3", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 21", TenCot = "TruongMoRongChiTiet4", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 22", TenCot = "TruongMoRongChiTiet5", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 23", TenCot = "TruongMoRongChiTiet6", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 24", TenCot = "TruongMoRongChiTiet7", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 25", TenCot = "TruongMoRongChiTiet8", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 26", TenCot = "TruongMoRongChiTiet9", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 27", TenCot = "TruongMoRongChiTiet10", LoaiCot = 2 },
+        };
+
+        public List<ImportExcelModel> PXKVGuiBanDaiLys = new List<ImportExcelModel>
+        {
+            new ImportExcelModel { MaCot="NGAYHOADON", TenCot = "NgayHoaDon", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 1", TenCot = "CanCuSo", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 2", TenCot = "NgayCanCu", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 3", TenCot = "Cua", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 4", TenCot = "DienGiai", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 5", TenCot = "MaKhachHang", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 6", TenCot = "TenKhachHang", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 7", TenCot = "MaSoThue", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 8", TenCot = "DiaChiKhoNhanHang", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 9", TenCot = "HoTenNguoiNhanHang", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 10", TenCot = "DiaChiKhoXuatHang", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 11", TenCot = "HoTenNguoiXuatHang", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 12", TenCot = "HopDongVanChuyenSo", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 13", TenCot = "TenNguoiVanChuyen", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="NM 14", TenCot = "PhuongThucVanChuyen", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="LOAITIEN", TenCot = "LoaiTienId", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="TYGIA", TenCot = "TyGia", LoaiCot = 1 },
+            new ImportExcelModel { MaCot="HHDV 2", TenCot = "MaHang", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 3", TenCot = "TenHang", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 4", TenCot = "TinhChat", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 5", TenCot = "MaQuyCach", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 6", TenCot = "DonViTinhId", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 7", TenCot = "SoLuong", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 8", TenCot = "DonGia", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 9", TenCot = "ThanhTien", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 10", TenCot = "ThanhTienQuyDoi", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 11", TenCot = "SoLo", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 12", TenCot = "HanSuDung", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 13", TenCot = "SoKhung", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 14", TenCot = "SoMay", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 15", TenCot = "XuatBanPhi", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 16", TenCot = "GhiChu", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 17", TenCot = "TruongMoRongChiTiet1", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 18", TenCot = "TruongMoRongChiTiet2", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 19", TenCot = "TruongMoRongChiTiet3", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 20", TenCot = "TruongMoRongChiTiet4", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 21", TenCot = "TruongMoRongChiTiet5", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 22", TenCot = "TruongMoRongChiTiet6", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 23", TenCot = "TruongMoRongChiTiet7", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 24", TenCot = "TruongMoRongChiTiet8", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 25", TenCot = "TruongMoRongChiTiet9", LoaiCot = 2 },
+            new ImportExcelModel { MaCot="HHDV 26", TenCot = "TruongMoRongChiTiet10", LoaiCot = 2 },
+        };
     }
 
     public enum MaTruongDLHDExcel
@@ -276,6 +369,70 @@ namespace Services.Helper.Params.HeThong
             }
         }
 
+        public TruongDLHDExcel(string tenCot)
+        {
+            switch (tenCot)
+            {
+                case "NgayHoaDon":
+                case "MaKhachHang":
+                case "LoaiTienId":
+                case "TyGia":
+                case "NgayCanCu":
+                case "MaHang":
+                case "TinhChat":
+                case "MaQuyCach":
+                case "DonViTinhId":
+                case "SoLuong":
+                case "SoLuongNhap":
+                case "SoLo":
+                case "HanSuDung":
+                case "SoKhung":
+                case "SoMay":
+                case "XuatBanPhi":
+                case "GhiChu":
+                    DoRong = 100;
+                    break;
+                case "CanCuSo":
+                case "Cua":
+                case "DienGiai":
+                case "HoTenNguoiMuaHang":
+                case "HoTenNguoiNhanHang":
+                case "HoTenNguoiXuatHang":
+                case "TenKhachHang":
+                case "DiaChi":
+                case "DiaChiKhoNhanHang":
+                case "DiaChiKhoXuatHang":
+                case "HopDongVanChuyenSo":
+                case "TenNguoiVanChuyen":
+                case "PhuongThucVanChuyen":
+                case "TenHang":
+                    DoRong = 200;
+                    break;
+                case "MaSoThue":
+                    DoRong = 120;
+                    break;
+                case "DonGia":
+                case "ThanhTien":
+                case "ThanhTienQuyDoi":
+                    DoRong = 150;
+                    break;
+                case "TruongMoRongChiTiet1":
+                case "TruongMoRongChiTiet2":
+                case "TruongMoRongChiTiet3":
+                case "TruongMoRongChiTiet4":
+                case "TruongMoRongChiTiet5":
+                case "TruongMoRongChiTiet6":
+                case "TruongMoRongChiTiet7":
+                case "TruongMoRongChiTiet8":
+                case "TruongMoRongChiTiet9":
+                case "TruongMoRongChiTiet10":
+                    DoRong = 170;
+                    break;
+                default:
+                    break;
+            }
+        }
+
         public MaTruongDLHDExcel Ma { get; set; }
         public int ColIndex { get; set; }
         public string TenTruong { get; set; }
@@ -283,6 +440,7 @@ namespace Services.Helper.Params.HeThong
         public string TenTruongExcel { get; set; }
         public string TenEnum { get; set; }
         public int DoRong { get; set; }
+        public string MaTruong { get; set; }
 
 
         public List<EnumModel> GetTruongDLHDExcels()
@@ -296,5 +454,12 @@ namespace Services.Helper.Params.HeThong
                 }).ToList();
             return enums;
         }
+    }
+
+    public class ImportExcelModel
+    {
+        public string MaCot { get; set; }
+        public string TenCot { get; set; }
+        public int LoaiCot { get; set; } // 1: mua hàng, 2: hhdv
     }
 }

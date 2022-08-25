@@ -395,5 +395,35 @@ namespace API.Controllers.DanhMuc
 
             return Ok(false);
         }
+
+        [AllowAnonymous]
+        [HttpPost("ClearOldFormatMauHoaDons")]
+        public async Task<IActionResult> ClearOldFormatMauHoaDons([FromBody] KeyParams param)
+        {
+            if (!string.IsNullOrEmpty(param.KeyString))
+            {
+                string dbString = (param.KeyString).Base64Decode();
+
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, dbString);
+                User.AddClaim(ClaimTypeConstants.DATABASE_NAME, param.DatabaseName);
+
+                using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var result = await _mauHoaDonService.ClearOldFormatMauHoaDonsAsync();
+                        transaction.Commit();
+                        return Ok(result);
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        return Ok(false);
+                    }
+                }
+            }
+
+            return Ok(false);
+        }
     }
 }

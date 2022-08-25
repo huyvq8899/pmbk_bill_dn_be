@@ -95,6 +95,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<ReloadPDFResult> ReloadPDFAsync(ReloadPDFParams @params);
         Task<FileReturn> DowloadXMLAsync(string id);
         Task<NhapKhauResult> ImportHoaDonAsync(NhapKhauParams @params);
+        Task<NhapKhauResult> ImportPhieuXuatKhoAsync(NhapKhauParams @params);
         Task<bool> InsertImportHoaDonAsync(List<HoaDonDienTuImport> data);
         FileReturn CreateFileImportHoaDonError(NhapKhauResult result);
         Task<bool> SendEmailThongBaoSaiThongTinAsync(ParamsSendMailThongBaoSaiThongTin @params);
