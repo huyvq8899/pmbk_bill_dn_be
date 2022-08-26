@@ -12885,7 +12885,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                                 else if (thongTinHoaDon.TrangThaiHoaDon.GetValueOrDefault() == 4) //hóa đơn điều chỉnh
                                 {
-                                    dienGiaiChiTietTrangThai = "&nbsp;|&nbsp;HĐ điều chỉnh bị điều chỉnh";
+                                    dienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hóa đơn điều chỉnh bị điều chỉnh";
                                 }
 
                                 return new CotThongBaoSaiSotViewModel
@@ -16140,7 +16140,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 foreach (var item in hoaDons)
                 {
-                    moTaChiTiets.Add($"Phát hành HĐ {item.SoHoaDon} - {item.MauSo} - {item.KyHieu} - {item.MaTraCuu}");
+                    moTaChiTiets.Add($"Phát hành hóa đơn {item.SoHoaDon} - {item.MauSo} - {item.KyHieu} - {item.MaTraCuu}");
                 }
             }
             if (@params.Any(x => x.HoaDon.HasError == true))
