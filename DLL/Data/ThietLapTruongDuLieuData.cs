@@ -2243,10 +2243,19 @@ namespace DLL.Data
             }
 
             // Nhóm hàng hóa dịch vụ
-            var nhomHHDVGTGTs = data.Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomHangHoaDichVu && x.TenCot != nameof(hoaDonDienTuChiTiet.SoLuongNhap)).ToList();
+            var nhomHHDVGTGTs = data.Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomHangHoaDichVu).ToList();
             for (int i = 1; i <= nhomHHDVGTGTs.Count; i++)
             {
                 ThietLapTruongDuLieu item = nhomHHDVGTGTs[i - 1];
+                item.MaTruong = $"HHDV {i}";
+                item.STT = i;
+            }
+
+            // Nhóm hàng hóa dịch vụ phiếu xuất kho đại lý
+            var nhomHHDVGTGTPXKDLs = data.Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomHangHoaDichVu && x.TenCot != nameof(hoaDonDienTuChiTiet.SoLuongNhap)).ToList();
+            for (int i = 1; i <= nhomHHDVGTGTPXKDLs.Count; i++)
+            {
+                ThietLapTruongDuLieu item = nhomHHDVGTGTPXKDLs[i - 1];
                 item.MaTruong = $"HHDV {i}";
                 item.STT = i;
 
@@ -2256,7 +2265,7 @@ namespace DLL.Data
 
                 if (cloneGuiBanDaiLy.TenCot == nameof(hoaDonDienTuChiTiet.SoLuong))
                 {
-                    cloneGuiBanDaiLy.TenCot = "Số lượng";
+                    cloneGuiBanDaiLy.TenTruong = "Số lượng";
                     cloneGuiBanDaiLy.TenTruongHienThi = "Số lượng";
                     cloneGuiBanDaiLy.DoRong = 100;
                 }
