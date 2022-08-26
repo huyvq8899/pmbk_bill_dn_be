@@ -2256,10 +2256,9 @@ namespace DLL.Data
             for (int i = 1; i <= nhomHHDVGTGTPXKDLs.Count; i++)
             {
                 ThietLapTruongDuLieu item = nhomHHDVGTGTPXKDLs[i - 1];
-                item.MaTruong = $"HHDV {i}";
-                item.STT = i;
-
                 var cloneGuiBanDaiLy = (ThietLapTruongDuLieu)item.Clone();
+                cloneGuiBanDaiLy.MaTruong = $"HHDV {i}";
+                cloneGuiBanDaiLy.STT = i;
                 cloneGuiBanDaiLy.ThietLapTruongDuLieuId = Guid.NewGuid().ToString();
                 cloneGuiBanDaiLy.LoaiHoaDon = LoaiHoaDon.PXKHangGuiBanDaiLy;
 

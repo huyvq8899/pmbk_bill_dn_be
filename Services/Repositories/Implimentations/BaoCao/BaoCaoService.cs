@@ -11,6 +11,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Services.Helper;
 using Services.Helper.Params.BaoCao;
+using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces.BaoCao;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels;
@@ -1110,7 +1111,7 @@ namespace Services.Repositories.Implimentations.BaoCao
             }
         }
 
-        private async Task<List<BangKeHangHoaBanRaViewModel>> GetBangKeHangHoaBanRaAsync(PagingParams @params)
+        private async Task<List<BangKeHangHoaBanRaViewModel>> GetBangKeHangHoaBanRaAsync(HoaDonParams @params)
         {
             var result = new List<BangKeHangHoaBanRaViewModel>();
             try
@@ -1124,6 +1125,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                             where DateTime.Parse(hd.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate
                             && DateTime.Parse(hd.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate
                             && (hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa || hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi || hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)
+                            && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
                             group hdct by new { bkhhd, hd, hdct.ThueGTGT } into g
                             select new BangKeHangHoaBanRaViewModel
                             {
@@ -1146,7 +1148,7 @@ namespace Services.Repositories.Implimentations.BaoCao
             return result;
         }
 
-        public async Task<string> ExportExcelBangKeHangHoaBanRa(PagingParams @params)
+        public async Task<string> ExportExcelBangKeHangHoaBanRa(HoaDonParams @params)
         {
             try
             {
