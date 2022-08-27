@@ -16111,8 +16111,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     await UpdateTrangThaiQuyTrinhAsync(param.HoaDonDienTuId, TrangThaiQuyTrinh.KyDienTuLoi);
                     await _nhatKyThaoTacLoiService.InsertAsync(new NhatKyThaoTacLoiViewModel
                     {
-                        MoTa = rsKyDienTu ? "Lỗi hệ thống" : param.MoTa,
-                        HuongDanXuLy = rsKyDienTu ? "Vui lòng liên hệ với bộ phận hỗ trợ để được trợ giúp" : param.HuongDanXuLy,
+                        MoTa = param.MoTa ?? "Lỗi hệ thống",
+                        HuongDanXuLy = param.HuongDanXuLy ?? "Vui lòng liên hệ với bộ phận hỗ trợ để được trợ giúp",
                         RefId = param.HoaDonDienTuId,
                         ThaoTacLoi = ThaoTacLoi.KyDienTu
                     });
