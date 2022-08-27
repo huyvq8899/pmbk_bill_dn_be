@@ -373,7 +373,6 @@ namespace Services.Helper.Params.HeThong
         {
             switch (tenCot)
             {
-                case "NgayHoaDon":
                 case "MaKhachHang":
                 case "LoaiTienId":
                 case "TyGia":
@@ -382,8 +381,7 @@ namespace Services.Helper.Params.HeThong
                 case "TinhChat":
                 case "MaQuyCach":
                 case "DonViTinhId":
-                case "SoLuong":
-                case "SoLuongNhap":
+
                 case "SoLo":
                 case "HanSuDung":
                 case "SoKhung":
@@ -408,8 +406,13 @@ namespace Services.Helper.Params.HeThong
                 case "TenHang":
                     DoRong = 200;
                     break;
+                case "NgayHoaDon":
                 case "MaSoThue":
                     DoRong = 120;
+                    break;
+                case "SoLuong":
+                case "SoLuongNhap":
+                    DoRong = 130;
                     break;
                 case "DonGia":
                 case "ThanhTien":
