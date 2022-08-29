@@ -462,6 +462,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           NgayTao = hd.CreatedDate,
                                                           TenNguoiCapNhat = mb.UserName ?? string.Empty,
                                                           NgayCapNhat = hd.ModifyDate,
+                                                          // pxk
+                                                          CanCuSo = hd.CanCuSo,
+                                                          NgayCanCu = hd.NgayCanCu,
+                                                          Cua = hd.Cua,
+                                                          DienGiai = hd.DienGiai,
+                                                          DiaChiKhoXuatHang = hd.DiaChiKhoXuatHang,
+                                                          HoTenNguoiXuatHang = hd.HoTenNguoiXuatHang,
+                                                          HopDongVanChuyenSo = hd.HopDongVanChuyenSo,
+                                                          TenNguoiVanChuyen = hd.TenNguoiVanChuyen,
+                                                          PhuongThucVanChuyen = hd.PhuongThucVanChuyen,
+                                                          DiaChiKhoNhanHang = hd.DiaChiKhoNhanHang,
+                                                          HoTenNguoiNhanHang = hd.HoTenNguoiNhanHang,
                                                           DaBiDieuChinh = (from hd1 in _db.HoaDonDienTus
                                                                            join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
                                                                            where hd1.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
