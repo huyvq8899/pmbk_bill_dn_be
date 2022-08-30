@@ -4133,6 +4133,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
                         entity.FileDaKy = pdfFileName;
+
+                        xmlFileName = entity.XMLDaKy;
                     }
                     else
                     {
@@ -14474,7 +14476,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                             }
 
-                            if (!string.IsNullOrEmpty(item.ThueGTGT) && (hoaDon.LoaiHoaDon != (int)LoaiHoaDon.HoaDonBanHang))
+                            if (!string.IsNullOrEmpty(item.ThueGTGT) && (hoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT))
                             {
                                 decimal thueGTGT = 0;
                                 if (item.ThueGTGT.CheckValidNumber() || item.ThueGTGT.Contains("KHAC"))
