@@ -14457,7 +14457,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             // get tiền chiết khấu gốc theo công thức
                             var tienChietKhauGoc = (item.ThanhTien * item.TyLeChietKhau / 100).Value.MathRoundNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
-                            if (item.TienChietKhau != tienChietKhauGoc)
+                            if (item.TienChietKhau != tienChietKhauGoc && ((hoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT) || (hoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang)))
                             {
                                 var strTienChietKhau = item.TienChietKhau.Value.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
                                 var strTienChietKhauGoc = tienChietKhauGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
