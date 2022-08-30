@@ -4137,7 +4137,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else
                     {
                         pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.pdf";
+                        xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.xml";
                         entity.FileChuaKy = pdfFileName;
+                        entity.XMLChuaKy = xmlFileName;
                     }
                 }
 
@@ -16957,7 +16959,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// </summary>
         /// <param name="pagingParams"></param>
         /// <returns></returns>
-        public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonDeGuiEmailDongLoatAsync(HoaDonParams pagingParams)
+        public async Task<PagedList<HoaDonDienTuViewModel>> GetListHoaDonDeGuiEmailDongLoatAsync(HoaDonParams pagingParams)
         {
             DateTime? fromDate = !string.IsNullOrEmpty(pagingParams.FromDate) ? DateTime.Parse(pagingParams.FromDate) : (DateTime?)null;
             DateTime? toDate = !string.IsNullOrEmpty(pagingParams.ToDate) ? DateTime.Parse(pagingParams.ToDate) : (DateTime?)null;
@@ -17008,6 +17010,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             EmailNguoiNhanHD = (kh != null && !string.IsNullOrEmpty(kh.EmailNguoiNhanHD)) ? kh.EmailNguoiNhanHD : hddt.EmailNguoiNhanHD
                         };
 
+            if (pagingParams.HoaDonDienTuIds.Any())
+            {
+                query = query.Where(x => pagingParams.HoaDonDienTuIds.Contains(x.HoaDonDienTuId));
+            }
+
             if (pagingParams.TimKiemTheo != null)
             {
                 var timKiemTheo = pagingParams.TimKiemTheo;
@@ -17048,7 +17055,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
 
-            var result = await query.ToListAsync();
+            if (pagingParams.PageSize == -1)
+            {
+                pagingParams.PageSize = await query.CountAsync();
+            }
+
+            var result = await PagedList<HoaDonDienTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
 
             var nhatKyGuiEmails = await _db.NhatKyGuiEmails
                 .Where(x => x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui)
@@ -17066,7 +17078,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 })
                 .ToDictionaryAsync(x => x.NhatKyGuiEmailId);
 
-            foreach (var item in result)
+            foreach (var item in result.Items)
             {
                 if (string.IsNullOrEmpty(item.HoTenNguoiNhanHD) && nhatKyGuiEmails.ContainsKey(item.HoaDonDienTuId))
                 {

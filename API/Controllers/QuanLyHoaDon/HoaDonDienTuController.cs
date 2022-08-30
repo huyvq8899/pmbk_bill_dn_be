@@ -1408,8 +1408,8 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("GetListHoaDonDeGuiEmailDongLoat")]
         public async Task<IActionResult> GetListHoaDonDeGuiEmailDongLoat(HoaDonParams pagingParams)
         {
-            var result = await _hoaDonDienTuService.GetListHoaDonDeGuiEmailDongLoatAsync(pagingParams);
-            return Ok(result);
+            var paged = await _hoaDonDienTuService.GetListHoaDonDeGuiEmailDongLoatAsync(pagingParams);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
         [HttpPost("TaiTepGuiHoaDonLoi")]
