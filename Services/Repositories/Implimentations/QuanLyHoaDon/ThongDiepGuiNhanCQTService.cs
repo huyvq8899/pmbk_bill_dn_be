@@ -1222,6 +1222,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             foreach (var item in listHoaDonCanDanhDau)
                             {
                                 item.LanGui04 = (item.LanGui04 ?? 0) + 1;
+                                item.IsDaLapThongBao04 = true;
                                 item.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.ChoPhanHoi;
                             }
                             _db.ThongTinHoaDons.UpdateRange(listHoaDonCanDanhDau);
@@ -1236,6 +1237,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             foreach (var item in listHoaDonCanDanhDau)
                             {
+                                item.IsDaLapThongBao04 = true;
                                 item.LanGui04 = (item.LanGui04 ?? 0) + 1;
                                 item.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.ChoPhanHoi;
                             }

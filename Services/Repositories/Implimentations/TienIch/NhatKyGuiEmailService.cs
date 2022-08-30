@@ -571,6 +571,7 @@ namespace Services.Repositories.Implimentations.TienIch
 
             //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
             List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
+                                                         where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
                                                          select new HoaDonDienTu
                                                          {
                                                              HoaDonDienTuId = hoaDon.HoaDonDienTuId,
