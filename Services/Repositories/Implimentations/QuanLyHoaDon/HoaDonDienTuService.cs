@@ -1145,8 +1145,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             if (string.IsNullOrEmpty(id) || id == "null" || id == "undefined") return null;
 
-            var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.ToList();
-            var thongDiepChungs = _db.ThongDiepChungs.ToList();
+            var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.AsNoTracking().ToList();
+            var thongDiepChungs = _db.ThongDiepChungs
+                .Select(x => new ThongDiepChung
+                {
+                    ThongDiepChungId = x.ThongDiepChungId,
+                    IdThamChieu = x.IdThamChieu,
+                    TrangThaiGui = x.TrangThaiGui
+                })
+                .ToList();
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string folder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
 
@@ -1172,7 +1179,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             //đọc ra thông tin hóa đơn được nhập từ phần mềm khác, (được dùng để hiển thị cột thông tin sai sót ở hóa đơn điều chỉnh); việc đọc ra bảng này vì phải truy vấn thông tin với các hóa đơn được nhập từ phần mềm khác
             List<ThongTinHoaDon> listThongTinHoaDon = await (from hoaDon in _db.ThongTinHoaDons
-                                                             where listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.Id) > 0
+                                                             join hddt in _db.HoaDonDienTus on hoaDon.Id equals hddt.DieuChinhChoHoaDonId
+                                                             //where listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.Id) > 0
                                                              select new ThongTinHoaDon
                                                              {
                                                                  Id = hoaDon.Id,
@@ -1182,7 +1190,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                  ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
                                                                  TrangThaiGui04 = hoaDon.TrangThaiGui04
                                                              }).ToListAsync();
-
 
             var query = from hd in _db.HoaDonDienTus
                         join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieus
@@ -1503,7 +1510,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      orderby tdc.NgayGui descending, tdc.CreatedDate descending
                                                      select $"Số {bthdlhd.SoBTHDLieu}/{(bthdlhd.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {bthdlhd.BoSungLanThu}")}/{((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription()}").FirstOrDefault(),
                             ThongDiepGuiCQTId = _db.ThongDiepChiTietGuiCQTs.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).OrderByDescending(x => x.CreatedDate).Select(x => x.ThongDiepGuiCQTId).FirstOrDefault()
-
                         };
 
             var result = await query.FirstOrDefaultAsync();
@@ -1513,7 +1519,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             #region xử lý trạng thái khác
-
             var hoaDonDieuChinh_ThayThes = await _db.HoaDonDienTus
             .Where(x => x.DieuChinhChoHoaDonId == result.HoaDonDienTuId || x.ThayTheChoHoaDonId == result.HoaDonDienTuId)
             .AsNoTracking()
@@ -1558,7 +1563,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             result.TenTrangThaiLanDieuChinhGanNhat = result.TrangThaiLanDieuChinhGanNhat.HasValue ? ((TrangThaiQuyTrinh)result.TrangThaiLanDieuChinhGanNhat.Value).GetDescription() : string.Empty;
             return result;
         }
-
         public async Task<HoaDonDienTuViewModel> GetByIdAsync(long SoHoaDon, string KyHieuHoaDon, string KyHieuMauSoHoaDon)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
@@ -4028,7 +4032,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 string fullPdfFolder;
                 string fullXmlFolder;
-                if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
+                if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true || hd.SoHoaDon.HasValue)
                 {
                     fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
                     fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
@@ -4161,7 +4165,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
-                    await _xMLInvoiceService.CreateXMLInvoice(fullXmlFilePath, hd);
+                    if (hd.SoHoaDon.HasValue)
+                    {
+                        if (string.IsNullOrEmpty(fullXmlFilePath))
+                        {
+                            var fileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.RefId == hd.HoaDonDienTuId && x.Type == 1 && x.IsSigned == true);
+                            if (fileData != null)
+                            {
+                                await File.WriteAllBytesAsync(fullXmlFilePath, fileData.Binary);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        await _xMLInvoiceService.CreateXMLInvoice(fullXmlFilePath, hd);
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(entity.FileDaKy))
@@ -13263,7 +13281,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
         //Method này để hiển thị dữ liệu ở cột thông báo sai sót (đối với hóa đơn hệ thống)
-        private CotThongBaoSaiSotViewModel GetCotThongBaoSaiSot(List<ThongDiepChiTietGuiCQT> thongDiepChiTiets, string tuyChonKyKeKhai, HoaDonDienTu hoaDonParam, DLL.Entity.QuanLy.BoKyHieuHoaDon boKyHieuHoaDon, List<HoaDonDienTu> listHoaDonDienTu, ThongTinHoaDon thongTinHoaDon, List<ThongDiepChung> thongDiepChungs = null)
+        private CotThongBaoSaiSotViewModel GetCotThongBaoSaiSot(List<ThongDiepChiTietGuiCQT> thongDiepChiTiets, string tuyChonKyKeKhai, HoaDonDienTu hoaDonParam, BoKyHieuHoaDon boKyHieuHoaDon, List<HoaDonDienTu> listHoaDonDienTu, ThongTinHoaDon thongTinHoaDon, List<ThongDiepChung> thongDiepChungs = null)
         {
             HoaDonDienTu hoaDon = hoaDonParam;
             //Kiểm tra hóa đơn điều chỉnh cho hóa đơn được nhập từ phần mềm khác
