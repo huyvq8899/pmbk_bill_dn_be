@@ -370,6 +370,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public string TenLoaiHoaDon { get; set; }
 
+        [IgnoreLogging]
+        public string TenLoaiChungTu { get; set; }
+
         [Display(Name = "Loại tiền")]
         public string MaLoaiTien { get; set; }
 

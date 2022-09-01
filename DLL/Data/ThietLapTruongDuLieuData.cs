@@ -315,20 +315,6 @@ namespace DLL.Data
                     DoRong = 150,
                     HienThi = false
                 },
-                //new ThietLapTruongDuLieu
-                //{
-                //    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
-                //    MaTruong = null,
-                //    TenCot = TrangThaiThoaThuan,
-                //    TenTruong = "Trạng thái thỏa thuận",
-                //    TenTruongHienThi = "Trạng thái thỏa thuận",
-                //    LoaiHoaDon = LoaiHoaDon.None,
-                //    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
-                //    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
-                //    GhiChu = null,
-                //    DoRong = 150,
-                //    HienThi = false
-                //},
                 new ThietLapTruongDuLieu
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
