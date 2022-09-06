@@ -989,6 +989,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             pagingParams.TongTienThanhToan = query.Sum(x => x.TongTienThanhToan);
 
+            if (pagingParams.PageSize == -1)
+            {
+                pagingParams.PageSize = query.Count();
+            }
+
             var result = PagedList<HoaDonDienTuViewModel>.Create(query, pagingParams.PageNumber, pagingParams.PageSize);
             result.AllItemIds = allHoaDonDienTuIds;
 
@@ -2099,6 +2104,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from mb in tmpModifiedBy.DefaultIfEmpty()
                         select new HoaDonDienTuViewModel
                         {
+                            HoaDonDienTuId = hddt.HoaDonDienTuId,
+                            BoKyHieuHoaDonId = hddt.BoKyHieuHoaDonId,
                             MauSo = bkh.KyHieuMauSoHoaDon.ToString(),
                             KyHieu = bkh.KyHieu,
                             SoHoaDon = hddt.SoHoaDon,
@@ -2117,10 +2124,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TongTienThanhToan = hddt.TongTienThanhToan,
                             LoaiTienId = hddt.LoaiTienId,
                             MaLoaiTien = hddt.MaLoaiTien,
+                            IsVND = hddt.MaLoaiTien == "VND",
                             TrangThaiGuiHoaDon = hddt.TrangThaiGuiHoaDon,
                             TenTrangThaiGuiHoaDon = hddt.TrangThaiGuiHoaDon.HasValue ? ((LoaiTrangThaiGuiHoaDon)hddt.TrangThaiGuiHoaDon).GetDescription() : string.Empty,
                             HoTenNguoiNhanHD = hddt.HoTenNguoiNhanHD,
                             EmailNguoiNhanHD = hddt.EmailNguoiNhanHD,
+                            SoDienThoaiNguoiNhanHD = hddt.SoDienThoaiNguoiNhanHD,
                             SoLanChuyenDoi = hddt.SoLanChuyenDoi,
                             // Dinh kem
                             LyDoXoaBo = hddt.LyDoXoaBo,
@@ -2150,6 +2159,49 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TruongThongTinBoSung10 = hddt.TruongThongTinBoSung10
                         };
 
+            List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
+                                                         select new HoaDonDienTu
+                                                         {
+                                                             HoaDonDienTuId = hoaDon.HoaDonDienTuId,
+                                                             SoHoaDon = hoaDon.SoHoaDon,
+                                                             ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
+                                                             DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
+                                                             NgayHoaDon = hoaDon.NgayHoaDon,
+                                                             TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh,
+                                                             MaCuaCQT = hoaDon.MaCuaCQT,
+                                                             ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
+                                                             TrangThaiGui04 = hoaDon.TrangThaiGui04,
+                                                             LanGui04 = hoaDon.LanGui04,
+                                                             IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04,
+                                                             CreatedDate = hoaDon.CreatedDate
+                                                         }).ToListAsync();
+
+            //đọc ra thông tin hóa đơn được nhập từ phần mềm khác, (được dùng để hiển thị cột thông tin sai sót ở hóa đơn điều chỉnh); việc đọc ra bảng này vì phải truy vấn thông tin với các hóa đơn được nhập từ phần mềm khác
+            List<ThongTinHoaDon> listThongTinHoaDon = await (from hoaDon in _db.ThongTinHoaDons
+                                                             join q in listHoaDonDienTu on hoaDon.Id equals q.DieuChinhChoHoaDonId
+                                                             select new ThongTinHoaDon
+                                                             {
+                                                                 Id = hoaDon.Id,
+                                                                 TrangThaiHoaDon = hoaDon.TrangThaiHoaDon,
+                                                                 IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04,
+                                                                 LanGui04 = hoaDon.LanGui04,
+                                                                 ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
+                                                                 TrangThaiGui04 = hoaDon.TrangThaiGui04
+                                                             }).ToListAsync();
+
+            //đọc ra kỳ kế toán hiện tại
+            //mục đích đọc ra là để hiển thị tình trạng quá hạn/trong hạn của mỗi hóa đơn theo yêu cầu của a Kiên
+            var tuyChonKyKeKhai = (await _db.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
+            var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.AsNoTracking().ToList();
+            var thongDiepChungs = _db.ThongDiepChungs
+                .Select(x => new ThongDiepChung
+                {
+                    ThongDiepChungId = x.ThongDiepChungId,
+                    IdThamChieu = x.IdThamChieu,
+                    TrangThaiGui = x.TrangThaiGui
+                })
+                .ToList();
+
             if (!string.IsNullOrEmpty(pagingParams.FromDate) && !string.IsNullOrEmpty(pagingParams.ToDate))
             {
                 DateTime fromDate = DateTime.Parse(pagingParams.FromDate);
@@ -2162,6 +2214,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 .ThenByDescending(x => x.NgayHoaDon.Value.Date)
                 .ThenByDescending(x => x.SoHoaDon)
                 .ThenByDescending(x => x.CreatedDate);
+
             // Export excel
             string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
 
@@ -2186,6 +2239,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             using (ExcelPackage package = new ExcelPackage(file))
             {
                 List<HoaDonDienTuViewModel> list = await query.ToListAsync();
+                var _tuyChons = await _TuyChonService.GetAllAsync();
+
                 // Open sheet1
                 int totalRows = list.Count;
 
@@ -2224,7 +2279,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         foreach (var splitItem in array)
                         {
                             var type = KieuDuLieuThietLapTuyChinh.Chu;
-                            int doRong = 100;
+                            int doRong = 180;
 
                             switch (splitItem)
                             {
@@ -2233,32 +2288,43 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     type = KieuDuLieuThietLapTuyChinh.Chu;
                                     break;
                                 case "Số hóa đơn":
+                                    doRong = 100;
                                     type = KieuDuLieuThietLapTuyChinh.Chu;
                                     break;
                                 case "Ngày hóa đơn":
+                                    doRong = 100;
                                     type = KieuDuLieuThietLapTuyChinh.Ngay;
                                     break;
                                 case "Người mua hàng":
+                                    doRong = 230;
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
                                 case "Mã số thuế":
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
                                 case "Tên khách hàng":
+                                    doRong = 300;
                                     type = KieuDuLieuThietLapTuyChinh.Chu;
                                     break;
                                 case "Trạng thái hóa đơn":
                                     type = KieuDuLieuThietLapTuyChinh.Chu;
                                     break;
                                 case "Mã tra cứu":
+                                    doRong = 250;
                                     type = KieuDuLieuThietLapTuyChinh.Chu;
                                     break;
                                 case "Trạng thái quy trình":
                                     type = KieuDuLieuThietLapTuyChinh.Chu;
                                     break;
                                 case "Mã CQT cấp":
+                                    doRong = 310;
                                     type = KieuDuLieuThietLapTuyChinh.Chu;
                                     break;
                                 case "Tổng tiền thanh toán":
                                     type = KieuDuLieuThietLapTuyChinh.TienTe;
                                     break;
                                 case "Loại tiền":
+                                    doRong = 100;
                                     type = KieuDuLieuThietLapTuyChinh.Chu;
                                     break;
                                 case "Hình thức hóa đơn":
@@ -2279,6 +2345,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             listTruongDuLieuSplit.Add(new ThietLapTruongDuLieuViewModel
                             {
+                                TenTruong = splitItem,
                                 TenTruongHienThi = splitItem,
                                 KieuDuLieu = type,
                                 DoRong = doRong
@@ -2287,6 +2354,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else
                     {
+                        if (item.TenCot == "TrangThaiGuiHoaDon")
+                        {
+                            item.DoRong = 200;
+                        }
+
                         listTruongDuLieuSplit.Add(item);
                     }
                 }
@@ -2294,76 +2366,233 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 worksheet.InsertColumn(2, totalCols, 1);
 
                 // Add Row
-                worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+                worksheet.InsertRow(begin_row + 1, totalRows, begin_row);
 
                 // fill text title
                 int begin_col = 2;
                 foreach (var item in listTruongDuLieuSplit)
                 {
                     worksheet.Cells[begin_row - 1, begin_col].Value = item.TenTruongHienThi;
-                    worksheet.Column(begin_col).Width = (item.DoRong ?? 0) * 10 / 100d;
+                    worksheet.Column(begin_col).Width = (item.DoRong ?? 0) * 12 / 100d;
                     begin_col++;
                 }
 
                 // Fill data
-                //int idx = begin_row;
-                //int count = 1;
-                //foreach (var it in list)
-                //{
-                //    worksheet.Cells[idx, 1].Value = count;
+                int idx = begin_row;
+                int idxTongTienThanhToan = -1;
+                int count = 1;
 
-                //    for (int i = 2; i <= totalCols; i++)
-                //    {
-                //        var tenTieuDe = worksheet.Cells[begin_row - 1, i].Value;
-                //        switch (tenTieuDe)
-                //        {
-                //            case "":
-                //                break;
-                //            default:
-                //                break;
-                //        }
-                //    }
+                var dicHoaDonDienTu = await _db.HoaDonDienTus
+                    .Where(x => list.Select(y => y.HoaDonDienTuId).Contains(x.HoaDonDienTuId))
+                    .ToDictionaryAsync(x => x.HoaDonDienTuId);
 
-                //    worksheet.Cells[idx, 1].Value = count.ToString();
-                //    worksheet.Cells[idx, 2].Value = it.NgayHoaDon.Value.ToString("dd/MM/yyyy");
-                //    worksheet.Cells[idx, 3].Value = it.SoHoaDon;
-                //    worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.MaCuaCQT) ? it.MaCuaCQT : "<Chưa cấp mã>";
-                //    worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.BoKyHieuHoaDon != null ? it.BoKyHieuHoaDon.KyHieuMauSoHoaDon.ToString() : string.Empty);
-                //    worksheet.Cells[idx, 6].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.BoKyHieuHoaDon != null ? it.BoKyHieuHoaDon.KyHieuHoaDon : string.Empty);
-                //    worksheet.Cells[idx, 7].Value = !string.IsNullOrEmpty(it.MaKhachHang) ? it.MaKhachHang : (it.KhachHang != null ? it.KhachHang.Ma : string.Empty);
-                //    worksheet.Cells[idx, 8].Value = !string.IsNullOrEmpty(it.TenKhachHang) ? it.TenKhachHang : (it.KhachHang != null ? it.KhachHang.Ten : string.Empty);
-                //    worksheet.Cells[idx, 9].Value = !string.IsNullOrEmpty(it.DiaChi) ? it.DiaChi : (it.KhachHang != null ? it.KhachHang.DiaChi : string.Empty);
-                //    worksheet.Cells[idx, 10].Value = !string.IsNullOrEmpty(it.MaSoThue) ? it.MaSoThue : (it.KhachHang != null ? it.KhachHang.MaSoThue : string.Empty);
-                //    worksheet.Cells[idx, 11].Value = !string.IsNullOrEmpty(it.HoTenNguoiMuaHang) ? it.HoTenNguoiMuaHang : (it.KhachHang != null ? it.KhachHang.HoTenNguoiMuaHang : string.Empty);
-                //    worksheet.Cells[idx, 12].Value = !string.IsNullOrEmpty(it.TenNhanVienBanHang) ? it.TenNhanVienBanHang : it.NhanVienBanHang != null ? it.NhanVienBanHang.Ten : string.Empty;
-                //    worksheet.Cells[idx, 13].Value = it.TongTienThanhToan;
-                //    worksheet.Cells[idx, 14].Value = it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng";
-                //    worksheet.Cells[idx, 15].Value = TrangThaiHoaDons.Where(x => x.TrangThaiId == it.TrangThai).Select(x => x.Ten).FirstOrDefault();
-                //    worksheet.Cells[idx, 16].Value = (it.TrangThaiQuyTrinh == 0 ? "Chưa phát hành" : (it.TrangThaiQuyTrinh == 1 ? "Đang phát hành" : (it.TrangThaiQuyTrinh == 2 ? "Phát hành lỗi" : "Đã phát hành")));
-                //    worksheet.Cells[idx, 17].Value = it.MaTraCuu;
-                //    worksheet.Cells[idx, 18].Value = TrangThaiGuiHoaDons.Where(x => x.TrangThaiId == it.TrangThaiGuiHoaDon).Select(x => x.Ten).FirstOrDefault();
-                //    worksheet.Cells[idx, 19].Value = it.KhachHang != null ? it.KhachHang.HoTenNguoiNhanHD : string.Empty;
-                //    worksheet.Cells[idx, 20].Value = it.KhachHang != null ? it.KhachHang.EmailNguoiNhanHD : string.Empty;
-                //    worksheet.Cells[idx, 21].Value = it.KhachHang != null ? it.KhachHang.SoDienThoaiNguoiNhanHD : string.Empty;
-                //    worksheet.Cells[idx, 22].Value = it.KhachHangDaNhan.HasValue ? (it.KhachHangDaNhan.Value ? "Đã nhận" : "Chưa nhận") : "Chưa nhận";
-                //    worksheet.Cells[idx, 23].Value = it.SoLanChuyenDoi;
-                //    worksheet.Cells[idx, 24].Value = it.LyDoXoaBo;
-                //    worksheet.Cells[idx, 25].Value = it.LoaiChungTu == 0 ? "Mua hàng" : it.LoaiChungTu == 1 ? "Bán hàng" : it.LoaiChungTu == 2 ? "Kho" : "Hóa đơn bách khoa";
-                //    worksheet.Cells[idx, 26].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
-                //    worksheet.Cells[idx, 27].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
+                var dicBoKyHieuHoaDon = await _db.BoKyHieuHoaDons
+                    .Where(x => list.Select(y => y.BoKyHieuHoaDonId).Contains(x.BoKyHieuHoaDonId))
+                    .ToDictionaryAsync(x => x.BoKyHieuHoaDonId);
 
-                //    idx += 1;
-                //    count += 1;
-                //}
-                //worksheet.Cells[2, 1].Value = dateReport;
-                ////worksheet.Row(5).Style.Font.Color.SetColor(Color.Red);
-                //// Total
-                //worksheet.Row(idx).Style.Font.Bold = true;
-                //worksheet.Cells[idx, 2].Value = string.Format("Số dòng = {0}", list.Count);
+                foreach (var it in list)
+                {
+                    var thongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, dicHoaDonDienTu[it.HoaDonDienTuId], dicBoKyHieuHoaDon[it.BoKyHieuHoaDonId], listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == it.DieuChinhChoHoaDonId), thongDiepChungs);
+                    string contentThongBaoSaiSot = string.Empty;
+                    if (thongBaoSaiSot != null)
+                    {
+                        thongBaoSaiSot.DienGiaiChiTietTrangThai = thongBaoSaiSot.DienGiaiChiTietTrangThai.Replace("&nbsp;", " ");
 
-                //replace Text
+                        if (thongBaoSaiSot.TrangThaiLapVaGuiThongBao == -2)
+                        {
+                            contentThongBaoSaiSot += "Chưa lập thông báo" + thongBaoSaiSot.DienGiaiChiTietTrangThai;
+                        }
+                        else if (thongBaoSaiSot.TrangThaiLapVaGuiThongBao > -2)
+                        {
+                            if (thongBaoSaiSot.LanGui != null)
+                            {
+                                contentThongBaoSaiSot += thongBaoSaiSot.LanGui + " | " + thongBaoSaiSot.DienGiaiChiTietTrangThai;
+                            }
+                            else
+                            {
+                                if (thongBaoSaiSot.TrangThaiLapVaGuiThongBao == -1)
+                                {
+                                    contentThongBaoSaiSot += "Chưa gửi" + thongBaoSaiSot.DienGiaiChiTietTrangThai;
+                                }
+                            }
+                        }
+                    }
 
+                    worksheet.Cells[idx, 1].Value = count;
+                    worksheet.Cells[idx, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
+                    for (int i = 2; i <= (totalCols + 1); i++)
+                    {
+                        var itemTruongDuLieu = listTruongDuLieuSplit[i - 2];
+
+                        switch (itemTruongDuLieu.KieuDuLieu)
+                        {
+                            case KieuDuLieuThietLapTuyChinh.None:
+                                break;
+                            case KieuDuLieuThietLapTuyChinh.Chu:
+                                worksheet.Cells[idx, i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+                                break;
+                            case KieuDuLieuThietLapTuyChinh.TienTe:
+                            case KieuDuLieuThietLapTuyChinh.SoLuong:
+                                worksheet.Cells[idx, i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                                break;
+                            case KieuDuLieuThietLapTuyChinh.Ngay:
+                                worksheet.Cells[idx, i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                break;
+                            case KieuDuLieuThietLapTuyChinh.PhanTram:
+                                break;
+                            case KieuDuLieuThietLapTuyChinh.Bool:
+                                break;
+                            default:
+                                break;
+                        }
+
+                        switch (itemTruongDuLieu.TenTruong)
+                        {
+                            case "Ký hiệu mẫu số hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.MauSo;
+                                break;
+                            case "Ký hiệu hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.KyHieu;
+                                break;
+                            case "Số hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.SoHoaDon;
+                                break;
+                            case "Ngày hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.NgayHoaDon.Value.ToString("dd/MM/yyyy");
+                                break;
+                            case "Mã khách hàng":
+                                worksheet.Cells[idx, i].Value = it.MaKhachHang;
+                                break;
+                            case "Người mua hàng":
+                                worksheet.Cells[idx, i].Value = it.HoTenNguoiMuaHang;
+                                break;
+                            case "Mã số thuế":
+                                worksheet.Cells[idx, i].Value = it.MaSoThue;
+                                break;
+                            case "Tên khách hàng":
+                                worksheet.Cells[idx, i].Value = it.TenKhachHang;
+                                break;
+                            case "Địa chỉ":
+                                worksheet.Cells[idx, i].Value = it.DiaChi;
+                                break;
+                            case "Trạng thái hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.TenTrangThaiHoaDon;
+                                break;
+                            case "Mã tra cứu":
+                                worksheet.Cells[idx, i].Value = it.MaTraCuu;
+                                break;
+                            case "Trạng thái quy trình":
+                                worksheet.Cells[idx, i].Value = it.TenTrangThaiQuyTrinh;
+                                break;
+                            case "Mã CQT cấp":
+                                worksheet.Cells[idx, i].Value = it.MaCuaCQT;
+                                break;
+                            case "Tổng tiền thanh toán":
+                                idxTongTienThanhToan = i;
+                                worksheet.Cells[idx, i].Value = it.TongTienThanhToan.Value.FormatNumberByTuyChon(_tuyChons, it.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                break;
+                            case "Loại tiền":
+                                worksheet.Cells[idx, i].Value = it.MaLoaiTien;
+                                break;
+                            case "Trạng thái gửi hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.TenTrangThaiGuiHoaDon;
+                                break;
+                            case "Tên người nhận":
+                                worksheet.Cells[idx, i].Value = it.HoTenNguoiNhanHD;
+                                break;
+                            case "Email người nhận":
+                                worksheet.Cells[idx, i].Value = it.EmailNguoiNhanHD;
+                                break;
+                            case "Số điện thoại người nhận":
+                                worksheet.Cells[idx, i].Value = it.SoDienThoaiNguoiNhanHD;
+                                break;
+                            case "Số lần chuyển thành hóa đơn giấy":
+                                worksheet.Cells[idx, i].Value = it.SoLanChuyenDoi;
+                                break;
+                            case "Đính kèm":
+                                /////////////////////////////////////////////////
+                                break;
+                            case "Lý do xóa bỏ":
+                                worksheet.Cells[idx, i].Value = it.LyDoXoaBo;
+                                break;
+                            case "Thông báo hóa đơn điện tử có sai sót":
+                                worksheet.Cells[idx, i].Value = contentThongBaoSaiSot;
+                                break;
+                            case "NV bán hàng":
+                                worksheet.Cells[idx, i].Value = it.TenNhanVienBanHang;
+                                break;
+                            case "Hình thức hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.TenHinhThucHoaDon;
+                                break;
+                            case "Ủy nhiệm lập hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.TenUyNhiemLapHoaDon;
+                                break;
+                            case "Phương thức chuyển dữ liệu":
+                                worksheet.Cells[idx, i].Value = it.PhuongThucChuyenDL;
+                                break;
+                            case "Loại hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.TenLoaiHoaDon;
+                                break;
+                            case "Loại chứng từ":
+                                worksheet.Cells[idx, i].Value = it.TenLoaiChungTu;
+                                break;
+                            case "Thông tin tạo":
+                                worksheet.Cells[idx, i].Value = it.ThongTinTao;
+                                break;
+                            case "Thông tin cập nhật":
+                                worksheet.Cells[idx, i].Value = it.ThongTinCapNhat;
+                                break;
+                            case "Trường thông tin bổ sung 1":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung1;
+                                break;
+                            case "Trường thông tin bổ sung 2":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung2;
+                                break;
+                            case "Trường thông tin bổ sung 3":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung3;
+                                break;
+                            case "Trường thông tin bổ sung 4":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung4;
+                                break;
+                            case "Trường thông tin bổ sung 5":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung5;
+                                break;
+                            case "Trường thông tin bổ sung 6":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung6;
+                                break;
+                            case "Trường thông tin bổ sung 7":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung7;
+                                break;
+                            case "Trường thông tin bổ sung 8":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung8;
+                                break;
+                            case "Trường thông tin bổ sung 9":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung9;
+                                break;
+                            case "Trường thông tin bổ sung 10":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung10;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+                    idx += 1;
+                    count += 1;
+                }
+
+                // total
+                worksheet.Row(idx).Style.Font.Bold = true;
+                worksheet.Cells[2, 1].Value = dateReport;
+                worksheet.Cells[idx, 2].Value = string.Format("Số dòng = {0}", list.Count);
+                if (idxTongTienThanhToan != -1)
+                {
+                    worksheet.Cells[idx, idxTongTienThanhToan].Value = list.Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, list.All(x => x.IsVND == true) ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                    worksheet.Cells[idx, idxTongTienThanhToan].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                }
+
+                // save file
                 package.SaveAs(new FileInfo(excelPath));
             }
 
@@ -14670,19 +14899,31 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (param.IsPhatHanh == true)
                 {
-                    var checkHasHoaDonChuaCapSoBefore = await _db.HoaDonDienTus
-                    .AnyAsync(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && !x.SoHoaDon.HasValue && x.NgayHoaDon.Value.Date < ngayHoaDon);
+                    var listHoaDonChuaCapSoBefore = await _db.HoaDonDienTus
+                    .Where(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && !x.SoHoaDon.HasValue && x.NgayHoaDon.Value.Date < ngayHoaDon)
+                    .ToListAsync();
 
-                    if (checkHasHoaDonChuaCapSoBefore && (hoaDon.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi))
+                    if (listHoaDonChuaCapSoBefore.Any())
                     {
                         return new KetQuaCapSoHoaDon
                         {
                             HoaDon = hoaDon,
                             IsCoHoaDonNhoHonHoaDonDangPhatHanh = true,
                             TitleMessage = "Kiểm tra lại",
-                            ErrorMessage = $"Bạn đang thực hiện phát hành hóa đơn có ký hiệu <span class = 'colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> ngày <span class = 'colorChuYTrongThongBao'><b>{ngayHoaDon:dd/MM/yyyy}</b></span>. " +
-                                            $"Tồn tại hóa đơn có ký hiệu <span class = 'colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> số <span class = 'colorChuYTrongThongBao'><b>&lt;Chưa cấp số&gt;</b></span> có ngày hóa đơn nhỏ hơn ngày hóa đơn của hóa đơn này. " +
-                                            $"Vui lòng kiểm tra lại!"
+                            ErrorMessage = $"<div class='mg-bottom-5'>Bạn đang thực hiện phát hành hóa đơn có ký hiệu <span class='colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> ngày hóa đơn <span class='colorChuYTrongThongBao'><b>{ngayHoaDon:dd/MM/yyyy}</b></span>.</div> " +
+                                            $"<div class='mg-bottom-5'>Tồn tại <b>{listHoaDonChuaCapSoBefore.Count()}</b> hóa đơn có ký hiệu <span class='colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> số hóa đơn <span class='colorChuYTrongThongBao'><b>Chưa cấp số</b></span> có ngày hóa đơn nhỏ hơn ngày hóa đơn của hóa đơn này.</div> " +
+                                            $"<div class='mg-bottom-5'>Cụ thể số lượng hóa đơn chưa cấp số theo trạng thái quy trình:</div>",
+                            HoaDons = listHoaDonChuaCapSoBefore
+                                .GroupBy(x => x.TrangThaiQuyTrinh)
+                                .Select(x => new HoaDonDienTuViewModel
+                                {
+                                    KyHieuHoaDon = boKyHieuHoaDon.KyHieu,
+                                    TrangThaiQuyTrinh = x.Key,
+                                    TenTrangThaiQuyTrinh = ((TrangThaiQuyTrinh)x.Key).GetDescription(),
+                                    Count = x.Count()
+                                })
+                                .OrderBy(x => x.TrangThaiQuyTrinh)
+                                .ToList()
                         };
                     }
                 }

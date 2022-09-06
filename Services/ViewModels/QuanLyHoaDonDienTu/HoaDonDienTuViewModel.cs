@@ -521,6 +521,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? IsTheHienLyDoTrenHoaDon { get; set; }
 
         public bool? IsDaLapThongBao04 { get; set; }
+        public int? TrangThaiGui04 { get; set; }
+        public int? LanGui04 { get; set; }
         public bool IsSended { get; set; }//đánh dấu hóa đơn được chọn gửi khi phát hành
         public bool? IsNotCreateThayThe { get; set; }//đánh dấu Hóa đơn xóa bỏ không cần lập thay thế
         public int? HinhThucXoabo { get; set; }
@@ -668,6 +670,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool HasHoaDonKhacNhau { get; set; }
+
+        [IgnoreLogging]
+        public int? Count { get; set; }
     }
 
     public class CotThongBaoSaiSotViewModel
