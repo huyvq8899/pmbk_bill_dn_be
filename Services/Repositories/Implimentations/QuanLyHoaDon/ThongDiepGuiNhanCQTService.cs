@@ -1222,6 +1222,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             foreach (var item in listHoaDonCanDanhDau)
                             {
                                 item.LanGui04 = (item.LanGui04 ?? 0) + 1;
+                                item.IsDaLapThongBao04 = true;
                                 item.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.ChoPhanHoi;
                             }
                             _db.ThongTinHoaDons.UpdateRange(listHoaDonCanDanhDau);
@@ -1236,6 +1237,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             foreach (var item in listHoaDonCanDanhDau)
                             {
+                                item.IsDaLapThongBao04 = true;
                                 item.LanGui04 = (item.LanGui04 ?? 0) + 1;
                                 item.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.ChoPhanHoi;
                             }
@@ -1978,8 +1980,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 MaSoThue = tDiep.DLieu.TBao.DLTBao.MST,
                 ThoiHan = tDiep.DLieu.TBao.DLTBao.THan,
                 Lan = tDiep.DLieu.TBao.DLTBao.Lan,
-                HinhThuc = tDiep.DLieu.TBao.DLTBao.HThuc,
-                ChucDanh = tDiep.DLieu.TBao.DLTBao.CDanh,
+                HinhThuc = tDiep.DLieu.TBao.DLTBao.TCQTCTren,// tDiep.DLieu.TBao.DLTBao.HThuc,
+                ChucDanh = tDiep.DLieu.TBao.DLTBao.TCQT,//tDiep.DLieu.TBao.DLTBao.CDanh,
                 FileDinhKem = xmlFileName + ";" + pdfFileName,
                 CreatedDate = DateTime.Now,
                 CreatedBy = "",
@@ -3513,7 +3515,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         thoiGianNhan = DateTime.Parse(tDiep301.DLieu.TBao.DLTBao.TGNhan);
                     }
                     doc.Replace("<TGNhan>", thoiGianNhan.ToString("dd/MM/yyyy"), true, true);
-                    doc.Replace("<chucvu>", tDiep301.DLieu.TBao.DLTBao.CDanh.ToUpper(), true, true);
+                    doc.Replace("<chucvu>", tDiep301.DLieu.TBao.DLTBao.TCQT.ToUpper(), true, true);
 
                     //thêm chữ ký số
                     if (chuKyCua_TTCQT != null) //thêm chữ ký số của thủ trưởng CQT
@@ -3522,11 +3524,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                         ImageHelper.CreateSignatureBox(doc, chuKyCua_TTCQT.TenNguoiKy, DateTime.Parse(chuKyCua_TTCQT.NgayKy), "<DIGITALSIGNATURETTCQT>");
                     }
+                    else
+                    {
+                        doc.Replace("<DIGITALSIGNATURETTCQT>", "", true, true);
+                    }
                     if (chuKyCua_CQT != null) //thêm chữ ký số của CQT
                     {
                         //ImageHelper.AddSignatureImageToDocV2("<DIGITALSIGNATURECQT>", doc, chuKyCua_CQT.TenNguoiKy, LoaiNgonNgu.TiengViet, chuKyCua_CQT.NgayKy);
 
                         ImageHelper.CreateSignatureBox(doc, chuKyCua_CQT.TenNguoiKy, DateTime.Parse(chuKyCua_CQT.NgayKy), "<DIGITALSIGNATURECQT>");
+                    }
+                    else
+                    {
+                        doc.Replace("<DIGITALSIGNATURECQT>", "", true, true);
                     }
 
                     //tạo thư mục để lưu các file dữ liệu

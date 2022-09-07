@@ -20,5 +20,6 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<bool> UpdateAsync(DonViTinhViewModel model);
         Task<bool> DeleteAsync(string id);
         Task<bool> CheckTrungMaAsync(DonViTinhViewModel model);
+        Task<bool> CheckPhatSinhAsync(string id);
     }
 }

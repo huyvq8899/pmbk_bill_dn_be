@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper.Params.DanhMuc;
+using Services.Repositories.Implimentations.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
@@ -36,7 +37,17 @@ namespace API.Controllers.DanhMuc
             var result = await _donViTinhService.GetByIdAsync(id);
             return Ok(result);
         }
-
+        /// <summary>
+        /// Kiểm tra xem đã phát sinh trong hóa đơn chưa?
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("CheckPhatSinh/{Id}")]
+        public async Task<IActionResult> CheckPhatSinh(string id)
+        {
+            var result = await _donViTinhService.CheckPhatSinhAsync(id);
+            return Ok(result);
+        }
         [HttpPost("CheckTrungMa")]
         public async Task<IActionResult> CheckTrungMa(DonViTinhViewModel model)
         {
