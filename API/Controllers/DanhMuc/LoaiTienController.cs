@@ -37,6 +37,17 @@ namespace API.Controllers.DanhMuc
             var result = await _loaiTienService.GetByIdAsync(id);
             return Ok(result);
         }
+        /// <summary>
+        /// Kiểm tra xem đã phát sinh trong hóa đơn chưa?
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("CheckPhatSinh/{Id}")]
+        public async Task<IActionResult> CheckPhatSinh(string id)
+        {
+            var result = await _loaiTienService.CheckPhatSinhAsync(id);
+            return Ok(result);
+        }
 
         [HttpPost("CheckTrungMa")]
         public async Task<IActionResult> CheckTrungMa(LoaiTienViewModel model)

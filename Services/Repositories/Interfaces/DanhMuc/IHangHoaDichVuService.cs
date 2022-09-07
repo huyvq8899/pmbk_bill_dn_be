@@ -14,6 +14,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<List<HangHoaDichVuViewModel>> GetAllAsync(HangHoaDichVuParams @params = null);
         Task<PagedList<HangHoaDichVuViewModel>> GetAllPagingAsync(HangHoaDichVuParams @params);
         Task<HangHoaDichVuViewModel> GetByIdAsync(string id);
+        Task<bool> CheckPhatSinhAsync(string id);
         Task<FileReturn> ExportExcelAsync(HangHoaDichVuParams @params);
         HangHoaDichVuViewModel CheckMaOutObject(string ma, List<HangHoaDichVu> models);
 
