@@ -147,7 +147,7 @@ namespace Services.Repositories.Implimentations.TienIch
                         from hddtInSys in tmpHDDTInSys.DefaultIfEmpty()
                         join hddtOutSys in _db.ThongTinHoaDons on nk.RefId equals hddtOutSys.Id into tmpHDDTOutSys
                         from hddtOutSys in tmpHDDTOutSys.DefaultIfEmpty()
-                        let soHoaDon = string.IsNullOrEmpty(nk.So) ? (hddtInSys != null ? (hddtInSys.SoHoaDon + "") : hddtOutSys.SoHoaDon) : nk.So
+                        let soHoaDon = string.IsNullOrEmpty(nk.So) ? (hddtOutSys != null ? hddtOutSys.SoHoaDon : "<Chưa cấp số>") : nk.So
                         orderby nk.CreatedDate descending
                         select new NhatKyGuiEmailViewModel
                         {

@@ -262,7 +262,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //cột này hiển thị ở cả 4 tab hóa đơn
             //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
             List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                         where hoaDon.HinhThucXoabo !=null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
+                                                         where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
                                                          select new HoaDonDienTu
                                                          {
                                                              HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -445,7 +445,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           NgayTao = hd.CreatedDate,
                                                           TenNguoiCapNhat = mb.UserName ?? string.Empty,
                                                           NgayCapNhat = hd.ModifyDate,
-                                                          NgayGuiTBaoSaiSotKhongPhaiLapHD= hd.NgayGuiTBaoSaiSotKhongPhaiLapHD,
+                                                          NgayGuiTBaoSaiSotKhongPhaiLapHD = hd.NgayGuiTBaoSaiSotKhongPhaiLapHD,
                                                           IsDaLapThongBao04 = hd.IsDaLapThongBao04,
                                                           LanGui04 = hd.LanGui04,
                                                       };
@@ -980,8 +980,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 item.HinhThucDieuChinh = GetHinhThucDieuChinh(item, hoaDonDieuChinh_ThayThes.Any(x => x.ThayTheChoHoaDonId == item.HoaDonDienTuId), hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId) || bienBanDieuChinhs.Any(x => x.HoaDonBiDieuChinhId == item.HoaDonDienTuId));
                 item.IsLapHoaDonThayThe = (item.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) && (item.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) && item.DaLapHoaDonThayThe != true;
                 item.IsLapHoaDonDieuChinh = (item.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) && (item.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) && (item.TrangThaiGuiHoaDon >= (int)TrangThaiGuiHoaDon.DaGui) && !hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId);
-                
-                item.ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, _db.HoaDonDienTus.Where(x=>x.HoaDonDienTuId == item.HoaDonDienTuId).FirstOrDefault(),_db.BoKyHieuHoaDons.Where(x=>x.BoKyHieuHoaDonId == item.BoKyHieuHoaDonId).FirstOrDefault(), listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == item.DieuChinhChoHoaDonId), thongDiepChungs);
+
+                item.ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == item.HoaDonDienTuId).FirstOrDefault(), _db.BoKyHieuHoaDons.Where(x => x.BoKyHieuHoaDonId == item.BoKyHieuHoaDonId).FirstOrDefault(), listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == item.DieuChinhChoHoaDonId), thongDiepChungs);
 
                 item.TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                         where tldk.NghiepVuId == item.HoaDonDienTuId
@@ -5186,13 +5186,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 string messageTitle = banMauEmail.TieuDeEmail;
                 messageTitle = messageTitle.Replace("##tendonvi##", salerVM.TenDonVi);
-                messageTitle = messageTitle.Replace("##loaihoadon##", hddt.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
+                messageTitle = messageTitle.Replace("##loaihoadon##", ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription());
 
                 string messageBody = banMauEmail.NoiDungEmail;
                 messageBody = messageBody.Replace("##tendonvi##", salerVM.TenDonVi);
-                messageBody = messageBody.Replace("##loaihoadon##", hddt.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
+                messageBody = messageBody.Replace("##loaihoadon##", ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription());
                 messageBody = messageBody.Replace("##tennguoinhan##", TenNguoiNhan ?? (hddt.HoTenNguoiNhanHD ?? string.Empty));
-                messageBody = messageBody.Replace("##so##", hddt.SoHoaDon.HasValue ? hddt.SoHoaDon.ToString() : "<Chưa cấp số>");
+                messageBody = messageBody.Replace("##so##", hddt.SoHoaDon.HasValue ? hddt.SoHoaDon.ToString() : "&lt;Chưa cấp số&gt;");
                 messageBody = messageBody.Replace("##mauso##", hddt.MauSo);
                 messageBody = messageBody.Replace("##kyhieu##", hddt.KyHieu);
                 messageBody = messageBody.Replace("##matracuu##", hddt.MaTraCuu);
@@ -5700,17 +5700,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 string messageTitle = banMauEmail.TieuDeEmail;
                 messageTitle = messageTitle.Replace("##tendonvi##", salerVM.TenDonVi);
-                messageTitle = messageTitle.Replace("##loaihoadon##", @params.HoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
+                messageTitle = messageTitle.Replace("##loaihoadon##", ((LoaiHoaDon)@params.HoaDon.LoaiHoaDon).GetDescription());
                 messageTitle = messageTitle.Replace("##so##", hddt.SoHoaDon.HasValue ? hddt.SoHoaDon.ToString() : "<Chưa cấp số>");
                 messageTitle = messageTitle.Replace("##tenkhachhang##", hddt.TenKhachHang);
 
                 string messageBody = banMauEmail.NoiDungEmail;
                 string TenNguoiNhan = !string.IsNullOrEmpty(@params.TenNguoiNhan) ? @params.TenNguoiNhan : (@params.HoaDon.HoTenNguoiNhanHD ?? string.Empty);
                 messageBody = messageBody.Replace("##tendonvi##", salerVM.TenDonVi);
-                messageBody = messageBody.Replace("##loaihoadon##", @params.HoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
+                messageBody = messageBody.Replace("##loaihoadon##", ((LoaiHoaDon)@params.HoaDon.LoaiHoaDon).GetDescription());
                 messageBody = messageBody.Replace("##tennguoinhan##", TenNguoiNhan);
                 messageBody = messageBody.Replace("##tenkhachhang##", TenNguoiNhan);
-                messageBody = messageBody.Replace("##so##", !@params.HoaDon.SoHoaDon.HasValue ? "<Chưa cấp số>" : @params.HoaDon.SoHoaDon.ToString());
+                messageBody = messageBody.Replace("##so##", !@params.HoaDon.SoHoaDon.HasValue ? "&lt;Chưa cấp số&gt;" : @params.HoaDon.SoHoaDon.ToString());
                 messageBody = messageBody.Replace("##mauso##", @params.HoaDon.MauSo);
                 messageBody = messageBody.Replace("##kyhieu##", @params.HoaDon.KyHieu);
                 messageBody = messageBody.Replace("##ngayhoadon##", hddt.NgayHoaDon.Value.ToString("dd/MM/yyyy"));
@@ -5763,7 +5763,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                         else
                         {
-                            _objHDDT.TrangThaiGuiHoaDonNhap = (int)TrangThaiGuiHoaDon.DaGui;
+                            if (!isBanNhap)
+                            {
+                                _objHDDT.TrangThaiGuiHoaDonNhap = (int)TrangThaiGuiHoaDon.DaGui;
+                            }
                         }
                     }
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
@@ -8047,7 +8050,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //cột này hiển thị ở cả 4 tab hóa đơn
                 //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
                 List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                         where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
+                                                             where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -9645,7 +9648,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else
                         worksheet.Cells[idx, 2].Value = "Gửi hóa đơn cho khách hàng lỗi";
 
-                    worksheet.Cells[idx, 3].Value = it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng";
+                    worksheet.Cells[idx, 3].Value = ((LoaiHoaDon)it.LoaiHoaDon).GetDescription();
 
                     worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
                     worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.MauHoaDon != null ? it.MauHoaDon.KyHieu : string.Empty);
@@ -9891,7 +9894,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //cột này hiển thị ở cả 4 tab hóa đơn
                 //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
                 List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                         where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
+                                                             where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -10434,7 +10437,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //cột này hiển thị ở cả 4 tab hóa đơn
                 //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
                 List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                         where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
+                                                             where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -14688,7 +14691,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 //đọc ra trước các hóa đơn để lấy ra hóa đơn thay thế, hóa đơn điều chỉnh tại mỗi dòng hóa đơn đang duyệt
                 List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                         where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
+                                                             where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -15314,7 +15317,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<bool> IsDaGuiEmailChoKhachHangAsync(string id)
         {
             var isDaGui = await _db.NhatKyGuiEmails
-                .AnyAsync(x => x.RefId == id && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan));
+                .AnyAsync(x => x.RefId == id && !string.IsNullOrEmpty(x.So) && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan));
 
             return isDaGui;
         }
