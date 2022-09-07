@@ -14897,7 +14897,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     };
                 }
 
-                if (param.IsPhatHanh == true)
+                if (param.IsPhatHanh == true && param.SkipCheckHoaDonNhoHonHoaDonDangPhatHanh != true)
                 {
                     var listHoaDonChuaCapSoBefore = await _db.HoaDonDienTus
                     .Where(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && !x.SoHoaDon.HasValue && x.NgayHoaDon.Value.Date < ngayHoaDon)
@@ -16418,6 +16418,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 .OrderBy(x => x.KyHieuHoaDon)
                 .ToList();
 
+            var ngayHoaDonMax = groups.SelectMany(x => x.Children).Max(x => x.NgayHoaDon);
+
+            var listHoaDonNgayNhoHon = await _db.HoaDonDienTus
+                .Where(x => list.Any(y => y.BoKyHieuHoaDonId == x.BoKyHieuHoaDonId) && ((x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.ChuaKyDienTu) || (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KyDienTuLoi)) && x.NgayHoaDon.Value.Date < ngayHoaDonMax)
+                .ToListAsync();
+
+            var listHoaDonNgayNhoHonVM = _mp.Map<List<HoaDonDienTuViewModel>>(listHoaDonNgayNhoHon);
+
             foreach (var group in groups)
             {
                 long? soHoaDon = null;
@@ -16432,7 +16440,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 else
                 {
                     // Có hóa đơn có ngày nhỏ hơn hóa đơn đang phát hành
-                    group.HasHoaDonNhoHon = await _db.HoaDonDienTus.AnyAsync(x => x.BoKyHieuHoaDonId == group.BoKyHieuHoaDonId && ((x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.ChuaKyDienTu) || (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KyDienTuLoi)) && x.NgayHoaDon.Value.Date < group.Children.Max(y => y.NgayHoaDon));
+                    group.HasHoaDonNhoHon = listHoaDonNgayNhoHon.Any(x => x.BoKyHieuHoaDonId == group.BoKyHieuHoaDonId && x.NgayHoaDon.Value.Date < group.NgayHoaDon);
+                    group.Count = listHoaDonNgayNhoHon.Count(x => x.BoKyHieuHoaDonId == group.BoKyHieuHoaDonId && x.NgayHoaDon.Value.Date < group.NgayHoaDon);
+                    group.HoaDons = listHoaDonNgayNhoHonVM
+                        .Where(x => x.BoKyHieuHoaDonId == group.BoKyHieuHoaDonId && x.NgayHoaDon.Value.Date < group.NgayHoaDon)
+                        .GroupBy(x => x.TrangThaiQuyTrinh)
+                        .Select(x => new HoaDonDienTuViewModel
+                        {
+                            KyHieuHoaDon = group.KyHieuHoaDon,
+                            TrangThaiQuyTrinh = x.Key,
+                            TenTrangThaiQuyTrinh = ((TrangThaiQuyTrinh)x.Key).GetDescription(),
+                            Count = x.Count()
+                        })
+                        .OrderBy(x => x.TrangThaiQuyTrinh)
+                        .ToList();
                 }
 
                 foreach (var child in group.Children)
