@@ -27,7 +27,7 @@ namespace Services.Helper.Params.Filter
                     switch (filterValueType)
                     {
                         case FilterValueType.Decimal:
-                            query = query.Where(x => selector(x) != null && selector(x).Equals(filterColumn.ColValue));
+                            query = query.Where(x => selector(x) != null && (((decimal)selector(x)) == decimal.Parse(filterColumn.ColValue)));
                             break;
                         case FilterValueType.String:
                             query = query.Where(x => (selector(x) ?? string.Empty).ToString().ToUnSign().ToUpper().Equals(filterColumn.ColValue));

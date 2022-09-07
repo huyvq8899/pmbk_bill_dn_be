@@ -55,7 +55,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             return result;
         }
-
+        public async Task<bool> CheckPhatSinhAsync(string id)
+        {
+            return await _db.HoaDonDienTuChiTiets.AnyAsync(x => x.DonViTinhId == id);
+        }
         public async Task<bool> DeleteAsync(string id)
         {
             var entity = await _db.DonViTinhs.FirstOrDefaultAsync(x => x.DonViTinhId == id);

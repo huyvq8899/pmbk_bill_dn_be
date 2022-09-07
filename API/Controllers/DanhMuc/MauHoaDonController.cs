@@ -49,6 +49,17 @@ namespace API.Controllers.DanhMuc
             var result = await _mauHoaDonService.GetByIdAsync(id);
             return Ok(result);
         }
+        /// <summary>
+        /// Kiểm tra xem mâu hóa đơn đã phát sinh trong hóa đơn hoặc bộ ký hiệu nào chưa
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("CheckPhatSinh/{Id}")]
+        public async Task<IActionResult> CheckPhatSinh(string id)
+        {
+            var result = await _mauHoaDonService.CheckPhatSinhAsync(id);
+            return Ok(result);
+        }
 
         [HttpGet("GetNgayKyById/{Id}")]
         public async Task<IActionResult> GetNgayKyById(string id)

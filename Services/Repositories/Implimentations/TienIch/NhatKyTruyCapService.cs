@@ -1230,9 +1230,12 @@ namespace Services.Repositories.Implimentations.TienIch
 
         public async Task<List<NhatKyTruyCapViewModel>> GetByRefIdAsync(string id)
         {
+
+            var bbHuyId = (from bbxb in _db.BienBanXoaBos where bbxb.HoaDonDienTuId == id select bbxb.Id).FirstOrDefault();
+            var bbdcId = (from bbdc in _db.BienBanDieuChinhs where bbdc.HoaDonBiDieuChinhId == id select bbdc.BienBanDieuChinhId).FirstOrDefault();
             var query = from nktc in _db.NhatKyTruyCaps
                         join u in _db.Users on nktc.CreatedBy equals u.UserId
-                        where nktc.RefId == id || nktc.RefId.Contains(id)
+                        where nktc.RefId == id || (nktc.RefId == bbHuyId && bbHuyId != null) || (nktc.RefId == bbdcId && bbdcId != null)
                         orderby nktc.CreatedDate descending
                         select new NhatKyTruyCapViewModel
                         {
@@ -1252,6 +1255,7 @@ namespace Services.Repositories.Implimentations.TienIch
                             CreatedBy = nktc.CreatedBy,
                             CreatedByUserName = u.UserName
                         };
+
             return await query.ToListAsync();
         }
     }

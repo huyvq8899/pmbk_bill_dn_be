@@ -41,6 +41,17 @@ namespace API.Controllers.DanhMuc
             var result = await _hangHoaDichVuService.GetByIdAsync(id);
             return Ok(result);
         }
+        /// <summary>
+        /// Kiểm tra xem hàng hóa dịch vụ đã được tạo trong hóa đơn chưa. nếu có trong tạo hóa đơn rồi thì không được xóa hhdv.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("CheckPhatSinh/{Id}")]
+        public async Task<IActionResult> CheckPhatSinh(string id)
+        {
+            var result = await _hangHoaDichVuService.CheckPhatSinhAsync(id);
+            return Ok(result);
+        }
 
         [HttpPost("CheckTrungMa")]
         public async Task<IActionResult> CheckTrungMa(HangHoaDichVuViewModel model)

@@ -81,7 +81,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             return result;
         }
-
+        public async Task<bool> CheckPhatSinhAsync(string id)
+        {
+            return await _db.HoaDonDienTus.AnyAsync(x => x.MauHoaDonId == id)
+                || await _db.BoKyHieuHoaDons.AnyAsync(x => x.MauHoaDonId == id);
+        }
         public async Task<List<MauHoaDonViewModel>> GetAllAsync(MauHoaDonParams @params = null)
         {
             var query = _db.MauHoaDons.Select(x => new MauHoaDonViewModel
