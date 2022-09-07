@@ -19,6 +19,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public string HoaDonDienTuId { get; set; }
 
+        [Display(Name = "Ngày gửi thông báo sai sót không phải lập hóa đơn")]
+        public DateTime? NgayGuiTBaoSaiSotKhongPhaiLapHD { get; set; }
+
         [Display(Name = "Ngày hóa đơn")]
         public DateTime? NgayHoaDon { get; set; }
 

@@ -255,6 +255,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var result = await _db.SaveChangesAsync() > 0;
             return result;
         }
-
+        public async Task<bool> CheckPhatSinhAsync(string id)
+        {
+            return await _db.HoaDonDienTus.AnyAsync(x => x.LoaiTienId == id);
+        }
     }
 }
