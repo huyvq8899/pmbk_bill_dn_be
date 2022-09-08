@@ -2047,6 +2047,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from cb in tmpCreatedBy.DefaultIfEmpty()
                         join mb in _db.Users on hddt.ModifyBy equals mb.UserId into tmpModifiedBy
                         from mb in tmpModifiedBy.DefaultIfEmpty()
+                        where pagingParams.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8)
                         select new HoaDonDienTuViewModel
                         {
                             HoaDonDienTuId = hddt.HoaDonDienTuId,
@@ -2105,6 +2106,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
 
             List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
+                                                         where pagingParams.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8)
                                                          select new HoaDonDienTu
                                                          {
                                                              HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -2197,7 +2199,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var truongDuLieuBangKes = await _db.ThietLapTruongDuLieus
                     .Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomBangKe &&
-                                //x.LoaiHoaDon == (pagingParams.LoaiNghiepVu == 1 ? LoaiHoaDon.None : LoaiHoaDon.PhieuXuatKho) &&
+                                x.LoaiHoaDon == (pagingParams.LoaiNghiepVu == 1 ? LoaiHoaDon.None : LoaiHoaDon.PhieuXuatKho) &&
                                 x.HienThi == true)
                     .Select(x => new ThietLapTruongDuLieuViewModel
                     {
@@ -3031,6 +3033,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         && (@params.TrangThaiChuyenDoi == -1 || (@params.TrangThaiChuyenDoi != -1 && @params.TrangThaiChuyenDoi == 0 ? hd.SoLanChuyenDoi == 0 : hd.SoLanChuyenDoi > 0))
                         && (@params.KhachHangId.Contains("-1") || @params.KhachHangId.Contains(hd.KhachHangId))
                         && (@params.BoKyHieuHoaDonId.Contains("-1") || @params.BoKyHieuHoaDonId.Contains(hd.BoKyHieuHoaDonId))
+                        && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
                         select new HoaDonDienTuViewModel()
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -3401,9 +3404,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                 $"Số hóa đơn: {it.SoHoaDonLienQuan}\n" +
                                                                 $"Ngày hóa đơn: {it.NgayHoaDonLienQuan.Value.ToString("dd/MM/yyyy")}";
                             worksheet.Cells[idx, 48].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
-                            worksheet.Cells[idx, 49].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-
-                            worksheet.Cells[idx, 50].Value = it.ActionUser != null ? it.ActionUser.FullName : string.Empty;
+                            //worksheet.Cells[idx, 49].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                            worksheet.Cells[idx, 49].Value = it.ActionUser != null ? it.ActionUser.FullName : string.Empty;
 
                             idx += 1;
                             count += 1;
