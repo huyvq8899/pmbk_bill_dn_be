@@ -489,21 +489,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                 IdThamChieu = tdc.IdThamChieu,
                                                                 CreatedDate = tdc.CreatedDate,
                                                                 ModifyDate = tdc.ModifyDate,
-                                                                TaiLieuDinhKems = (from tldk in _dataContext.TaiLieuDinhKems
-                                                                                   where tldk.NghiepVuId == tdc.ThongDiepChungId
-                                                                                   orderby tldk.CreatedDate
-                                                                                   select new TaiLieuDinhKemViewModel
-                                                                                   {
-                                                                                       TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
-                                                                                       NghiepVuId = tldk.NghiepVuId,
-                                                                                       LoaiNghiepVu = tldk.LoaiNghiepVu,
-                                                                                       TenGoc = tldk.TenGoc,
-                                                                                       TenGuid = tldk.TenGuid,
-                                                                                       CreatedDate = tldk.CreatedDate,
-                                                                                       Link = _httpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
-                                                                                       Status = tldk.Status
-                                                                                   })
-                                                                                   .ToList(),
+
                                                             };
 
                 if (!string.IsNullOrEmpty(@params.FromDate) && !string.IsNullOrEmpty(@params.ToDate))
@@ -568,6 +554,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             item.TenTrangThaiGui = "CQT không tiếp nhận";
                         }
                     }
+
                 }
 
                 if (@params.TrangThaiGui != -99 && @params.TrangThaiGui != null)
@@ -764,8 +751,26 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     @params.PageSize = await query.CountAsync();
                 }
 
-                return await PagedList<ThongDiepChungViewModel>
-                     .CreateAsync(query, @params.PageNumber, @params.PageSize);
+                var result = PagedList<ThongDiepChungViewModel>.Create(query, @params.PageNumber, @params.PageSize);
+
+                foreach (var item in result.Items)
+                {
+                    item.TaiLieuDinhKems = (from tldk in _dataContext.TaiLieuDinhKems
+                                            where tldk.NghiepVuId == item.ThongDiepChungId
+                                            orderby tldk.CreatedDate
+                                            select new TaiLieuDinhKemViewModel
+                                            {
+                                                TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                NghiepVuId = tldk.NghiepVuId,
+                                                LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                TenGoc = tldk.TenGoc,
+                                                TenGuid = tldk.TenGuid,
+                                                CreatedDate = tldk.CreatedDate,
+                                                Link = _httpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
+                                                Status = tldk.Status
+                                            }).ToList();
+                }
+                return result;
             }
             catch (Exception ex)
             {
