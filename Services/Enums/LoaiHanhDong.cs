@@ -22,13 +22,13 @@ namespace Services.Enums
         In,
         [Description("Ký điện tử")]
         KyDienTu,
-        [Description("Phát hành hóa đơn thành công")]
+        [Description("Phát hành hóa đơn")]
         PhatHanhHoaDonThanhCong,
         [Description("Phát hành hóa đơn không thành công")]
         PhatHanhHoaDonThatBai,
         [Description("Chuyển thành hóa đơn giấy")]
         ChuyenThanhHoaDonGiay,
-        [Description("Gửi HĐ cho KH")]
+        [Description("Gửi hóa đơn cho khách hàng")]
         GuiHoaDonChoKhachHang,
         [Description("Xóa bỏ hóa đơn")]
         XoaBoHoaDon,
@@ -44,13 +44,15 @@ namespace Services.Enums
         NhanBan,
         [Description("Cập nhật ngày hóa đơn")]
         CapNhatNgayHoaDon,
-        [Description("Gửi biên bản điều chỉnh HĐ")]
+        [Description("Gửi biên bản điều chỉnh hóa đơn")]
         GuiBienBanDieuChinhHoaDon,
-        [Description("Gửi thông báo HĐ có thông tin sai sót không phải lập lại HĐ")]
+        [Description("Gửi thông báo hóa đơn có thông tin sai sót không phải lập lại hóa đơn")]
         GuiThongBaoHoaDonCoThongTinSaiSot,
-        [Description("Gửi thông báo xóa bỏ HĐ")]
+        [Description("Gửi thông báo xóa bỏ hóa đơn")]
         GuiThongBaoXoaBoHoaDon,
-        [Description("Gửi biên bản hủy HĐ")]
-        GuiBienBanHuyHoaDon
+        [Description("Gửi biên bản hủy hóa đơn")]
+        GuiBienBanHuyHoaDon,
+        [Description("Phát hành hóa đơn đồng loạt")]
+        PhatHanhHoaDonDongLoat
     }
 }

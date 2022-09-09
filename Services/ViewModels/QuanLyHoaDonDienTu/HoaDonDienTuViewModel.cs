@@ -19,6 +19,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public string HoaDonDienTuId { get; set; }
 
+        [Display(Name = "Ngày gửi thông báo sai sót không phải lập hóa đơn")]
+        public DateTime? NgayGuiTBaoSaiSotKhongPhaiLapHD { get; set; }
+
         [Display(Name = "Ngày hóa đơn")]
         public DateTime? NgayHoaDon { get; set; }
 
@@ -518,6 +521,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? IsTheHienLyDoTrenHoaDon { get; set; }
 
         public bool? IsDaLapThongBao04 { get; set; }
+        public int? LanGui04 { get; set; }
         public bool IsSended { get; set; }//đánh dấu hóa đơn được chọn gửi khi phát hành
         public bool? IsNotCreateThayThe { get; set; }//đánh dấu Hóa đơn xóa bỏ không cần lập thay thế
         public int? HinhThucXoabo { get; set; }
@@ -659,6 +663,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool HasError { get; set; }
+
+        [IgnoreLogging]
+        public bool HasHoaDonNhoHon { get; set; }
+
+        [IgnoreLogging]
+        public bool HasHoaDonKhacNhau { get; set; }
     }
 
     public class CotThongBaoSaiSotViewModel
@@ -720,5 +730,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string KyHieuHoaDon { get; set; }
         public string SoHoaDon { get; set; }
         public string NgayHoaDon { get; set; }
+    }
+
+    public class KetQuaThucHienPhatHanhDongLoat
+    {
+        public int? TrangThaiQuyTrinh { get; set; }
+        public string TenTrangThaiQuyTrinh { get; set; }
+        public List<string> HoaDonDienTuIds { get; set; }
     }
 }

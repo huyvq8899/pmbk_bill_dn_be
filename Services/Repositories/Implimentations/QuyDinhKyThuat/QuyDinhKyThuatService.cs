@@ -3369,7 +3369,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         doc.Replace("<TCQT>", tCQT ?? string.Empty, true, true);
                         doc.Replace("<mgdt>", maThongDiep ?? string.Empty, true, true);
                         doc.Replace("<lydo>", lydo ?? string.Empty, true, true);
-                        doc.Replace("<chucvu>", CDanh.ToUpper() ?? string.Empty, true, true);
+                        doc.Replace("<chucvu>", tCQT.ToUpper() ?? string.Empty, true, true);
                         //if (chuKyCua_TTCQT != null) ImageHelper.AddSignatureImageToDoc(doc, chuKyCua_TTCQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_TTCQT.NgayKy));
                         //if (chuKyCua_CQT != null) ImageHelper.AddSignatureImageToDoc_Buyer(doc, chuKyCua_CQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_CQT.NgayKy));
 

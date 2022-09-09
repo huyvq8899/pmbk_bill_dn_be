@@ -357,7 +357,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var result = await query.FirstOrDefaultAsync();
             return result;
         }
-
+        public async Task<bool> CheckPhatSinhAsync(string id)
+        {
+            return await _db.HoaDonDienTuChiTiets.AnyAsync(x => x.HangHoaDichVuId==id);
+        }
         public async Task<HangHoaDichVuViewModel> InsertAsync(HangHoaDichVuViewModel model)
         {
             var entity = _mp.Map<HangHoaDichVu>(model);

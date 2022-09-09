@@ -68,8 +68,7 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetAllPaging(HoaDonParams pagingParams)
         {
             var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
-            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-            return Ok(new { paged.Items, paged.AllItemIds, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            return Ok(new { paged.Items, paged.AllItemIds, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages, pagingParams.TongTienThanhToan });
         }
 
         [HttpPost("GetAllPagingHoaDonThayThe")]
@@ -1361,8 +1360,8 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("GetListHoaDonDePhatHanhDongLoat")]
         public async Task<IActionResult> GetListHoaDonDePhatHanhDongLoat(HoaDonParams pagingParams)
         {
-            var result = await _hoaDonDienTuService.GetListHoaDonDePhatHanhDongLoatAsync(pagingParams);
-            return Ok(result);
+            var paged = await _hoaDonDienTuService.GetListHoaDonDePhatHanhDongLoatAsync(pagingParams);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
         [HttpPost("GroupListDeXemDuLieuPhatHanhDongLoat")]
@@ -1411,6 +1410,60 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var result = await _hoaDonDienTuService.TaiTepGuiHoaDonLoiAsync(list);
             return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPost("CheckMultiHoaDonPhatHanh")]
+        public async Task<IActionResult> CheckMultiHoaDonPhatHanh(List<ParamPhatHanhHD> @params)
+        {
+            var result = await _hoaDonDienTuService.CheckMultiHoaDonPhatHanhAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpPost("GetMultiTrangThaiQuyTrinhById")]
+        public async Task<IActionResult> GetMultiTrangThaiQuyTrinhById(List<string> ids)
+        {
+            var result = await _hoaDonDienTuService.GetMultiTrangThaiQuyTrinhByIdAsync(ids);
+            return Ok(result);
+        }
+
+        [HttpPost("GetMultiById")]
+        public async Task<IActionResult> GetMultiById(List<string> ids)
+        {
+            var result = await _hoaDonDienTuService.GetMultiByIdAsync(ids);
+            return Ok(result);
+        }
+
+        [HttpPost("WaitMultiForTCTResonse")]
+        public async Task<IActionResult> WaitMultiForTCTResonse(List<string> ids)
+        {
+            var result = await _hoaDonDienTuService.WaitMultiForTCTResonseAsync(ids);
+            return Ok(result);
+        }
+
+        [HttpPost("GetKetQuaThucHienPhatHanhDongLoat")]
+        public async Task<IActionResult> GetKetQuaThucHienPhatHanhDongLoat(List<string> ids)
+        {
+            var result = await _hoaDonDienTuService.GetKetQuaThucHienPhatHanhDongLoatAsync(ids);
+            return Ok(result);
+        }
+
+        [HttpPost("UpdateRangeNgayHoaDonVeNgayHienTai")]
+        public async Task<IActionResult> UpdateRangeNgayHoaDonVeNgayHienTai(List<string> ids)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _hoaDonDienTuService.UpdateRangeNgayHoaDonVeNgayHienTaiAsync(ids);
+                    transaction.Commit();
+                    return Ok(true);
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
         }
     }
 }

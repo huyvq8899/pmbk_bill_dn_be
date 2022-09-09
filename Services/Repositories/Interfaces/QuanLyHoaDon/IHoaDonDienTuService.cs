@@ -22,6 +22,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> DeleteAsync(string id);
         ThamChieuModel DeleteRangeHoaDonDienTuAsync(List<HoaDonDienTuViewModel> list);
         Task<HoaDonDienTuViewModel> GetByIdAsync(string id);
+        Task<List<HoaDonDienTuViewModel>> GetMultiByIdAsync(List<string> ids);
         Task<HoaDonDienTuViewModel> GetByIdAsync(long SoHoaDon, string KyHieuHoaDon, string KyHieuMauSoHoaDon);
         Task<List<HoaDonDienTuViewModel>> GetAllAsync();
         Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingAsync(HoaDonParams pagingParams);
@@ -45,6 +46,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<FileReturn> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay @params);
         Task<bool> GateForWebSocket(ParamPhatHanhHD @param);
         Task<bool> WaitForTCTResonseAsync(string id);
+        Task<bool> WaitMultiForTCTResonseAsync(List<string> ids);
         Task<LuuTruTrangThaiFileHDDTViewModel> GetTrangThaiLuuTru(string HoaDonDienTuId);
         Task<bool> UpdateTrangThaiLuuFileHDDT(LuuTruTrangThaiFileHDDTViewModel model);
         Task<bool> ThemNhatKyThaoTacHoaDonAsync(NhatKyThaoTacHoaDonViewModel model);
@@ -101,7 +103,9 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<ReloadXmlResult> InsertThongDiepChungAsync(ReloadXmlParams @params);
         Task<KetQuaKiemTraLapTBao04ViewModel> KiemTraHoaDonDaLapTBaoCoSaiSotAsync(string hoaDonDienTuId);
         Task<KetQuaCapSoHoaDon> CheckHoaDonPhatHanhAsync(ParamPhatHanhHD @param);
+        Task<List<KetQuaCapSoHoaDon>> CheckMultiHoaDonPhatHanhAsync(List<ParamPhatHanhHD> @params);
         Task<(bool, List<HoaDonDienTuViewModel>)> UpdateNgayHoaDonBangNgayHoaDonPhatHanhAsync(HoaDonDienTuViewModel model);
+        Task UpdateRangeNgayHoaDonVeNgayHienTaiAsync(List<string> ids);
         Task<List<HoaDonDienTuViewModel>> GetListHoaDonSaiSotCanThayTheAsync(HoaDonThayTheParams @params);
         Task<ThongKeSoLuongHoaDonCoSaiSotViewModel> ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(byte coThongKeSoLuong);
         Task<int> KiemTraSoLanGuiEmailSaiSotAsync(string hoaDonDienTuId, byte loaiSaiSot);
@@ -109,6 +113,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> CheckDaPhatSinhThongDiepTruyenNhanVoiCQTAsync(string id);
         Task<bool> CheckLaHoaDonGuiTCTNLoiAsync(string id);
         Task<int> GetTrangThaiQuyTrinhByIdAsync(string id);
+        Task<List<int>> GetMultiTrangThaiQuyTrinhByIdAsync(List<string> ids);
         IEnumerable<HoaDonDienTuViewModel> SortListSelected(HoaDonParams pagingParams);
         Task<string> GetMaThongDiepInXMLSignedByIdAsync(string id);
         Task<List<TaiLieuDinhKemViewModel>> GetTaiLieuDinhKemsByIdAsync(string id);
@@ -117,12 +122,13 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<HoaDonChoKeToanBachKhoaViewModel>> GetHoaDonChoKeToanBachKhoaAsync(ThamSoLayDuLieuHoaDon thamSoLayDuLieu);
         Task<bool> UpdateTruongMaKhiSuaTrongDanhMucAsync(UpdateMa param);
         Task<FileReturn> CreateXMLToSignAsync(HoaDonDienTuViewModel hd);
-        Task<List<HoaDonDienTuViewModel>> GetListHoaDonDePhatHanhDongLoatAsync(HoaDonParams pagingParams);
+        Task<PagedList<HoaDonDienTuViewModel>> GetListHoaDonDePhatHanhDongLoatAsync(HoaDonParams pagingParams);
         Task<List<HoaDonDienTuViewModel>> GetListHoaDonDeGuiEmailDongLoatAsync(HoaDonParams pagingParams);
         Task<List<HoaDonDienTuViewModel>> GroupListDeXemDuLieuPhatHanhDongLoatAsync(List<HoaDonDienTuViewModel> list);
         Task<List<HoaDonDienTuViewModel>> PhatHanhHoaDonDongLoatAsync(List<ParamPhatHanhHD> @params);
-        Task<bool> PhatHanhHoaDonAsync(ParamPhatHanhHD @params);
+        Task<bool> PhatHanhHoaDonAsync(ParamPhatHanhHD param);
         Task<FileReturn> TaiTepPhatHanhHoaDonLoiAsync(List<HoaDonDienTuViewModel> list);
         Task<FileReturn> TaiTepGuiHoaDonLoiAsync(List<HoaDonDienTuViewModel> list);
+        Task<List<KetQuaThucHienPhatHanhDongLoat>> GetKetQuaThucHienPhatHanhDongLoatAsync(List<string> ids);
     }
 }

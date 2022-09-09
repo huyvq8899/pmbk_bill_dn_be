@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Services.Helper.Params.QuanLy;
 using Services.Repositories.Interfaces.QuanLy;
 using Services.ViewModels.QuanLy;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -214,6 +215,24 @@ namespace API.Controllers.QuanLy
         {
             var result = await _boKyHieuHoaDonService.ClearBoKyHieuDaPhatHanhAsync();
             return Ok(result);
+        }
+
+        [HttpPost("CheckDaHetSoLuongHoaDonVaXacThuc")]
+        public async Task<IActionResult> CheckDaHetSoLuongHoaDonVaXacThuc(HoaDonDienTuViewModel hoaDon)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _boKyHieuHoaDonService.CheckDaHetSoLuongHoaDonVaXacThucAsync(hoaDon);
+                    transaction.Commit();
+                    return Ok(true);
+                }
+                catch (Exception)
+                {
+                    return Ok(false);
+                }
+            }
         }
     }
 }

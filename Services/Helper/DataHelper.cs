@@ -208,7 +208,7 @@ namespace Services.Helper
                 {
                     xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan").Remove();
                 }
-                    
+
                 if (xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT") != null)
                 {
                     xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT").Remove();
