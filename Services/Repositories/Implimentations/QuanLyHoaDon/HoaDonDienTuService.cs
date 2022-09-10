@@ -5661,13 +5661,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 string messageTitle = banMauEmail.TieuDeEmail;
                 messageTitle = messageTitle.Replace("##tendonvi##", salerVM.TenDonVi);
-                messageTitle = messageTitle.Replace("##loaihoadon##", hddt.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
+                messageTitle = messageTitle.Replace("##loaihoadon##", ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription());
 
                 string messageBody = banMauEmail.NoiDungEmail;
                 messageBody = messageBody.Replace("##tendonvi##", salerVM.TenDonVi);
-                messageBody = messageBody.Replace("##loaihoadon##", hddt.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
+                messageBody = messageBody.Replace("##loaihoadon##", ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription());
                 messageBody = messageBody.Replace("##tennguoinhan##", TenNguoiNhan ?? (hddt.HoTenNguoiNhanHD ?? string.Empty));
-                messageBody = messageBody.Replace("##so##", hddt.SoHoaDon.HasValue ? hddt.SoHoaDon.ToString() : "<Chưa cấp số>");
+                messageBody = messageBody.Replace("##so##", hddt.SoHoaDon.HasValue ? hddt.SoHoaDon.ToString() : "&lt;Chưa cấp số&gt;");
                 messageBody = messageBody.Replace("##mauso##", hddt.MauSo);
                 messageBody = messageBody.Replace("##kyhieu##", hddt.KyHieu);
                 messageBody = messageBody.Replace("##matracuu##", hddt.MaTraCuu);
@@ -6175,17 +6175,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 string messageTitle = banMauEmail.TieuDeEmail;
                 messageTitle = messageTitle.Replace("##tendonvi##", salerVM.TenDonVi);
-                messageTitle = messageTitle.Replace("##loaihoadon##", @params.HoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
+                messageTitle = messageTitle.Replace("##loaihoadon##", ((LoaiHoaDon)@params.HoaDon.LoaiHoaDon).GetDescription());
                 messageTitle = messageTitle.Replace("##so##", hddt.SoHoaDon.HasValue ? hddt.SoHoaDon.ToString() : "<Chưa cấp số>");
                 messageTitle = messageTitle.Replace("##tenkhachhang##", hddt.TenKhachHang);
 
                 string messageBody = banMauEmail.NoiDungEmail;
                 string TenNguoiNhan = !string.IsNullOrEmpty(@params.TenNguoiNhan) ? @params.TenNguoiNhan : (@params.HoaDon.HoTenNguoiNhanHD ?? string.Empty);
                 messageBody = messageBody.Replace("##tendonvi##", salerVM.TenDonVi);
-                messageBody = messageBody.Replace("##loaihoadon##", @params.HoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
+                messageBody = messageBody.Replace("##loaihoadon##", ((LoaiHoaDon)@params.HoaDon.LoaiHoaDon).GetDescription());
                 messageBody = messageBody.Replace("##tennguoinhan##", TenNguoiNhan);
                 messageBody = messageBody.Replace("##tenkhachhang##", TenNguoiNhan);
-                messageBody = messageBody.Replace("##so##", !@params.HoaDon.SoHoaDon.HasValue ? "<Chưa cấp số>" : @params.HoaDon.SoHoaDon.ToString());
+                messageBody = messageBody.Replace("##so##", !@params.HoaDon.SoHoaDon.HasValue ? "&lt;Chưa cấp số&gt;" : @params.HoaDon.SoHoaDon.ToString());
                 messageBody = messageBody.Replace("##mauso##", @params.HoaDon.MauSo);
                 messageBody = messageBody.Replace("##kyhieu##", @params.HoaDon.KyHieu);
                 messageBody = messageBody.Replace("##ngayhoadon##", hddt.NgayHoaDon.Value.ToString("dd/MM/yyyy"));
@@ -6238,7 +6238,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                         else
                         {
-                            _objHDDT.TrangThaiGuiHoaDonNhap = (int)TrangThaiGuiHoaDon.DaGui;
+                            if (!isBanNhap)
+                            {
+                                _objHDDT.TrangThaiGuiHoaDonNhap = (int)TrangThaiGuiHoaDon.DaGui;
+                            }
                         }
                     }
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
@@ -10128,7 +10131,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else
                         worksheet.Cells[idx, 2].Value = "Gửi hóa đơn cho khách hàng lỗi";
 
-                    worksheet.Cells[idx, 3].Value = it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng";
+                    worksheet.Cells[idx, 3].Value = ((LoaiHoaDon)it.LoaiHoaDon).GetDescription();
 
                     worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
                     worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.MauHoaDon != null ? it.MauHoaDon.KyHieu : string.Empty);
@@ -15837,7 +15840,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<bool> IsDaGuiEmailChoKhachHangAsync(string id)
         {
             var isDaGui = await _db.NhatKyGuiEmails
-                .AnyAsync(x => x.RefId == id && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan));
+                .AnyAsync(x => x.RefId == id && !string.IsNullOrEmpty(x.So) && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan));
 
             return isDaGui;
         }
