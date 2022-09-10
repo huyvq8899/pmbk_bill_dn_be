@@ -990,16 +990,16 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [HttpGet("GetDSXoaBoChuaLapThayThe")]
-        public async Task<IActionResult> GetDSXoaBoChuaLapThayThe()
+        [HttpGet("GetDSXoaBoChuaLapThayThe/{loaiNghiepVu}")]
+        public async Task<IActionResult> GetDSXoaBoChuaLapThayThe(int? loaiNghiepVu)
         {
-            var result = await _hoaDonDienTuService.GetDSXoaBoChuaLapThayTheAsync();
+            var result = await _hoaDonDienTuService.GetDSXoaBoChuaLapThayTheAsync(loaiNghiepVu);
             return Ok(result);
         }
-        [HttpGet("GetHoaDonDaLapBbChuaXoaBo")]
-        public async Task<IActionResult> GetHoaDonDaLapBbChuaXoaBo()
+        [HttpGet("GetHoaDonDaLapBbChuaXoaBo/{loaiNghiepVu}")]
+        public async Task<IActionResult> GetHoaDonDaLapBbChuaXoaBo(int? loaiNghiepVu)
         {
-            var result = await _hoaDonDienTuService.GetHoaDonDaLapBbChuaXoaBoAsync();
+            var result = await _hoaDonDienTuService.GetHoaDonDaLapBbChuaXoaBoAsync(loaiNghiepVu);
             return Ok(result);
         }
 
@@ -1243,10 +1243,10 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [HttpGet("ThongKeSoLuongHoaDonSaiSotChuaLapThongBao/{coThongKeSoLuong}")]
-        public async Task<IActionResult> ThongKeSoLuongHoaDonSaiSotChuaLapThongBao(byte coThongKeSoLuong)
+        [HttpGet("ThongKeSoLuongHoaDonSaiSotChuaLapThongBao/{coThongKeSoLuong}/{loaiNghiepVu}")]
+        public async Task<IActionResult> ThongKeSoLuongHoaDonSaiSotChuaLapThongBao(byte coThongKeSoLuong, int? loaiNghiepVu)
         {
-            var result = await _hoaDonDienTuService.ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(coThongKeSoLuong);
+            var result = await _hoaDonDienTuService.ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(coThongKeSoLuong, loaiNghiepVu);
             return Ok(result);
         }
 

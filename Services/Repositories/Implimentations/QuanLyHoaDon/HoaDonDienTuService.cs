@@ -10310,9 +10310,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return await query.ToListAsync();
         }
 
-        public async Task<List<HoaDonDienTuViewModel>> GetDSXoaBoChuaLapThayTheAsync()
+        public async Task<List<HoaDonDienTuViewModel>> GetDSXoaBoChuaLapThayTheAsync(int? loaiNghiepVu) // 1: hóa đơn, 2: phiếu xuất kho
         {
             var query = from hd in _db.HoaDonDienTus
+                        where loaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8)
                         select new HoaDonDienTuViewModel
                         {
                             DaLapHoaDonThayThe = _db.HoaDonDienTus.Any(x => x.ThayTheChoHoaDonId == hd.HoaDonDienTuId),
@@ -10338,10 +10339,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
             return await query.ToListAsync();
         }
-        public async Task<List<HoaDonDienTuViewModel>> GetHoaDonDaLapBbChuaXoaBoAsync()
+        public async Task<List<HoaDonDienTuViewModel>> GetHoaDonDaLapBbChuaXoaBoAsync(int? loaiNghiepVu) // 1: hóa đơn, 2: phiếu xuất kho
         {
             var query = from hd in _db.HoaDonDienTus
-                        where hd.TrangThaiBienBanXoaBo > 0 && hd.TrangThai != 2
+                        where hd.TrangThaiBienBanXoaBo > 0 && hd.TrangThai != 2 && (loaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
                         select new HoaDonDienTuViewModel
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -15173,7 +15174,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// </summary>
         /// <param name="coThongKeSoLuong"></param>
         /// <returns></returns>
-        public async Task<ThongKeSoLuongHoaDonCoSaiSotViewModel> ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(byte coThongKeSoLuong)
+        public async Task<ThongKeSoLuongHoaDonCoSaiSotViewModel> ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(byte coThongKeSoLuong, int? loaiNghiepVu)
         {
             var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.ToList();
             var thongDiepChungs = _db.ThongDiepChungs.ToList();
@@ -15214,7 +15215,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 //đọc ra trước các hóa đơn để lấy ra hóa đơn thay thế, hóa đơn điều chỉnh tại mỗi dòng hóa đơn đang duyệt
                 List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                             where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
+                                                             where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (loaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -15248,6 +15249,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     join bkhhd in _db.BoKyHieuHoaDons on hoaDon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                     where hoaDon.NgayHoaDon.Value.Date >= fromDate
                                      && hoaDon.NgayHoaDon.Value.Date <= toDate
+                                     && (loaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
                                     select new HoaDonDienTuViewModel
                                     {
                                         ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hoaDon, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hoaDon.DieuChinhChoHoaDonId), thongDiepChungs)
