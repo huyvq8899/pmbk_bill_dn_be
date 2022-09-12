@@ -93,7 +93,7 @@ namespace Services.Repositories.Implimentations
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch(Exception ex)
                     {
                         Tracert.WriteLog(ex.Message);
                         continue;
@@ -117,8 +117,7 @@ namespace Services.Repositories.Implimentations
 
                 foreach (var item in companyModels)
                 {
-                    try
-                    {
+                    try { 
                         using (SqlConnection connection = new SqlConnection(item.ConnectionString))
                         {
                             string query = $"SELECT COUNT(*) FROM HoaDonDienTus WHERE HoaDonDienTuId = @hoaDonId";
@@ -177,7 +176,7 @@ namespace Services.Repositories.Implimentations
                 {
                     try
                     {
-                        if (item.Server != "10.10.20.11")
+                        if(item.Server != "10.10.20.11")
                         {
                             var a = 0;
                         }
@@ -204,7 +203,7 @@ namespace Services.Repositories.Implimentations
                         continue;
                     }
                 }
-
+                
                 return null;
             }
             catch (Exception ex)
@@ -352,7 +351,7 @@ namespace Services.Repositories.Implimentations
             string formatConnection = _configuration["ConnectionStrings:FormatConnection"];
 
             // Get connection string default database.
-            if (formatConnection.Contains("Database={0}"))
+            if(formatConnection.Contains("Database={0}"))
             {
                 return string.Format(formatConnection, "CusManKiemThu");
             }
@@ -365,7 +364,7 @@ namespace Services.Repositories.Implimentations
             var splitAdd = IPAddrr.Split(".");
             var bSplitAdd = splitAdd.Select(x => byte.Parse(x)).ToArray();
             var ping = new Ping();
-            // or...
+                                                            // or...
             var reply = ping.Send(new IPAddress(bSplitAdd), 3000);
             return reply.Status == IPStatus.Success;
         }

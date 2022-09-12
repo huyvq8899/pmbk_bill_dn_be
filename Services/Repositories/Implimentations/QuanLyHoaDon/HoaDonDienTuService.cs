@@ -9229,6 +9229,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var listHoaDonDaLapBBDCs = await _db.BienBanDieuChinhs.Select(x => x.HoaDonBiDieuChinhId).Distinct().ToListAsync();
 
             var query = from hddt in _db.HoaDonDienTus
+                        join kh in _db.DoiTuongs on hddt.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
+                        from kh in tmpKhachHangs.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
                         join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDons
@@ -9251,6 +9253,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             HoaDonDienTuId = hddt.HoaDonDienTuId,
                             TrangThai = hddt.TrangThai,
+                            KhachHang = kh == null ? null : new DoiTuongViewModel
+                            {
+                                Ma = kh.Ma,
+                                Ten = kh.Ten,
+                                MaSoThue = kh.MaSoThue,
+                                DiaChi = kh.DiaChi
+                            },
                             DaBiDieuChinh = (from hd in _db.HoaDonDienTus
                                              join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
                                              where hd.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId
