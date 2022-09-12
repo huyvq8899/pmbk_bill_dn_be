@@ -870,7 +870,7 @@ namespace Services.Repositories.Implimentations
 
         public async Task<List<UserViewModel>> GetAdminUser()
         {
-            return mp.Map<List<UserViewModel>>(await db.Users.Where(x => x.IsAdmin == true || x.IsNodeAdmin == true).ToListAsync());
+            return mp.Map<List<UserViewModel>>(await db.Users.Where(x => x.IsNodeAdmin == true).ToListAsync());
         }
 
         public async Task<int> CheckTrungTenDangNhap(UserViewModel user)
