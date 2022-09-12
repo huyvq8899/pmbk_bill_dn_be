@@ -1465,5 +1465,17 @@ namespace API.Controllers.QuanLyHoaDon
                 }
             }
         }
+        /// <summary>
+        /// Kiểm tra xem danh sách hóa đơn truyền vào đã tồn tại chưa
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        [HttpPost("CheckExistInvoid")]
+        public async Task<IActionResult> CheckExistInvoid(List<ListCheckHoaDonSaiSotViewModel> list)
+        {
+            var result = await _hoaDonDienTuService.CheckExistInvoidAsync(list);
+            return Ok(result);
+        }
+
     }
 }

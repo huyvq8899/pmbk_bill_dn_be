@@ -28,7 +28,20 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string IdsChungTuLienQuan { get; set; } //chuỗi gồm 1 hoặc nhiều id chứng từ liên quan
         public string LyDoThayThe { get; set; }
     }
-
+    public class ListCheckHoaDonSaiSotViewModel
+    {
+        public bool? KetQua { get; set; }
+        public bool? KetQuaDieuChinhKhac { get; set; }
+        public bool? KetQuaThayTheKhac { get; set; }
+        public bool? KetQuaHoaDonNgoai { get; set; }
+        public string MaCQTCap { get; set; }
+        public string MauHoaDon { get; set; }
+        public string KyHieuHoaDon { get; set; }
+        public string SoHoaDon { get; set; }
+        public DateTime? NgayLapHoaDon { get; set; }
+        public int? LoaiApDungHoaDon { get; set; }
+        
+    }
     public class ThongDiepGuiCQTViewModel
     {
         public string Id { get; set; }

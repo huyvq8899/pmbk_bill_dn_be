@@ -130,5 +130,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<FileReturn> TaiTepPhatHanhHoaDonLoiAsync(List<HoaDonDienTuViewModel> list);
         Task<FileReturn> TaiTepGuiHoaDonLoiAsync(List<HoaDonDienTuViewModel> list);
         Task<List<KetQuaThucHienPhatHanhDongLoat>> GetKetQuaThucHienPhatHanhDongLoatAsync(List<string> ids);
+        Task<List<ListCheckHoaDonSaiSotViewModel>> CheckExistInvoidAsync(List<ListCheckHoaDonSaiSotViewModel> list);
     }
 }
