@@ -13625,7 +13625,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                         foreach (var item in thongBaoSaiSots)
                                         {
-                                            if (item.PhanLoaiHDSaiSot == 2)
+                                            if (item.PhanLoaiHDSaiSot == 4)
                                             {
                                                 var chungTuLQ = item.ChungTuLienQuan.Split(";");
                                                 if (chungTuLQ.Length > 1)
@@ -13683,7 +13683,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     foreach (var item in thongBaoSaiSots)
                                     {
                                         var idLienQuan = item.ChungTuLienQuan.Split(";")[1];
-                                        if (hoaDon.HoaDonDienTuId == idLienQuan)
+                                        if (hoaDon.HoaDonDienTuId == idLienQuan && item.PhanLoaiHDSaiSot == 4)
                                         {
                                             var thongBao = thongDiepChungs.Where(x => x.IdThamChieu == item.ThongDiepGuiCQTId).FirstOrDefault();
                                             TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)thongBao.TrangThaiGui.GetValueOrDefault();
