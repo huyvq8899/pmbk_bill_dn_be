@@ -1300,15 +1300,30 @@ namespace DLL.Migrations
 
                     b.Property<string>("BoKyHieuHoaDonId");
 
+                    b.Property<string>("CanCuSo")
+                        .HasMaxLength(255);
+
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime?>("CreatedDate");
+
+                    b.Property<string>("Cua")
+                        .HasMaxLength(400);
 
                     b.Property<bool?>("DaGuiThongBaoXoaBoHoaDon");
 
                     b.Property<string>("DiaChi");
 
                     b.Property<string>("DiaChiGiaoHang");
+
+                    b.Property<string>("DiaChiKhoNhanHang")
+                        .HasMaxLength(400);
+
+                    b.Property<string>("DiaChiKhoXuatHang")
+                        .HasMaxLength(400);
+
+                    b.Property<string>("DienGiai")
+                        .HasMaxLength(400);
 
                     b.Property<string>("DieuChinhChoHoaDonId");
 
@@ -1333,6 +1348,15 @@ namespace DLL.Migrations
                     b.Property<string>("HoTenNguoiMuaHang");
 
                     b.Property<string>("HoTenNguoiNhanHD");
+
+                    b.Property<string>("HoTenNguoiNhanHang")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("HoTenNguoiXuatHang")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("HopDongVanChuyenSo")
+                        .HasMaxLength(255);
 
                     b.Property<string>("IdHoaDonSaiSotBiThayThe")
                         .HasMaxLength(36);
@@ -1398,6 +1422,8 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("ModifyDate");
 
+                    b.Property<DateTime?>("NgayCanCu");
+
                     b.Property<DateTime?>("NgayGuiTBaoSaiSotKhongPhaiLapHD");
 
                     b.Property<DateTime?>("NgayHoaDon");
@@ -1411,6 +1437,9 @@ namespace DLL.Migrations
                     b.Property<string>("NguoiLapId");
 
                     b.Property<string>("NhanVienBanHangId");
+
+                    b.Property<string>("PhuongThucVanChuyen")
+                        .HasMaxLength(50);
 
                     b.Property<int?>("STT");
 
@@ -1433,6 +1462,9 @@ namespace DLL.Migrations
                     b.Property<string>("TenKhachHang");
 
                     b.Property<string>("TenNganHang");
+
+                    b.Property<string>("TenNguoiVanChuyen")
+                        .HasMaxLength(100);
 
                     b.Property<string>("TenNhanVienBanHang");
 
@@ -1590,6 +1622,9 @@ namespace DLL.Migrations
                     b.Property<string>("SoLo");
 
                     b.Property<decimal?>("SoLuong")
+                        .HasColumnType("decimal(21,6)");
+
+                    b.Property<decimal?>("SoLuongNhap")
                         .HasColumnType("decimal(21,6)");
 
                     b.Property<string>("SoMay");

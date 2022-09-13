@@ -8,22 +8,13 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.c
     public partial class TToan
     {
         /// <summary>
-        /// <para>Tổng tiền chiết khấu thương mại</para>
-        /// <para>Độ dài tối đa: 19,4</para>
-        /// <para>Kiểu dữ liệu: Số</para>
-        /// <para>Không bắt buộc (Trừ trường hợp quy định tại điểm đ, khoản 6, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
-        /// </summary>
-        [Column(TypeName = "decimal(19, 4)")]
-        public decimal? TTCKTMai { get; set; }
-
-        /// <summary>
         /// <para>Tổng tiền thanh toán bằng số</para>
         /// <para>Độ dài tối đa: 19,4</para>
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [Column(TypeName = "decimal(19, 4)")]
+        [Column(TypeName = "decimal(7, 2)")]
         public decimal TgTTTBSo { get; set; }
 
         /// <summary>
@@ -33,7 +24,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.c
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [Column(TypeName = "decimal(19, 4)")]
+        [MaxLength(255)]
         public decimal TgTTTBChu { get; set; }
 
         public List<LPhi> DSLPhi { get; set; }

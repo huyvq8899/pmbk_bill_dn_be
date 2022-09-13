@@ -11,6 +11,8 @@ namespace Services.ViewModels.Import
             HoaDonChiTiet = new HoaDonDienTuChiTietViewModel();
         }
 
+        public string HoaDonDienTuId { get; set; }
+
         public int STT { get; set; }
 
         public string StrNgayHoaDon { get; set; }
@@ -90,7 +92,19 @@ namespace Services.ViewModels.Import
         public string MaCuaCQT { get; set; }
 
         public DateTime? NgayKy { get; set; }
-
+        // pxk
+        public string CanCuSo { get; set; }
+        public string StrNgayCanCu { get; set; }
+        public DateTime? NgayCanCu { get; set; }
+        public string Cua { get; set; }
+        public string DienGiai { get; set; }
+        public string DiaChiKhoNhanHang { get; set; }
+        public string HoTenNguoiNhanHang { get; set; }
+        public string DiaChiKhoXuatHang { get; set; }
+        public string HoTenNguoiXuatHang { get; set; }
+        public string HopDongVanChuyenSo { get; set; }
+        public string TenNguoiVanChuyen { get; set; }
+        public string PhuongThucVanChuyen { get; set; }
         ////////////////////////////////////////////////
         public decimal? TongTienHang { get; set; }
 

@@ -21,5 +21,6 @@ namespace Services.Helper.Params.HoaDon
         public int? TrangThaiChuyenDoi { get; set; }
         public string HoaDonDienTuId { get; set; }
         public List<string> HoaDonDienTuIds { get; set; }
+        public int? LoaiNghiepVu { get; set; } // 1 hoa don, 2 phieu xuat kho
     }
 }

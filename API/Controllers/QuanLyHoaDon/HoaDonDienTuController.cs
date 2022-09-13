@@ -990,16 +990,16 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [HttpGet("GetDSXoaBoChuaLapThayThe")]
-        public async Task<IActionResult> GetDSXoaBoChuaLapThayThe()
+        [HttpGet("GetDSXoaBoChuaLapThayThe/{loaiNghiepVu}")]
+        public async Task<IActionResult> GetDSXoaBoChuaLapThayThe(int? loaiNghiepVu)
         {
-            var result = await _hoaDonDienTuService.GetDSXoaBoChuaLapThayTheAsync();
+            var result = await _hoaDonDienTuService.GetDSXoaBoChuaLapThayTheAsync(loaiNghiepVu);
             return Ok(result);
         }
-        [HttpGet("GetHoaDonDaLapBbChuaXoaBo")]
-        public async Task<IActionResult> GetHoaDonDaLapBbChuaXoaBo()
+        [HttpGet("GetHoaDonDaLapBbChuaXoaBo/{loaiNghiepVu}")]
+        public async Task<IActionResult> GetHoaDonDaLapBbChuaXoaBo(int? loaiNghiepVu)
         {
-            var result = await _hoaDonDienTuService.GetHoaDonDaLapBbChuaXoaBoAsync();
+            var result = await _hoaDonDienTuService.GetHoaDonDaLapBbChuaXoaBoAsync(loaiNghiepVu);
             return Ok(result);
         }
 
@@ -1106,6 +1106,13 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> ImportHoaDon([FromForm] NhapKhauParams @params)
         {
             var result = await _hoaDonDienTuService.ImportHoaDonAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpPost("ImportPhieuXuatKho")]
+        public async Task<IActionResult> ImportPhieuXuatKho([FromForm] NhapKhauParams @params)
+        {
+            var result = await _hoaDonDienTuService.ImportPhieuXuatKhoAsync(@params);
             return Ok(result);
         }
 
@@ -1236,10 +1243,10 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [HttpGet("ThongKeSoLuongHoaDonSaiSotChuaLapThongBao/{coThongKeSoLuong}")]
-        public async Task<IActionResult> ThongKeSoLuongHoaDonSaiSotChuaLapThongBao(byte coThongKeSoLuong)
+        [HttpGet("ThongKeSoLuongHoaDonSaiSotChuaLapThongBao/{coThongKeSoLuong}/{loaiNghiepVu}")]
+        public async Task<IActionResult> ThongKeSoLuongHoaDonSaiSotChuaLapThongBao(byte coThongKeSoLuong, int? loaiNghiepVu)
         {
-            var result = await _hoaDonDienTuService.ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(coThongKeSoLuong);
+            var result = await _hoaDonDienTuService.ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(coThongKeSoLuong, loaiNghiepVu);
             return Ok(result);
         }
 
@@ -1401,8 +1408,8 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("GetListHoaDonDeGuiEmailDongLoat")]
         public async Task<IActionResult> GetListHoaDonDeGuiEmailDongLoat(HoaDonParams pagingParams)
         {
-            var result = await _hoaDonDienTuService.GetListHoaDonDeGuiEmailDongLoatAsync(pagingParams);
-            return Ok(result);
+            var paged = await _hoaDonDienTuService.GetListHoaDonDeGuiEmailDongLoatAsync(pagingParams);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
         [HttpPost("TaiTepGuiHoaDonLoi")]

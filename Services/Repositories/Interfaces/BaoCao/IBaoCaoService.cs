@@ -1,6 +1,7 @@
 ﻿using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.BaoCao;
+using Services.Helper.Params.HoaDon;
 using Services.ViewModels.BaoCao;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -26,6 +27,6 @@ namespace Services.Repositories.Interfaces.BaoCao
         Task<ChonKyTinhThueParams> CheckNgayThangBaoCaoTinhHinhSuDungHD(ChonKyTinhThueParams @params);
         Task<bool> XoaBaoCaoTinhHinhSuDungHoaDon(string BaoCaoId);
         Task<BaoCaoBangKeChiTietHoaDonViewModel> GetBaoCaoByKyTinhThue(ChonKyTinhThueParams @params);
-        Task<string> ExportExcelBangKeHangHoaBanRa(PagingParams @params);
+        Task<string> ExportExcelBangKeHangHoaBanRa(HoaDonParams @params);
     }
 }
