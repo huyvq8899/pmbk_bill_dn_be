@@ -2243,7 +2243,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var truongDuLieuBangKes = await _db.ThietLapTruongDuLieus
                     .Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomBangKe &&
-                                //x.LoaiHoaDon == (pagingParams.LoaiNghiepVu == 1 ? LoaiHoaDon.None : LoaiHoaDon.PhieuXuatKho) &&
+                                x.LoaiHoaDon == (pagingParams.LoaiNghiepVu == 1 ? LoaiHoaDon.None : LoaiHoaDon.PhieuXuatKho) &&
                                 x.HienThi == true)
                     .Select(x => new ThietLapTruongDuLieuViewModel
                     {
@@ -3448,9 +3448,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                 $"Số hóa đơn: {it.SoHoaDonLienQuan}\n" +
                                                                 $"Ngày hóa đơn: {it.NgayHoaDonLienQuan.Value.ToString("dd/MM/yyyy")}";
                             worksheet.Cells[idx, 48].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
-                            worksheet.Cells[idx, 49].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-
-                            worksheet.Cells[idx, 50].Value = it.ActionUser != null ? it.ActionUser.FullName : string.Empty;
+                            //worksheet.Cells[idx, 49].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                            worksheet.Cells[idx, 49].Value = it.ActionUser != null ? it.ActionUser.FullName : string.Empty;
 
                             idx += 1;
                             count += 1;
