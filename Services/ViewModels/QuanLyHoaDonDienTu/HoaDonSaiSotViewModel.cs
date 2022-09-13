@@ -34,6 +34,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? KetQuaDieuChinhKhac { get; set; }
         public bool? KetQuaThayTheKhac { get; set; }
         public bool? KetQuaHoaDonNgoai { get; set; }
+        public bool? KetQuaDaTonTaiSaiSot { get; set; }
         public string MaCQTCap { get; set; }
         public string MauHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }

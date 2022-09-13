@@ -17182,6 +17182,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             foreach (var hdInput in list)
             {
                 hdInput.KetQua = await _db.HoaDonDienTus.AnyAsync(x => (x.LoaiApDungHoaDonDieuChinh == (int)hdInput.LoaiApDungHoaDon || hdInput.LoaiApDungHoaDon == 1) && x.BoKyHieuHoaDon.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper() && x.BoKyHieuHoaDon.KyHieuMauSoHoaDon.ToString().TrimToUpper() == hdInput.MauHoaDon.TrimToUpper() && x.MaCuaCQT != null && x.MaCuaCQT == hdInput.MaCQTCap.Trim() && x.NgayHoaDon.Value.Date == hdInput.NgayLapHoaDon && x.SoHoaDon.ToString() == hdInput.SoHoaDon.Trim());
+                
+                hdInput.KetQuaDaTonTaiSaiSot = await _db.ThongDiepChiTietGuiCQTs.AnyAsync(x => (x.LoaiApDungHoaDon == (int)hdInput.LoaiApDungHoaDon) && x.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper() && x.MauHoaDon.TrimToUpper() == hdInput.MauHoaDon.TrimToUpper() && x.MaCQTCap != null && x.MaCQTCap == hdInput.MaCQTCap.Trim() && x.NgayLapHoaDon.Value.Date == hdInput.NgayLapHoaDon && x.SoHoaDon.ToString() == hdInput.SoHoaDon.Trim());
 
                 //kiểm tra xem đã có hóa đơn thay thế cho hóa đơn đó chưa
                 var queryHoaDonThayTheNgoai = await (from thongTinHD in _db.ThongTinHoaDons
