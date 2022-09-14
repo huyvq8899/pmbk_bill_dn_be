@@ -2353,12 +2353,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 queryBangKe[i + 1].TongTienThanhToan = null;
                                 queryBangKe[i + 1].MaLoaiTien = null;
                                 queryBangKe[i + 1].LoaiApDungHoaDon = 0;
-                                queryBangKe[i + 1].LoaiSaiSot = null;
+                                //queryBangKe[i + 1].LoaiSaiSot = null;
 
-                                queryBangKe[i + 1].LyDo = null;
+                                //queryBangKe[i + 1].LyDo = null;
                                 queryBangKe[i + 1].LoaiHoaDon = null;
                                 queryBangKe[i + 1].TrangThaiHoaDon = null;
-                                queryBangKe[i + 1].ChungTuLienQuan = null;
+                                //queryBangKe[i + 1].ChungTuLienQuan = null;
                             }
                         }
 
@@ -2398,6 +2398,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 queryBangKe[i + 1].ThongDiepChungId = null;
                                 queryBangKe[i + 1].NgayThongBao = null;
                                 queryBangKe[i + 1].LoaiThongBaoSaiSot = null;
+                                queryBangKe[i + 1].TenLoaiThongBaoSaiSot = null;
                                 queryBangKe[i + 1].SoTBaoCuaCQT = null;
                                 queryBangKe[i + 1].NgayTBaoCuaCQT = null;
 
