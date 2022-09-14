@@ -13,6 +13,7 @@ namespace DLL.Configurations.QuanLyHoaDonDienTu
         public override void Configure(EntityTypeBuilder<HoaDonDienTuChiTiet> entity)
         {
             entity.Property(r => r.SoLuong).HasColumnType("decimal(21,6)");
+            entity.Property(r => r.SoLuongNhap).HasColumnType("decimal(21,6)");
             entity.Property(r => r.DonGia).HasColumnType("decimal(21,6)");
             entity.Property(r => r.DonGiaSauThue).HasColumnType("decimal(21,6)");
             entity.Property(r => r.DonGiaQuyDoi).HasColumnType("decimal(21,6)");

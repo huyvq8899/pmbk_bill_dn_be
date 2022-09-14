@@ -546,32 +546,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     }
                 }
 
-                foreach (var item in query)
-                {
-                    if (item.ThongDiepGuiDi == false && item.TrangThaiGui == (TrangThaiGuiThongDiep.ChoPhanHoi))
-                    {
-                        item.TrangThaiGui = (TrangThaiGuiThongDiep)GetTrangThaiPhanHoiThongDiepNhan(item);
-                        item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
-                    }
-
-
-                    if (item.TrangThaiGui == TrangThaiGuiThongDiep.DaTiepNhan)
-                    {
-                        if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
-                        {
-                            item.TenTrangThaiGui = "CQT đã tiếp nhận";
-                        }
-                    }
-
-                    if (item.TrangThaiGui == TrangThaiGuiThongDiep.TuChoiTiepNhan)
-                    {
-                        if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
-                        {
-                            item.TenTrangThaiGui = "CQT không tiếp nhận";
-                        }
-                    }
-                }
-
                 if (@params.TrangThaiGui != -99 && @params.TrangThaiGui != null)
                 {
                     query = query.Where(x => x.TrangThaiGui == (TrangThaiGuiThongDiep)@params.TrangThaiGui);
@@ -766,8 +740,33 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     @params.PageSize = await query.CountAsync();
                 }
 
-                return await PagedList<ThongDiepChungViewModel>
-                     .CreateAsync(query, @params.PageNumber, @params.PageSize);
+                var result = await PagedList<ThongDiepChungViewModel>.CreateAsync(query, @params.PageNumber, @params.PageSize);
+                foreach (var item in result.Items)
+                {
+                    if (item.ThongDiepGuiDi == false && item.TrangThaiGui == (TrangThaiGuiThongDiep.ChoPhanHoi))
+                    {
+                        item.TrangThaiGui = (TrangThaiGuiThongDiep)GetTrangThaiPhanHoiThongDiepNhan(item);
+                        item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
+                    }
+
+                    if (item.TrangThaiGui == TrangThaiGuiThongDiep.DaTiepNhan)
+                    {
+                        if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
+                        {
+                            item.TenTrangThaiGui = "CQT đã tiếp nhận";
+                        }
+                    }
+
+                    if (item.TrangThaiGui == TrangThaiGuiThongDiep.TuChoiTiepNhan)
+                    {
+                        if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
+                        {
+                            item.TenTrangThaiGui = "CQT không tiếp nhận";
+                        }
+                    }
+                }
+
+                return result;
             }
             catch (Exception ex)
             {
@@ -2178,40 +2177,40 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         if (!string.IsNullOrEmpty(moTaLoi))
                         {
-                            var hoaDonDienTu = await (from hddt in _dataContext.HoaDonDienTus
-                                                      join bkhhd in _dataContext.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
-                                                      join dlghd in _dataContext.DuLieuGuiHDDTs on hddt.HoaDonDienTuId equals dlghd.HoaDonDienTuId
-                                                      join tlg in _dataContext.ThongDiepChungs on dlghd.DuLieuGuiHDDTId equals tlg.IdThamChieu
-                                                      select new HoaDonDienTuViewModel
-                                                      {
-                                                          HoaDonDienTuId = hddt.HoaDonDienTuId,
-                                                          MauSo = bkhhd.KyHieuMauSoHoaDon + "",
-                                                          KyHieu = bkhhd.KyHieuHoaDon,
-                                                          SoHoaDon = hddt.SoHoaDon,
-                                                          NgayHoaDon = hddt.NgayHoaDon
-                                                      })
-                                                    .GroupBy(x => x.HoaDonDienTuId)
-                                                    .Select(x => new HoaDonDienTuViewModel
-                                                    {
-                                                        HoaDonDienTuId = x.Key,
-                                                        MauSo = x.First().MauSo,
-                                                        KyHieu = x.First().KyHieu,
-                                                        SoHoaDon = x.First().SoHoaDon,
-                                                        NgayHoaDon = x.First().NgayHoaDon
-                                                    })
-                                                    .FirstOrDefaultAsync();
+                            //var hoaDonDienTu = await (from hddt in _dataContext.HoaDonDienTus
+                            //                          join bkhhd in _dataContext.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                            //                          join dlghd in _dataContext.DuLieuGuiHDDTs on hddt.HoaDonDienTuId equals dlghd.HoaDonDienTuId
+                            //                          join tlg in _dataContext.ThongDiepChungs on dlghd.DuLieuGuiHDDTId equals tlg.IdThamChieu
+                            //                          select new HoaDonDienTuViewModel
+                            //                          {
+                            //                              HoaDonDienTuId = hddt.HoaDonDienTuId,
+                            //                              MauSo = bkhhd.KyHieuMauSoHoaDon + "",
+                            //                              KyHieu = bkhhd.KyHieuHoaDon,
+                            //                              SoHoaDon = hddt.SoHoaDon,
+                            //                              NgayHoaDon = hddt.NgayHoaDon
+                            //                          })
+                            //                        .GroupBy(x => x.HoaDonDienTuId)
+                            //                        .Select(x => new HoaDonDienTuViewModel
+                            //                        {
+                            //                            HoaDonDienTuId = x.Key,
+                            //                            MauSo = x.First().MauSo,
+                            //                            KyHieu = x.First().KyHieu,
+                            //                            SoHoaDon = x.First().SoHoaDon,
+                            //                            NgayHoaDon = x.First().NgayHoaDon
+                            //                        })
+                            //                        .FirstOrDefaultAsync();
 
-                            if (hoaDonDienTu != null)
-                            {
-                                result.ThongDiepChiTiet2s.Add(new ThongDiepChiTiet2
-                                {
-                                    KyHieuMauSoHoaDon = hoaDonDienTu.MauSo ?? string.Empty,
-                                    KyHieuHoaDon = hoaDonDienTu.KyHieu ?? string.Empty,
-                                    SoHoaDon = hoaDonDienTu.SoHoaDon,
-                                    NgayLap = hoaDonDienTu.NgayHoaDon,
-                                    MoTaLoi = moTaLoi
-                                });
-                            }
+                            //if (hoaDonDienTu != null)
+                            //{
+                            //    result.ThongDiepChiTiet2s.Add(new ThongDiepChiTiet2
+                            //    {
+                            //        KyHieuMauSoHoaDon = hoaDonDienTu.MauSo ?? string.Empty,
+                            //        KyHieuHoaDon = hoaDonDienTu.KyHieu ?? string.Empty,
+                            //        SoHoaDon = hoaDonDienTu.SoHoaDon,
+                            //        NgayLap = hoaDonDienTu.NgayHoaDon,
+                            //        MoTaLoi = moTaLoi
+                            //    });
+                            //}
                         }
 
                         break;
@@ -3085,55 +3084,59 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                     foreach (var bkhhd in boKyHieuHoaDonNgungSuDungs)
                     {
-                        // set ngừng sử dụng
-                        bkhhd.TrangThaiSuDung = TrangThaiSuDung.NgungSuDung;
-
-                        string tenLoaiNgungSuDung;
-
-                        // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Hình thức hóa đơn và Loại hóa đơn
-                        if (bkhhd.HinhThucHoaDon == hinhThucHoaDonNgungSuDung && listLoaiHoaDonNgungSuDung.Contains(bkhhd.LoaiHoaDon))
+                        // Nếu khác ngừng sử dụng thì mới vào nhật ký xác thực
+                        if (bkhhd.TrangThaiSuDung != TrangThaiSuDung.NgungSuDung)
                         {
-                            tenLoaiNgungSuDung = "Hình thức hóa đơn và Loại hóa đơn";
-                        }
-                        else
-                        {
-                            // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Hình thức hóa đơn
-                            if (bkhhd.HinhThucHoaDon == hinhThucHoaDonNgungSuDung)
+                            string tenLoaiNgungSuDung;
+
+                            // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Hình thức hóa đơn và Loại hóa đơn
+                            if (bkhhd.HinhThucHoaDon == hinhThucHoaDonNgungSuDung && listLoaiHoaDonNgungSuDung.Contains(bkhhd.LoaiHoaDon))
                             {
-                                tenLoaiNgungSuDung = "Hình thức hóa đơn";
+                                tenLoaiNgungSuDung = "Hình thức hóa đơn và Loại hóa đơn";
                             }
-                            // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Loại hóa đơn
                             else
                             {
-                                tenLoaiNgungSuDung = "Loại hóa đơn";
+                                // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Hình thức hóa đơn
+                                if (bkhhd.HinhThucHoaDon == hinhThucHoaDonNgungSuDung)
+                                {
+                                    tenLoaiNgungSuDung = "Hình thức hóa đơn";
+                                }
+                                // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Loại hóa đơn
+                                else
+                                {
+                                    tenLoaiNgungSuDung = "Loại hóa đơn";
+                                }
                             }
-                        }
 
-                        // save mau hoa don xac thuc to db
-                        List<MauHoaDonXacThuc> mauHoaDonXacThucs = new List<MauHoaDonXacThuc>();
-                        var listMauHoaDon = await _mauHoaDonService.GetListMauHoaDonXacThucAsync(bkhhd.MauHoaDonId);
-                        foreach (var item in listMauHoaDon)
-                        {
-                            mauHoaDonXacThucs.Add(new MauHoaDonXacThuc
+                            // save mau hoa don xac thuc to db
+                            List<MauHoaDonXacThuc> mauHoaDonXacThucs = new List<MauHoaDonXacThuc>();
+                            var listMauHoaDon = await _mauHoaDonService.GetListMauHoaDonXacThucAsync(bkhhd.MauHoaDonId);
+                            foreach (var item in listMauHoaDon)
                             {
-                                FileByte = item.FileByte,
-                                FileType = item.FileType
+                                mauHoaDonXacThucs.Add(new MauHoaDonXacThuc
+                                {
+                                    FileByte = item.FileByte,
+                                    FileType = item.FileType
+                                });
+                            }
+
+                            listAddedNhatKyXacThuc.Add(new NhatKyXacThucBoKyHieu
+                            {
+                                TrangThaiSuDung = TrangThaiSuDung.NgungSuDung,
+                                BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                                MauHoaDonId = bkhhd.MauHoaDonId,
+                                ThongDiepId = thongDiepGui.ThongDiepChungId,
+                                ThoiGianXacThuc = DateTime.Now,
+                                ThoiDiemChapNhan = thongDiepGui.NgayThongBao,
+                                MaThongDiepGui = thongDiepGui.MaThongDiep,
+                                TenMauHoaDon = bkhhd.MauHoaDon.Ten,
+                                NoiDung = tenLoaiNgungSuDung,
+                                MauHoaDonXacThucs = mauHoaDonXacThucs
                             });
                         }
 
-                        listAddedNhatKyXacThuc.Add(new NhatKyXacThucBoKyHieu
-                        {
-                            TrangThaiSuDung = TrangThaiSuDung.NgungSuDung,
-                            BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
-                            MauHoaDonId = bkhhd.MauHoaDonId,
-                            ThongDiepId = thongDiepGui.ThongDiepChungId,
-                            ThoiGianXacThuc = DateTime.Now,
-                            ThoiDiemChapNhan = thongDiepGui.NgayThongBao,
-                            MaThongDiepGui = thongDiepGui.MaThongDiep,
-                            TenMauHoaDon = bkhhd.MauHoaDon.Ten,
-                            NoiDung = tenLoaiNgungSuDung,
-                            MauHoaDonXacThucs = mauHoaDonXacThucs
-                        });
+                        // set ngừng sử dụng
+                        bkhhd.TrangThaiSuDung = TrangThaiSuDung.NgungSuDung;
                     }
                 }
                 else

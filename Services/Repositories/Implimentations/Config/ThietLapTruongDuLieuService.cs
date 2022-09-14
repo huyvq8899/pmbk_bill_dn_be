@@ -62,6 +62,19 @@ namespace Services.Repositories.Implimentations.Config
                 var oldItem = oldData.FirstOrDefault(x => x.TenCot == item.TenCot);
                 if (oldItem != null)
                 {
+                    if (loaiTruong == LoaiTruongDuLieu.NhomBangKe)
+                    {
+                        if (item.TenCot == "KyHieu" ||
+                        item.TenCot == "SoNgay" ||
+                        item.TenCot == "KhachHang" ||
+                        item.TenCot == "TrangThai" ||
+                        item.TenCot == "TrangThaiQuyTrinh" ||
+                        item.TenCot == "TongTienThanhToan")
+                        {
+                            item.Disabled = true;
+                        }
+                    }
+
                     item.ThietLapTruongDuLieuId = oldItem.ThietLapTruongDuLieuId;
                 }
             }
@@ -83,6 +96,22 @@ namespace Services.Repositories.Implimentations.Config
             //ThietLapTruongDuLieuData data = new ThietLapTruongDuLieuData();
             //var result = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(data.InitData());
             //result = result.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).OrderBy(x => x.STT).ToList();
+
+            if (loaiTruong == LoaiTruongDuLieu.NhomBangKe)
+            {
+                foreach (var item in result)
+                {
+                    if (item.TenCot == "KyHieu" ||
+                        item.TenCot == "SoNgay" ||
+                        item.TenCot == "KhachHang" ||
+                        item.TenCot == "TrangThai" ||
+                        item.TenCot == "TrangThaiQuyTrinh" ||
+                        item.TenCot == "TongTienThanhToan")
+                    {
+                        item.Disabled = true;
+                    }
+                }
+            }
 
             return result;
         }

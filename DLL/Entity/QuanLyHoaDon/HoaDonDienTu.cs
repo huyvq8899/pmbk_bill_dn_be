@@ -81,6 +81,19 @@ namespace DLL.Entity.QuanLyHoaDon
         public LoaiChietKhau LoaiChietKhau { get; set; }
         public decimal? TyLeChietKhau { get; set; }
         ///////////////////////////////////
+        // Phiếu xuất kho
+        public string CanCuSo { get; set; }
+        public DateTime? NgayCanCu { get; set; }
+        public string Cua { get; set; }
+        public string DienGiai { get; set; }
+        public string DiaChiKhoNhanHang { get; set; }
+        public string HoTenNguoiNhanHang { get; set; }
+        public string DiaChiKhoXuatHang { get; set; }
+        public string HoTenNguoiXuatHang { get; set; }
+        public string HopDongVanChuyenSo { get; set; }
+        public string TenNguoiVanChuyen { get; set; }
+        public string PhuongThucVanChuyen { get; set; }
+        ///////////////////////////////////
         public decimal? TongTienHang { get; set; }
         public decimal? TongTienChietKhau { get; set; }
         public decimal? TongTienThueGTGT { get; set; }

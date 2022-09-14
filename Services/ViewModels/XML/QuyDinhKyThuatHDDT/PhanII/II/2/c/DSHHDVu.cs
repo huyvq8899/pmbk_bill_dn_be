@@ -79,24 +79,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.c
         public decimal? DGia { get; set; }
 
         /// <summary>
-        /// <para>Tỷ lệ % chiết khấu (Trong trường hợp muốn thể hiện thông tin chiết khấu theo cột cho từng hàng hóa, dịch vụ)</para>
-        /// <para>Độ dài tối đa: 6,4</para>
-        /// <para>Kiểu dữ liệu: Số</para>
-        /// <para>Không Bắt buộc</para>
-        /// </summary>
-        [Column(TypeName = "decimal(6, 4)")]
-        public decimal? TLCKhau { get; set; }
-
-        /// <summary>
-        /// <para>Số tiền chiết khấu (Trong trường hợp muốn thể hiện thông tin chiết khấu theo cột cho từng hàng hóa, dịch vụ)</para>
-        /// <para>Độ dài tối đa: 19,4</para>
-        /// <para>Kiểu dữ liệu: Số</para>
-        /// <para>Không Bắt buộc</para>
-        /// </summary>
-        [Column(TypeName = "decimal(19, 4)")]
-        public decimal? STCKhau { get; set; }
-
-        /// <summary>
         /// <para>Thành tiền (Thành tiền chưa có thuế GTGT)</para>
         /// <para>Độ dài tối đa: 19,4</para>
         /// <para>Kiểu dữ liệu: Số</para>

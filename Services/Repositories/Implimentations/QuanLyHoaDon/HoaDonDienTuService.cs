@@ -262,7 +262,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //cột này hiển thị ở cả 4 tab hóa đơn
             //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
             List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                         where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
+                                                         where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (pagingParams.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
                                                          select new HoaDonDienTu
                                                          {
                                                              HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -310,8 +310,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                       from cb in tmpCreatedBys.DefaultIfEmpty()
                                                       join mb in _db.Users on hd.ModifyBy equals mb.UserId into tmpModifyBys
                                                       from mb in tmpModifyBys.DefaultIfEmpty()
-                                                      where pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
-
+                                                      where pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId) &&
+                                                      (pagingParams.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
                                                       select new HoaDonDienTuViewModel
                                                       {
                                                           ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
@@ -448,6 +448,33 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           NgayCapNhat = hd.ModifyDate,
                                                           NgayGuiTBaoSaiSotKhongPhaiLapHD = hd.NgayGuiTBaoSaiSotKhongPhaiLapHD,
                                                           LanGui04 = hd.LanGui04,
+                                                          // pxk
+                                                          CanCuSo = hd.CanCuSo,
+                                                          NgayCanCu = hd.NgayCanCu,
+                                                          Cua = hd.Cua,
+                                                          DienGiai = hd.DienGiai,
+                                                          DiaChiKhoXuatHang = hd.DiaChiKhoXuatHang,
+                                                          HoTenNguoiXuatHang = hd.HoTenNguoiXuatHang,
+                                                          HopDongVanChuyenSo = hd.HopDongVanChuyenSo,
+                                                          TenNguoiVanChuyen = hd.TenNguoiVanChuyen,
+                                                          PhuongThucVanChuyen = hd.PhuongThucVanChuyen,
+                                                          DiaChiKhoNhanHang = hd.DiaChiKhoNhanHang,
+                                                          HoTenNguoiNhanHang = hd.HoTenNguoiNhanHang,
+                                                          DaBiDieuChinh = (from hd1 in _db.HoaDonDienTus
+                                                                           join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                                                           where hd1.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
+                                                                           && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo
+                                                                           && ((bkh.HinhThucHoaDon == HinhThucHoaDon.CoMa && hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                                                                           || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe))
+                                                                           )
+                                                                           select hd1.HoaDonDienTuId).Any(),
+                                                          IsLapHoaDonThayThe = (from hd1 in _db.HoaDonDienTus
+                                                                                join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                                                                where hd1.ThayTheChoHoaDonId == hd.HoaDonDienTuId
+                                                                                && ((bkh.HinhThucHoaDon == HinhThucHoaDon.CoMa && hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                                                                                || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe))
+                                                                                )
+                                                                                select hd1.HoaDonDienTuId).Any(),
                                                       };
             //if (pagingParams.LocHoaDonCoSaiSotChuaLapTBao04.GetValueOrDefault())
             //{
@@ -893,6 +920,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //pagingParams.TongTienThanhToan = await query.SumAsync(x => x.TongTienThanhToan);
             //pagingParams.TongTienThanhToan = query.Sum(x => x.TongTienThanhToan);
 
+            if (pagingParams.PageSize == -1)
+            {
+                pagingParams.PageSize = query.Count();
+            }
+
             var result = PagedList<HoaDonDienTuViewModel>.Create(query, pagingParams.PageNumber, pagingParams.PageSize);
             result.AllItemIds = allHoaDonDienTuIds;
 
@@ -1076,8 +1108,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             if (string.IsNullOrEmpty(id) || id == "null" || id == "undefined") return null;
 
-            var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.ToList();
-            var thongDiepChungs = _db.ThongDiepChungs.ToList();
+            var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.AsNoTracking().ToList();
+            var thongDiepChungs = _db.ThongDiepChungs
+                .Select(x => new ThongDiepChung
+                {
+                    ThongDiepChungId = x.ThongDiepChungId,
+                    IdThamChieu = x.IdThamChieu,
+                    TrangThaiGui = x.TrangThaiGui
+                })
+                .ToList();
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string folder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
 
@@ -1104,7 +1143,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             //đọc ra thông tin hóa đơn được nhập từ phần mềm khác, (được dùng để hiển thị cột thông tin sai sót ở hóa đơn điều chỉnh); việc đọc ra bảng này vì phải truy vấn thông tin với các hóa đơn được nhập từ phần mềm khác
             List<ThongTinHoaDon> listThongTinHoaDon = await (from hoaDon in _db.ThongTinHoaDons
-                                                             where listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.Id) > 0
+                                                             join hddt in _db.HoaDonDienTus on hoaDon.Id equals hddt.DieuChinhChoHoaDonId
+                                                             //where listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.Id) > 0
                                                              select new ThongTinHoaDon
                                                              {
                                                                  Id = hoaDon.Id,
@@ -1114,7 +1154,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                  ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
                                                                  TrangThaiGui04 = hoaDon.TrangThaiGui04
                                                              }).ToListAsync();
-
 
             var query = from hd in _db.HoaDonDienTus
                         join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieus
@@ -1269,6 +1308,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             //LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
                             LyDoThayTheModel = string.IsNullOrEmpty(hd.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe),
                             GhiChuThayTheSaiSot = hd.GhiChuThayTheSaiSot,
+                            // pxk
+                            CanCuSo = hd.CanCuSo,
+                            NgayCanCu = hd.NgayCanCu,
+                            Cua = hd.Cua,
+                            DienGiai = hd.DienGiai,
+                            DiaChiKhoNhanHang = hd.DiaChiKhoNhanHang,
+                            HoTenNguoiNhanHang = hd.HoTenNguoiNhanHang,
+                            DiaChiKhoXuatHang = hd.DiaChiKhoXuatHang,
+                            HoTenNguoiXuatHang = hd.HoTenNguoiXuatHang,
+                            HopDongVanChuyenSo = hd.HopDongVanChuyenSo,
+                            TenNguoiVanChuyen = hd.TenNguoiVanChuyen,
+                            PhuongThucVanChuyen = hd.PhuongThucVanChuyen,
                             HoaDonChiTiets = (
                                                from hdct in _db.HoaDonDienTuChiTiets
                                                join hd in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hd.HoaDonDienTuId into tmpHoaDons
@@ -1308,6 +1359,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                        Ten = dvt.Ten
                                                    } : null,
                                                    SoLuong = hdct.SoLuong,
+                                                   SoLuongNhap = hdct.SoLuongNhap,
                                                    DonGia = hdct.DonGia,
                                                    DonGiaSauThue = hdct.DonGiaSauThue,
                                                    DonGiaQuyDoi = hdct.DonGiaQuyDoi,
@@ -1423,7 +1475,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      orderby tdc.NgayGui descending, tdc.CreatedDate descending
                                                      select $"Số {bthdlhd.SoBTHDLieu}/{(bthdlhd.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {bthdlhd.BoSungLanThu}")}/{((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription()}").FirstOrDefault(),
                             ThongDiepGuiCQTId = _db.ThongDiepChiTietGuiCQTs.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).OrderByDescending(x => x.CreatedDate).Select(x => x.ThongDiepGuiCQTId).FirstOrDefault()
-
                         };
 
             var result = await query.FirstOrDefaultAsync();
@@ -1433,7 +1484,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             #region xử lý trạng thái khác
-
             var hoaDonDieuChinh_ThayThes = await _db.HoaDonDienTus
             .Where(x => x.DieuChinhChoHoaDonId == result.HoaDonDienTuId || x.ThayTheChoHoaDonId == result.HoaDonDienTuId)
             .AsNoTracking()
@@ -1478,7 +1528,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             result.TenTrangThaiLanDieuChinhGanNhat = result.TrangThaiLanDieuChinhGanNhat.HasValue ? ((TrangThaiQuyTrinh)result.TrangThaiLanDieuChinhGanNhat.Value).GetDescription() : string.Empty;
             return result;
         }
-
         public async Task<HoaDonDienTuViewModel> GetByIdAsync(long SoHoaDon, string KyHieuHoaDon, string KyHieuMauSoHoaDon)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
@@ -2036,43 +2085,114 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<string> ExportExcelBangKe(HoaDonParams pagingParams)
         {
-            IQueryable<HoaDonDienTuViewModel> query = _db.HoaDonDienTus
-            .Select(hd => new HoaDonDienTuViewModel
-            {
-                HoaDonDienTuId = hd.HoaDonDienTuId,
-                NgayHoaDon = hd.NgayHoaDon,
-                NgayLap = hd.CreatedDate,
-                SoHoaDon = hd.SoHoaDon,
-                IsCoSoHoaDon = hd.SoHoaDon.HasValue,
-                MaCuaCQT = hd.MaCuaCQT,
-                BoKyHieuHoaDon = _mp.Map<BoKyHieuHoaDonViewModel>(_db.BoKyHieuHoaDons.FirstOrDefault(x => x.BoKyHieuHoaDonId == hd.BoKyHieuHoaDonId)),
-                MauSo = hd.MauSo,
-                KyHieu = hd.KyHieu,
-                KhachHangId = hd.KhachHangId ?? string.Empty,
-                KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.KhachHangId)),
-                TenKhachHang = hd.TenKhachHang,
-                EmailNguoiMuaHang = hd.EmailNguoiMuaHang,
-                TenNganHang = hd.TenNganHang,
-                HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
-                SoTaiKhoanNganHang = hd.SoTaiKhoanNganHang,
-                SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang,
-                NhanVienBanHangId = hd.NhanVienBanHangId ?? string.Empty,
-                NhanVienBanHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.NhanVienBanHangId)),
-                TenNhanVienBanHang = hd.TenNhanVienBanHang,
-                LoaiTienId = hd.LoaiTienId ?? string.Empty,
-                LoaiTien = _mp.Map<LoaiTienViewModel>(_db.LoaiTiens.FirstOrDefault(x => x.LoaiTienId == hd.LoaiTienId)),
-                TyGia = hd.TyGia ?? 1,
-                TrangThai = hd.TrangThai,
-                TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
-                MaTraCuu = hd.MaTraCuu,
-                TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
-                KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
-                SoLanChuyenDoi = hd.SoLanChuyenDoi,
-                LyDoXoaBo = hd.LyDoXoaBo,
-                LoaiHoaDon = hd.LoaiHoaDon,
-                LoaiChungTu = hd.LoaiChungTu,
-                TongTienThanhToan = hd.TongTienThanhToan
-            });
+            var query = from hddt in _db.HoaDonDienTus
+                        join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                        join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
+                        join cb in _db.Users on hddt.CreatedBy equals cb.UserId into tmpCreatedBy
+                        from cb in tmpCreatedBy.DefaultIfEmpty()
+                        join mb in _db.Users on hddt.ModifyBy equals mb.UserId into tmpModifiedBy
+                        from mb in tmpModifiedBy.DefaultIfEmpty()
+                        where pagingParams.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8)
+                        select new HoaDonDienTuViewModel
+                        {
+                            HoaDonDienTuId = hddt.HoaDonDienTuId,
+                            BoKyHieuHoaDonId = hddt.BoKyHieuHoaDonId,
+                            MauSo = bkh.KyHieuMauSoHoaDon.ToString(),
+                            KyHieu = bkh.KyHieu,
+                            SoHoaDon = hddt.SoHoaDon,
+                            NgayHoaDon = hddt.NgayHoaDon,
+                            MaKhachHang = hddt.MaKhachHang,
+                            HoTenNguoiMuaHang = hddt.HoTenNguoiMuaHang,
+                            MaSoThue = hddt.MaSoThue,
+                            TenKhachHang = hddt.TenKhachHang,
+                            DiaChi = hddt.DiaChi,
+                            TrangThai = hddt.TrangThai,
+                            TenTrangThaiHoaDon = TrangThaiHoaDons.Where(x => x.TrangThaiId == hddt.TrangThai).Select(x => x.Ten).FirstOrDefault(),
+                            MaTraCuu = hddt.MaTraCuu,
+                            TrangThaiQuyTrinh = hddt.TrangThaiQuyTrinh,
+                            TenTrangThaiQuyTrinh = ((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh).GetDescription(),
+                            MaCuaCQT = hddt.MaCuaCQT,
+                            TongTienThanhToan = hddt.TongTienThanhToan,
+                            LoaiTienId = hddt.LoaiTienId,
+                            MaLoaiTien = hddt.MaLoaiTien,
+                            IsVND = hddt.MaLoaiTien == "VND",
+                            TrangThaiGuiHoaDon = hddt.TrangThaiGuiHoaDon,
+                            TenTrangThaiGuiHoaDon = hddt.TrangThaiGuiHoaDon.HasValue ? ((LoaiTrangThaiGuiHoaDon)hddt.TrangThaiGuiHoaDon).GetDescription() : string.Empty,
+                            HoTenNguoiNhanHD = hddt.HoTenNguoiNhanHD,
+                            EmailNguoiNhanHD = hddt.EmailNguoiNhanHD,
+                            SoDienThoaiNguoiNhanHD = hddt.SoDienThoaiNguoiNhanHD,
+                            SoLanChuyenDoi = hddt.SoLanChuyenDoi,
+                            // Dinh kem
+                            LyDoXoaBo = hddt.LyDoXoaBo,
+                            // thong bao sai sot
+                            MaNhanVienBanHang = hddt.MaNhanVienBanHang,
+                            TenNhanVienBanHang = hddt.TenNhanVienBanHang,
+                            HinhThucHoaDon = (int)bkh.HinhThucHoaDon,
+                            TenHinhThucHoaDon = bkh.HinhThucHoaDon.GetDescription(),
+                            UyNhiemLapHoaDon = (int)bkh.UyNhiemLapHoaDon,
+                            TenUyNhiemLapHoaDon = bkh.UyNhiemLapHoaDon.GetDescription(),
+                            PhuongThucChuyenDL = bkh.PhuongThucChuyenDL.GetDescription(),
+                            LoaiHoaDon = hddt.LoaiHoaDon,
+                            TenLoaiHoaDon = ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription(),
+                            LoaiChungTu = hddt.LoaiChungTu,
+                            TenLoaiChungTu = hddt.LoaiChungTu == 0 ? "Mua hàng" : hddt.LoaiChungTu == 1 ? "Bán hàng" : hddt.LoaiChungTu == 2 ? "Kho" : "Hóa đơn bách khoa",
+                            ThongTinTao = $"{(cb != null ? cb.UserName : string.Empty)} {(hddt.CreatedDate.HasValue ? hddt.CreatedDate.Value.ToString("dd/MM/yyy HH:mm:ss") : string.Empty)}".Trim(),
+                            ThongTinCapNhat = $"{(mb != null ? mb.UserName : string.Empty)} {(hddt.ModifyDate.HasValue ? hddt.ModifyDate.Value.ToString("dd/MM/yyy HH:mm:ss") : string.Empty)}".Trim(),
+                            TruongThongTinBoSung1 = hddt.TruongThongTinBoSung1,
+                            TruongThongTinBoSung2 = hddt.TruongThongTinBoSung2,
+                            TruongThongTinBoSung3 = hddt.TruongThongTinBoSung3,
+                            TruongThongTinBoSung4 = hddt.TruongThongTinBoSung4,
+                            TruongThongTinBoSung5 = hddt.TruongThongTinBoSung5,
+                            TruongThongTinBoSung6 = hddt.TruongThongTinBoSung6,
+                            TruongThongTinBoSung7 = hddt.TruongThongTinBoSung7,
+                            TruongThongTinBoSung8 = hddt.TruongThongTinBoSung8,
+                            TruongThongTinBoSung9 = hddt.TruongThongTinBoSung9,
+                            TruongThongTinBoSung10 = hddt.TruongThongTinBoSung10
+                        };
+
+            List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
+                                                         where pagingParams.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8)
+                                                         select new HoaDonDienTu
+                                                         {
+                                                             HoaDonDienTuId = hoaDon.HoaDonDienTuId,
+                                                             SoHoaDon = hoaDon.SoHoaDon,
+                                                             ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
+                                                             DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
+                                                             NgayHoaDon = hoaDon.NgayHoaDon,
+                                                             TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh,
+                                                             MaCuaCQT = hoaDon.MaCuaCQT,
+                                                             ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
+                                                             TrangThaiGui04 = hoaDon.TrangThaiGui04,
+                                                             LanGui04 = hoaDon.LanGui04,
+                                                             IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04,
+                                                             CreatedDate = hoaDon.CreatedDate
+                                                         }).ToListAsync();
+
+            //đọc ra thông tin hóa đơn được nhập từ phần mềm khác, (được dùng để hiển thị cột thông tin sai sót ở hóa đơn điều chỉnh); việc đọc ra bảng này vì phải truy vấn thông tin với các hóa đơn được nhập từ phần mềm khác
+            List<ThongTinHoaDon> listThongTinHoaDon = await (from hoaDon in _db.ThongTinHoaDons
+                                                             join q in listHoaDonDienTu on hoaDon.Id equals q.DieuChinhChoHoaDonId
+                                                             select new ThongTinHoaDon
+                                                             {
+                                                                 Id = hoaDon.Id,
+                                                                 TrangThaiHoaDon = hoaDon.TrangThaiHoaDon,
+                                                                 IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04,
+                                                                 LanGui04 = hoaDon.LanGui04,
+                                                                 ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
+                                                                 TrangThaiGui04 = hoaDon.TrangThaiGui04
+                                                             }).ToListAsync();
+
+            //đọc ra kỳ kế toán hiện tại
+            //mục đích đọc ra là để hiển thị tình trạng quá hạn/trong hạn của mỗi hóa đơn theo yêu cầu của a Kiên
+            var tuyChonKyKeKhai = (await _db.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
+            var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.AsNoTracking().ToList();
+            var thongDiepChungs = _db.ThongDiepChungs
+                .Select(x => new ThongDiepChung
+                {
+                    ThongDiepChungId = x.ThongDiepChungId,
+                    IdThamChieu = x.IdThamChieu,
+                    TrangThaiGui = x.TrangThaiGui
+                })
+                .ToList();
 
             if (!string.IsNullOrEmpty(pagingParams.FromDate) && !string.IsNullOrEmpty(pagingParams.ToDate))
             {
@@ -2086,6 +2206,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 .ThenByDescending(x => x.NgayHoaDon.Value.Date)
                 .ThenByDescending(x => x.SoHoaDon)
                 .ThenByDescending(x => x.CreatedDate);
+
             // Export excel
             string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
 
@@ -2110,6 +2231,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             using (ExcelPackage package = new ExcelPackage(file))
             {
                 List<HoaDonDienTuViewModel> list = await query.ToListAsync();
+                var _tuyChons = await _TuyChonService.GetAllAsync();
+
                 // Open sheet1
                 int totalRows = list.Count;
 
@@ -2119,54 +2242,349 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 // Open sheet1
                 ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 
+                var truongDuLieuBangKes = await _db.ThietLapTruongDuLieus
+                    .Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomBangKe &&
+                                x.LoaiHoaDon == (pagingParams.LoaiNghiepVu == 1 ? LoaiHoaDon.None : LoaiHoaDon.PhieuXuatKho) &&
+                                x.HienThi == true)
+                    .Select(x => new ThietLapTruongDuLieuViewModel
+                    {
+                        ThietLapTruongDuLieuId = x.ThietLapTruongDuLieuId,
+                        MaTruong = x.MaTruong,
+                        TenCot = x.TenCot,
+                        TenTruong = x.TenTruong,
+                        TenTruongHienThi = x.TenTruongHienThi,
+                        KieuDuLieu = x.KieuDuLieu,
+                        DoRong = x.DoRong,
+                        STT = x.STT
+                    })
+                    .OrderBy(x => x.STT)
+                    .ToListAsync();
+
+                var totalCols = truongDuLieuBangKes.Select(x => x.TenTruong.Split("/").Count()).Sum();
+
+                var listTruongDuLieuSplit = new List<ThietLapTruongDuLieuViewModel>();
+                foreach (var item in truongDuLieuBangKes)
+                {
+                    if (item.TenTruong.IndexOf("/") != -1)
+                    {
+                        var array = item.TenTruong.Split("/");
+                        foreach (var splitItem in array)
+                        {
+                            var type = KieuDuLieuThietLapTuyChinh.Chu;
+                            int doRong = 180;
+
+                            switch (splitItem)
+                            {
+                                case "Ký hiệu mẫu số hóa đơn":
+                                case "Ký hiệu hóa đơn":
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
+                                case "Số hóa đơn":
+                                    doRong = 100;
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
+                                case "Ngày hóa đơn":
+                                    doRong = 100;
+                                    type = KieuDuLieuThietLapTuyChinh.Ngay;
+                                    break;
+                                case "Người mua hàng":
+                                    doRong = 230;
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
+                                case "Mã số thuế":
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
+                                case "Tên khách hàng":
+                                    doRong = 300;
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
+                                case "Trạng thái hóa đơn":
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
+                                case "Mã tra cứu":
+                                    doRong = 250;
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
+                                case "Trạng thái quy trình":
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
+                                case "Mã CQT cấp":
+                                    doRong = 310;
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
+                                case "Tổng tiền thanh toán":
+                                    type = KieuDuLieuThietLapTuyChinh.TienTe;
+                                    break;
+                                case "Loại tiền":
+                                    doRong = 100;
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
+                                case "Hình thức hóa đơn":
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
+                                case "Ủy nhiệm lập hóa đơn":
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
+                                case "Thông tin tạo":
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
+                                case "Thông tin cập nhật":
+                                    type = KieuDuLieuThietLapTuyChinh.Chu;
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            listTruongDuLieuSplit.Add(new ThietLapTruongDuLieuViewModel
+                            {
+                                TenTruong = splitItem,
+                                TenTruongHienThi = splitItem,
+                                KieuDuLieu = type,
+                                DoRong = doRong
+                            });
+                        }
+                    }
+                    else
+                    {
+                        if (item.TenCot == "TrangThaiGuiHoaDon")
+                        {
+                            item.DoRong = 200;
+                        }
+
+                        listTruongDuLieuSplit.Add(item);
+                    }
+                }
+
+                worksheet.InsertColumn(2, totalCols, 1);
+
                 // Add Row
-                worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+                worksheet.InsertRow(begin_row + 1, totalRows, begin_row);
+
+                // fill text title
+                int begin_col = 2;
+                foreach (var item in listTruongDuLieuSplit)
+                {
+                    worksheet.Cells[begin_row - 1, begin_col].Value = item.TenTruongHienThi;
+                    worksheet.Column(begin_col).Width = (item.DoRong ?? 0) * 12 / 100d;
+                    begin_col++;
+                }
 
                 // Fill data
                 int idx = begin_row;
+                int idxTongTienThanhToan = -1;
                 int count = 1;
+
+                var dicHoaDonDienTu = await _db.HoaDonDienTus
+                    .Where(x => list.Select(y => y.HoaDonDienTuId).Contains(x.HoaDonDienTuId))
+                    .ToDictionaryAsync(x => x.HoaDonDienTuId);
+
+                var dicBoKyHieuHoaDon = await _db.BoKyHieuHoaDons
+                    .Where(x => list.Select(y => y.BoKyHieuHoaDonId).Contains(x.BoKyHieuHoaDonId))
+                    .ToDictionaryAsync(x => x.BoKyHieuHoaDonId);
+
                 foreach (var it in list)
                 {
-                    worksheet.Cells[idx, 1].Value = count.ToString();
-                    worksheet.Cells[idx, 2].Value = it.NgayHoaDon.Value.ToString("dd/MM/yyyy");
-                    worksheet.Cells[idx, 3].Value = it.SoHoaDon;
-                    worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.MaCuaCQT) ? it.MaCuaCQT : "<Chưa cấp mã>";
-                    worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.BoKyHieuHoaDon != null ? it.BoKyHieuHoaDon.KyHieuMauSoHoaDon.ToString() : string.Empty);
-                    worksheet.Cells[idx, 6].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.BoKyHieuHoaDon != null ? it.BoKyHieuHoaDon.KyHieuHoaDon : string.Empty);
-                    worksheet.Cells[idx, 7].Value = !string.IsNullOrEmpty(it.MaKhachHang) ? it.MaKhachHang : (it.KhachHang != null ? it.KhachHang.Ma : string.Empty);
-                    worksheet.Cells[idx, 8].Value = !string.IsNullOrEmpty(it.TenKhachHang) ? it.TenKhachHang : (it.KhachHang != null ? it.KhachHang.Ten : string.Empty);
-                    worksheet.Cells[idx, 9].Value = !string.IsNullOrEmpty(it.DiaChi) ? it.DiaChi : (it.KhachHang != null ? it.KhachHang.DiaChi : string.Empty);
-                    worksheet.Cells[idx, 10].Value = !string.IsNullOrEmpty(it.MaSoThue) ? it.MaSoThue : (it.KhachHang != null ? it.KhachHang.MaSoThue : string.Empty);
-                    worksheet.Cells[idx, 11].Value = !string.IsNullOrEmpty(it.HoTenNguoiMuaHang) ? it.HoTenNguoiMuaHang : (it.KhachHang != null ? it.KhachHang.HoTenNguoiMuaHang : string.Empty);
-                    worksheet.Cells[idx, 12].Value = !string.IsNullOrEmpty(it.TenNhanVienBanHang) ? it.TenNhanVienBanHang : it.NhanVienBanHang != null ? it.NhanVienBanHang.Ten : string.Empty;
-                    worksheet.Cells[idx, 13].Value = it.TongTienThanhToan;
-                    worksheet.Cells[idx, 14].Value = it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng";
-                    worksheet.Cells[idx, 15].Value = TrangThaiHoaDons.Where(x => x.TrangThaiId == it.TrangThai).Select(x => x.Ten).FirstOrDefault();
-                    worksheet.Cells[idx, 16].Value = (it.TrangThaiQuyTrinh == 0 ? "Chưa phát hành" : (it.TrangThaiQuyTrinh == 1 ? "Đang phát hành" : (it.TrangThaiQuyTrinh == 2 ? "Phát hành lỗi" : "Đã phát hành")));
-                    worksheet.Cells[idx, 17].Value = it.MaTraCuu;
-                    worksheet.Cells[idx, 18].Value = TrangThaiGuiHoaDons.Where(x => x.TrangThaiId == it.TrangThaiGuiHoaDon).Select(x => x.Ten).FirstOrDefault();
-                    worksheet.Cells[idx, 19].Value = it.KhachHang != null ? it.KhachHang.HoTenNguoiNhanHD : string.Empty;
-                    worksheet.Cells[idx, 20].Value = it.KhachHang != null ? it.KhachHang.EmailNguoiNhanHD : string.Empty;
-                    worksheet.Cells[idx, 21].Value = it.KhachHang != null ? it.KhachHang.SoDienThoaiNguoiNhanHD : string.Empty;
-                    worksheet.Cells[idx, 22].Value = it.KhachHangDaNhan.HasValue ? (it.KhachHangDaNhan.Value ? "Đã nhận" : "Chưa nhận") : "Chưa nhận";
-                    worksheet.Cells[idx, 23].Value = it.SoLanChuyenDoi;
-                    worksheet.Cells[idx, 24].Value = it.LyDoXoaBo;
-                    worksheet.Cells[idx, 25].Value = it.LoaiChungTu == 0 ? "Mua hàng" : it.LoaiChungTu == 1 ? "Bán hàng" : it.LoaiChungTu == 2 ? "Kho" : "Hóa đơn bách khoa";
-                    worksheet.Cells[idx, 26].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
-                    worksheet.Cells[idx, 27].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
+                    var thongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, dicHoaDonDienTu[it.HoaDonDienTuId], dicBoKyHieuHoaDon[it.BoKyHieuHoaDonId], listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == it.DieuChinhChoHoaDonId), thongDiepChungs);
+                    string contentThongBaoSaiSot = string.Empty;
+                    if (thongBaoSaiSot != null)
+                    {
+                        thongBaoSaiSot.DienGiaiChiTietTrangThai = thongBaoSaiSot.DienGiaiChiTietTrangThai.Replace("&nbsp;", " ");
+
+                        if (thongBaoSaiSot.TrangThaiLapVaGuiThongBao == -2)
+                        {
+                            contentThongBaoSaiSot += "Chưa lập thông báo" + thongBaoSaiSot.DienGiaiChiTietTrangThai;
+                        }
+                        else if (thongBaoSaiSot.TrangThaiLapVaGuiThongBao > -2)
+                        {
+                            if (thongBaoSaiSot.LanGui != null)
+                            {
+                                contentThongBaoSaiSot += thongBaoSaiSot.LanGui + " | " + thongBaoSaiSot.DienGiaiChiTietTrangThai;
+                            }
+                            else
+                            {
+                                if (thongBaoSaiSot.TrangThaiLapVaGuiThongBao == -1)
+                                {
+                                    contentThongBaoSaiSot += "Chưa gửi" + thongBaoSaiSot.DienGiaiChiTietTrangThai;
+                                }
+                            }
+                        }
+                    }
+
+                    worksheet.Cells[idx, 1].Value = count;
+                    worksheet.Cells[idx, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                    for (int i = 2; i <= (totalCols + 1); i++)
+                    {
+                        var itemTruongDuLieu = listTruongDuLieuSplit[i - 2];
+
+                        switch (itemTruongDuLieu.KieuDuLieu)
+                        {
+                            case KieuDuLieuThietLapTuyChinh.None:
+                                break;
+                            case KieuDuLieuThietLapTuyChinh.Chu:
+                                worksheet.Cells[idx, i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+                                break;
+                            case KieuDuLieuThietLapTuyChinh.TienTe:
+                            case KieuDuLieuThietLapTuyChinh.SoLuong:
+                                worksheet.Cells[idx, i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                                break;
+                            case KieuDuLieuThietLapTuyChinh.Ngay:
+                                worksheet.Cells[idx, i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                break;
+                            case KieuDuLieuThietLapTuyChinh.PhanTram:
+                                break;
+                            case KieuDuLieuThietLapTuyChinh.Bool:
+                                break;
+                            default:
+                                break;
+                        }
+
+                        switch (itemTruongDuLieu.TenTruong)
+                        {
+                            case "Ký hiệu mẫu số hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.MauSo;
+                                break;
+                            case "Ký hiệu hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.KyHieu;
+                                break;
+                            case "Số hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.SoHoaDon;
+                                break;
+                            case "Ngày hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.NgayHoaDon.Value.ToString("dd/MM/yyyy");
+                                break;
+                            case "Mã khách hàng":
+                                worksheet.Cells[idx, i].Value = it.MaKhachHang;
+                                break;
+                            case "Người mua hàng":
+                                worksheet.Cells[idx, i].Value = it.HoTenNguoiMuaHang;
+                                break;
+                            case "Mã số thuế":
+                                worksheet.Cells[idx, i].Value = it.MaSoThue;
+                                break;
+                            case "Tên khách hàng":
+                                worksheet.Cells[idx, i].Value = it.TenKhachHang;
+                                break;
+                            case "Địa chỉ":
+                                worksheet.Cells[idx, i].Value = it.DiaChi;
+                                break;
+                            case "Trạng thái hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.TenTrangThaiHoaDon;
+                                break;
+                            case "Mã tra cứu":
+                                worksheet.Cells[idx, i].Value = it.MaTraCuu;
+                                break;
+                            case "Trạng thái quy trình":
+                                worksheet.Cells[idx, i].Value = it.TenTrangThaiQuyTrinh;
+                                break;
+                            case "Mã CQT cấp":
+                                worksheet.Cells[idx, i].Value = it.MaCuaCQT;
+                                break;
+                            case "Tổng tiền thanh toán":
+                                idxTongTienThanhToan = i;
+                                worksheet.Cells[idx, i].Value = it.TongTienThanhToan.Value.FormatNumberByTuyChon(_tuyChons, it.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                break;
+                            case "Loại tiền":
+                                worksheet.Cells[idx, i].Value = it.MaLoaiTien;
+                                break;
+                            case "Trạng thái gửi hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.TenTrangThaiGuiHoaDon;
+                                break;
+                            case "Tên người nhận":
+                                worksheet.Cells[idx, i].Value = it.HoTenNguoiNhanHD;
+                                break;
+                            case "Email người nhận":
+                                worksheet.Cells[idx, i].Value = it.EmailNguoiNhanHD;
+                                break;
+                            case "Số điện thoại người nhận":
+                                worksheet.Cells[idx, i].Value = it.SoDienThoaiNguoiNhanHD;
+                                break;
+                            case "Số lần chuyển thành hóa đơn giấy":
+                                worksheet.Cells[idx, i].Value = it.SoLanChuyenDoi;
+                                break;
+                            case "Đính kèm":
+                                /////////////////////////////////////////////////
+                                break;
+                            case "Lý do xóa bỏ":
+                                worksheet.Cells[idx, i].Value = it.LyDoXoaBo;
+                                break;
+                            case "Thông báo hóa đơn điện tử có sai sót":
+                                worksheet.Cells[idx, i].Value = contentThongBaoSaiSot;
+                                break;
+                            case "NV bán hàng":
+                                worksheet.Cells[idx, i].Value = it.TenNhanVienBanHang;
+                                break;
+                            case "Hình thức hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.TenHinhThucHoaDon;
+                                break;
+                            case "Ủy nhiệm lập hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.TenUyNhiemLapHoaDon;
+                                break;
+                            case "Phương thức chuyển dữ liệu":
+                                worksheet.Cells[idx, i].Value = it.PhuongThucChuyenDL;
+                                break;
+                            case "Loại hóa đơn":
+                                worksheet.Cells[idx, i].Value = it.TenLoaiHoaDon;
+                                break;
+                            case "Loại chứng từ":
+                                worksheet.Cells[idx, i].Value = it.TenLoaiChungTu;
+                                break;
+                            case "Thông tin tạo":
+                                worksheet.Cells[idx, i].Value = it.ThongTinTao;
+                                break;
+                            case "Thông tin cập nhật":
+                                worksheet.Cells[idx, i].Value = it.ThongTinCapNhat;
+                                break;
+                            case "Trường thông tin bổ sung 1":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung1;
+                                break;
+                            case "Trường thông tin bổ sung 2":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung2;
+                                break;
+                            case "Trường thông tin bổ sung 3":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung3;
+                                break;
+                            case "Trường thông tin bổ sung 4":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung4;
+                                break;
+                            case "Trường thông tin bổ sung 5":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung5;
+                                break;
+                            case "Trường thông tin bổ sung 6":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung6;
+                                break;
+                            case "Trường thông tin bổ sung 7":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung7;
+                                break;
+                            case "Trường thông tin bổ sung 8":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung8;
+                                break;
+                            case "Trường thông tin bổ sung 9":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung9;
+                                break;
+                            case "Trường thông tin bổ sung 10":
+                                worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung10;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
 
                     idx += 1;
                     count += 1;
                 }
-                worksheet.Cells[2, 1].Value = dateReport;
-                //worksheet.Row(5).Style.Font.Color.SetColor(Color.Red);
-                // Total
+
+                // total
                 worksheet.Row(idx).Style.Font.Bold = true;
+                worksheet.Cells[2, 1].Value = dateReport;
                 worksheet.Cells[idx, 2].Value = string.Format("Số dòng = {0}", list.Count);
+                if (idxTongTienThanhToan != -1)
+                {
+                    worksheet.Cells[idx, idxTongTienThanhToan].Value = list.Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, list.All(x => x.IsVND == true) ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                    worksheet.Cells[idx, idxTongTienThanhToan].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                }
 
-                //replace Text
-
-
+                // save file
                 package.SaveAs(new FileInfo(excelPath));
             }
 
@@ -2248,6 +2666,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TrangThai = hd.TrangThai,
                             TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
                             MaTraCuu = hd.MaTraCuu,
+                            MaCuaCQT = hd.MaCuaCQT,
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                             KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
                             SoLanChuyenDoi = hd.SoLanChuyenDoi,
@@ -2477,6 +2896,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TrangThai = hd.TrangThai,
                             TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
                             MaTraCuu = hd.MaTraCuu,
+                            MaCuaCQT = hd.MaCuaCQT,
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                             KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
                             SoLanChuyenDoi = hd.SoLanChuyenDoi,
@@ -2658,6 +3078,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         && (@params.TrangThaiChuyenDoi == -1 || (@params.TrangThaiChuyenDoi != -1 && @params.TrangThaiChuyenDoi == 0 ? hd.SoLanChuyenDoi == 0 : hd.SoLanChuyenDoi > 0))
                         && (@params.KhachHangId.Contains("-1") || @params.KhachHangId.Contains(hd.KhachHangId))
                         && (@params.BoKyHieuHoaDonId.Contains("-1") || @params.BoKyHieuHoaDonId.Contains(hd.BoKyHieuHoaDonId))
+                        && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
                         select new HoaDonDienTuViewModel()
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -2716,6 +3137,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TrangThai = hd.TrangThai,
                             TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
                             MaTraCuu = hd.MaTraCuu,
+                            MaCuaCQT = hd.MaCuaCQT,
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                             KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
                             SoLanChuyenDoi = hd.SoLanChuyenDoi,
@@ -3018,17 +3440,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 42].Value = TrangThaiHoaDons.Where(x => x.TrangThaiId == it.TrangThai).Select(x => x.Ten).FirstOrDefault();
                             worksheet.Cells[idx, 43].Value = ((TrangThaiQuyTrinh)it.TrangThaiQuyTrinh).GetDescription();
                             worksheet.Cells[idx, 44].Value = it.MaTraCuu;
-                            worksheet.Cells[idx, 45].Value = it.LyDoXoaBo;
+                            worksheet.Cells[idx, 45].Value = it.MaCuaCQT;
+                            worksheet.Cells[idx, 46].Value = it.LyDoXoaBo;
 
-                            worksheet.Cells[idx, 46].Value = it.TrangThai != (int)TrangThaiHoaDon.HoaDonThayThe && it.TrangThai != (int)TrangThaiHoaDon.HoaDonDieuChinh ?
+                            worksheet.Cells[idx, 47].Value = it.TrangThai != (int)TrangThaiHoaDon.HoaDonThayThe && it.TrangThai != (int)TrangThaiHoaDon.HoaDonDieuChinh ?
                                                                 string.Empty :
                                                                 $"Ký hiệu: {it.MauSoHoaDonLienQuan}{it.KyHieuHoaDonLienQuan}\n" +
                                                                 $"Số hóa đơn: {it.SoHoaDonLienQuan}\n" +
                                                                 $"Ngày hóa đơn: {it.NgayHoaDonLienQuan.Value.ToString("dd/MM/yyyy")}";
-                            worksheet.Cells[idx, 47].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
-                            worksheet.Cells[idx, 47].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-
-                            worksheet.Cells[idx, 48].Value = it.ActionUser != null ? it.ActionUser.FullName : string.Empty;
+                            worksheet.Cells[idx, 48].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
+                            //worksheet.Cells[idx, 49].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                            worksheet.Cells[idx, 49].Value = it.ActionUser != null ? it.ActionUser.FullName : string.Empty;
 
                             idx += 1;
                             count += 1;
@@ -3470,6 +3892,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MaTraCuu.GenerateKeyTag(), hd.MaTraCuu ?? string.Empty, true, true);
 
+                // PXK
+                doc.Replace(LoaiChiTietTuyChonNoiDung.CanCuSo.GenerateKeyTag(), hd.CanCuSo ?? string.Empty, true, true);
+                doc.Replace("<ddPXK>", hd.NgayCanCu.HasValue ? hd.NgayCanCu.Value.Day.ToString() : string.Empty, true, true);
+                doc.Replace("<mmPXK>", hd.NgayCanCu.HasValue ? hd.NgayCanCu.Value.Month.ToString() : string.Empty, true, true);
+                doc.Replace("<yyyyPXK>", hd.NgayCanCu.HasValue ? hd.NgayCanCu.Value.Year.ToString() : string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.Cua.GenerateKeyTag(), hd.Cua ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.VeViecDienGiai.GenerateKeyTag(), hd.DienGiai ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.TenNguoiVanChuyen.GenerateKeyTag(), hd.TenNguoiVanChuyen ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.HopDongVanChuyenSo.GenerateKeyTag(), hd.HopDongVanChuyenSo ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.PhuongThucVanChuyen.GenerateKeyTag(), hd.PhuongThucVanChuyen ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiKhoXuatHang.GenerateKeyTag(), hd.DiaChiKhoXuatHang ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiKhoNhanHang.GenerateKeyTag(), hd.DiaChiKhoNhanHang ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiXuatHang.GenerateKeyTag(), hd.HoTenNguoiXuatHang ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiNhanHang.GenerateKeyTag(), hd.HoTenNguoiNhanHang ?? string.Empty, true, true);
+
                 if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true)
                 {
                     if (hd.IsCapMa == true || hd.IsPhatHanh == true)
@@ -3884,8 +4321,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                                 else
                                 {
+                                    par.SetValuePar2(models[i].MaHang, LoaiChiTietTuyChonNoiDung.MaHang);
                                     par.SetValuePar2(models[i].TenDonViTinh, LoaiChiTietTuyChonNoiDung.DonViTinh);
                                     par.SetValuePar2(models[i].SoLuong.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG), LoaiChiTietTuyChonNoiDung.SoLuong);
+                                    par.SetValuePar2((models[i].SoLuongNhap ?? 0).FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG), LoaiChiTietTuyChonNoiDung.SoLuongNhap);
                                     par.SetValuePar2(models[i].DonGia.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.DonGia);
                                     par.SetValuePar2(models[i].ThanhTien.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.ThanhTien);
                                     par.SetValuePar2(models[i].TyLeChietKhau.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE), LoaiChiTietTuyChonNoiDung.TyLeChietKhauHHDV);
@@ -3929,7 +4368,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 string fullPdfFolder;
                 string fullXmlFolder;
-                if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
+                if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true || hd.SoHoaDon.HasValue)
                 {
                     fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
                     fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
@@ -4034,11 +4473,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
                         entity.FileDaKy = pdfFileName;
+
+                        xmlFileName = entity.XMLDaKy;
                     }
                     else
                     {
                         pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.pdf";
+                        xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.xml";
                         entity.FileChuaKy = pdfFileName;
+                        entity.XMLChuaKy = xmlFileName;
                     }
                 }
 
@@ -4058,7 +4501,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
-                    await _xMLInvoiceService.CreateXMLInvoice(fullXmlFilePath, hd);
+                    if (hd.SoHoaDon.HasValue)
+                    {
+                        if (string.IsNullOrEmpty(fullXmlFilePath))
+                        {
+                            var fileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.RefId == hd.HoaDonDienTuId && x.Type == 1 && x.IsSigned == true);
+                            if (fileData != null)
+                            {
+                                await File.WriteAllBytesAsync(fullXmlFilePath, fileData.Binary);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        await _xMLInvoiceService.CreateXMLInvoice(fullXmlFilePath, hd);
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(entity.FileDaKy))
@@ -4188,6 +4645,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace(LoaiChiTietTuyChonNoiDung.DongTienThanhToan.GenerateKeyTag(), maLoaiTien, true, true);
 
             doc.Replace(LoaiChiTietTuyChonNoiDung.MaTraCuu.GenerateKeyTag(), hd.MaTraCuu ?? string.Empty, true, true);
+
+            // PXK
+            doc.Replace(LoaiChiTietTuyChonNoiDung.CanCuSo.GenerateKeyTag(), hd.CanCuSo ?? string.Empty, true, true);
+            doc.Replace("<ddPXK>", hd.NgayCanCu.HasValue ? hd.NgayCanCu.Value.Day.ToString() : string.Empty, true, true);
+            doc.Replace("<mmPXK>", hd.NgayCanCu.HasValue ? hd.NgayCanCu.Value.Month.ToString() : string.Empty, true, true);
+            doc.Replace("<yyyyPXK>", hd.NgayCanCu.HasValue ? hd.NgayCanCu.Value.Year.ToString() : string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.Cua.GenerateKeyTag(), hd.Cua ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.VeViecDienGiai.GenerateKeyTag(), hd.DienGiai ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.TenNguoiVanChuyen.GenerateKeyTag(), hd.TenNguoiVanChuyen ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.HopDongVanChuyenSo.GenerateKeyTag(), hd.HopDongVanChuyenSo ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.PhuongThucVanChuyen.GenerateKeyTag(), hd.PhuongThucVanChuyen ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiKhoXuatHang.GenerateKeyTag(), hd.DiaChiKhoXuatHang ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiKhoNhanHang.GenerateKeyTag(), hd.DiaChiKhoNhanHang ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiXuatHang.GenerateKeyTag(), hd.HoTenNguoiXuatHang ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiNhanHang.GenerateKeyTag(), hd.HoTenNguoiNhanHang ?? string.Empty, true, true);
 
             doc.Replace("<convertor>", @params.NguoiChuyenDoi ?? string.Empty, true, true);
             doc.Replace("<conversionDateValue>", @params.NgayChuyenDoi.Value.ToString("dd/MM/yyyy") ?? string.Empty, true, true);
@@ -4572,8 +5044,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                         else
                         {
+                            par.SetValuePar2(models[i].MaHang, LoaiChiTietTuyChonNoiDung.MaHang);
                             par.SetValuePar2(models[i].TenDonViTinh, LoaiChiTietTuyChonNoiDung.DonViTinh);
                             par.SetValuePar2(models[i].SoLuong.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG), LoaiChiTietTuyChonNoiDung.SoLuong);
+                            par.SetValuePar2((models[i].SoLuongNhap ?? 0).FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG), LoaiChiTietTuyChonNoiDung.SoLuongNhap);
                             par.SetValuePar2(models[i].DonGia.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.DonGia);
                             par.SetValuePar2(models[i].ThanhTien.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.ThanhTien);
                             par.SetValuePar2(models[i].TyLeChietKhau.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE), LoaiChiTietTuyChonNoiDung.TyLeChietKhauHHDV);
@@ -6360,7 +6834,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //cột này hiển thị ở cả 4 tab hóa đơn
             //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
             List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                         where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
+                                                         where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (@params.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
                                                          select new HoaDonDienTu
                                                          {
                                                              HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -6413,7 +6887,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         && string.IsNullOrWhiteSpace(hd.ThayTheChoHoaDonId) == false //hiện ra các hóa đơn thay thế
                         && listHoaDonBiThayTheIds.Contains(hd.HoaDonDienTuId) == false //và loại ra những hóa đơn đã bị thay thế
                         && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
-
+                        && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
                         orderby hd.NgayHoaDon descending, hd.SoHoaDon descending
                         select new HoaDonDienTuViewModel
                         {
@@ -6502,6 +6976,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                              join bkhhd in queryBoKyHieuHoaDon on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDon
                              from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
                              where hd.HinhThucXoabo != null
+                             && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
                              select new HoaDonDienTuViewModel
                              {
                                  ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null, thongDiepChungs),
@@ -6657,6 +7132,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                           from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
                                           where listHoaDonBiThayTheIds.Contains(hd.HoaDonDienTuId) == true
                                           && hd.TrangThai != 2
+                                          && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
                                           select new HoaDonDienTuViewModel
                                           {
                                               ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null, thongDiepChungs),
@@ -8051,7 +8527,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //cột này hiển thị ở cả 4 tab hóa đơn
                 //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
                 List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                             where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
+                                                             where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (@params.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -8096,6 +8572,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             where ((TrangThaiHoaDon)hd.TrangThai) == TrangThaiHoaDon.HoaDonGoc && (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || bbdc != null)
                             && hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate
                             && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
+                            && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
                             orderby hd.NgayHoaDon, hd.SoHoaDon descending
                             select new HoaDonDienTuViewModel
                             {
@@ -8248,6 +8725,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                      from lt in tmpLoaiTiens.DefaultIfEmpty()
                                      where ((!string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) && hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh)) && hddc == null
                                      && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
+                                     && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
                                      select new HoaDonDienTuViewModel
                                      {
                                          ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hd.DieuChinhChoHoaDonId), thongDiepChungs),
@@ -9116,6 +9594,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             && KiemTraHoaDonThayTheKhongDuocPhatHanhLai(hddt.HoaDonDienTuId, listBoKyHieuHoaDon, listTatCaHoaDon)
 
                             && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
+
+                            && (@params.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8))
+
                             orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending
                             select new HoaDonDienTuViewModel
                             {
@@ -9249,6 +9730,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         && (hddt.TrangThaiBienBanXoaBo == (int)TrangThaiBienBanXoaBo.ChuaLap)
                         && !listHoaDonDaLapThayTheIds.Contains(hddt.HoaDonDienTuId)
                         && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
+                        && (@params.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8))
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel
                         {
@@ -9837,9 +10319,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return await query.ToListAsync();
         }
 
-        public async Task<List<HoaDonDienTuViewModel>> GetDSXoaBoChuaLapThayTheAsync()
+        public async Task<List<HoaDonDienTuViewModel>> GetDSXoaBoChuaLapThayTheAsync(int? loaiNghiepVu) // 1: hóa đơn, 2: phiếu xuất kho
         {
             var query = from hd in _db.HoaDonDienTus
+                        where loaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8)
                         select new HoaDonDienTuViewModel
                         {
                             DaLapHoaDonThayThe = _db.HoaDonDienTus.Any(x => x.ThayTheChoHoaDonId == hd.HoaDonDienTuId),
@@ -9865,10 +10348,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
             return await query.ToListAsync();
         }
-        public async Task<List<HoaDonDienTuViewModel>> GetHoaDonDaLapBbChuaXoaBoAsync()
+        public async Task<List<HoaDonDienTuViewModel>> GetHoaDonDaLapBbChuaXoaBoAsync(int? loaiNghiepVu) // 1: hóa đơn, 2: phiếu xuất kho
         {
             var query = from hd in _db.HoaDonDienTus
-                        where hd.TrangThaiBienBanXoaBo > 0 && hd.TrangThai != 2
+                        where hd.TrangThaiBienBanXoaBo > 0 && hd.TrangThai != 2 && (loaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
                         select new HoaDonDienTuViewModel
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -9904,7 +10387,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //cột này hiển thị ở cả 4 tab hóa đơn
                 //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
                 List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                             where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
+                                                             where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (pagingParams.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -9943,7 +10426,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           from nl in tmpNguoiLaps.DefaultIfEmpty()
                                                           join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                                           from lt in tmpLoaiTiens.DefaultIfEmpty()
-                                                          where (hd.TrangThai == 2 || hd.TrangThaiBienBanXoaBo > 0) && hd.NgayXoaBo != null && pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
+                                                          where (hd.TrangThai == 2 || hd.TrangThaiBienBanXoaBo > 0) && hd.NgayXoaBo != null && pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId) &&
+                                                          (pagingParams.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
                                                           orderby hd.NgayXoaBo.Value.Date descending, hd.NgayHoaDon.Value.Date descending, bkhhd.UyNhiemLapHoaDon descending, bkhhd.KyHieuMauSoHoaDon descending, bkhhd.KyHieuHoaDon descending, hd.SoHoaDon descending, hd.NgayLap.Value.Date descending
                                                           select new HoaDonDienTuViewModel
                                                           {
@@ -10447,7 +10931,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //cột này hiển thị ở cả 4 tab hóa đơn
                 //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
                 List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                             where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
+                                                             where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (pagingParams.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -10484,7 +10968,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           from nl in tmpNguoiLaps.DefaultIfEmpty()
                                                           join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                                           from lt in tmpLoaiTiens.DefaultIfEmpty()
-                                                          where pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
+                                                          where pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId) &&
+                                                          (pagingParams.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
                                                           orderby hd.NgayXoaBo.Value.Date descending, hd.NgayHoaDon.Value.Date descending, bkhhd.UyNhiemLapHoaDon descending, bkhhd.KyHieuMauSoHoaDon descending, bkhhd.KyHieuHoaDon descending, hd.SoHoaDon descending, hd.NgayLap.Value.Date descending
                                                           select new HoaDonDienTuViewModel
                                                           {
@@ -12169,6 +12654,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     IsVND = x.First().IsVND,
                     MaLoaiTien = x.First().MaLoaiTien,
                     LoaiChietKhau = LoaiChietKhau.TheoMatHang,
+                    LoaiChungTu = 3,
+                    // pxk
+                    CanCuSo = x.First().CanCuSo,
+                    NgayCanCu = x.First().NgayCanCu,
+                    Cua = x.First().Cua,
+                    DienGiai = x.First().DienGiai,
+                    DiaChiKhoNhanHang = x.First().DiaChiKhoNhanHang,
+                    HoTenNguoiNhanHang = x.First().HoTenNguoiNhanHang,
+                    DiaChiKhoXuatHang = x.First().DiaChiKhoXuatHang,
+                    HoTenNguoiXuatHang = x.First().HoTenNguoiXuatHang,
+                    HopDongVanChuyenSo = x.First().HopDongVanChuyenSo,
+                    TenNguoiVanChuyen = x.First().TenNguoiVanChuyen,
+                    PhuongThucVanChuyen = x.First().PhuongThucVanChuyen,
                     HoaDonChiTiets = x.Select(y => new HoaDonDienTuChiTietViewModel
                     {
                         HangHoaDichVuId = y.HoaDonChiTiet.HangHoaDichVuId,
@@ -12179,6 +12677,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         TenDonViTinh = y.HoaDonChiTiet.TenDonViTinh,
                         DonGia = y.HoaDonChiTiet.DonGia,
                         SoLuong = y.HoaDonChiTiet.SoLuong,
+                        SoLuongNhap = y.HoaDonChiTiet.SoLuongNhap ?? 0,
                         ThanhTien = y.HoaDonChiTiet.ThanhTien ?? 0,
                         ThanhTienQuyDoi = y.HoaDonChiTiet.ThanhTienQuyDoi ?? 0,
                         TyLeChietKhau = y.HoaDonChiTiet.TyLeChietKhau ?? 0,
@@ -12216,6 +12715,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     case LoaiHoaDon.CacLoaiHoaDonKhac:
                         break;
                     case LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD:
+                        break;
+                    case LoaiHoaDon.PXKKiemVanChuyenNoiBo:
+                        item.LoaiChietKhau = LoaiChietKhau.KhongCoChietKhau;
+                        break;
+                    case LoaiHoaDon.PXKHangGuiBanDaiLy:
+                        item.LoaiChietKhau = LoaiChietKhau.KhongCoChietKhau;
                         break;
                     default:
                         break;
@@ -12328,6 +12833,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         else
                         {
                             detail.SoLuong = 0;
+                            detail.SoLuongNhap = 0;
                             detail.DonGia = 0;
                             detail.DonGiaSauThue = 0;
                             detail.ThanhTien = 0;
@@ -13125,7 +13631,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
         //Method này để hiển thị dữ liệu ở cột thông báo sai sót (đối với hóa đơn hệ thống)
-        private CotThongBaoSaiSotViewModel GetCotThongBaoSaiSot(List<ThongDiepChiTietGuiCQT> thongDiepChiTiets, string tuyChonKyKeKhai, HoaDonDienTu hoaDonParam, DLL.Entity.QuanLy.BoKyHieuHoaDon boKyHieuHoaDon, List<HoaDonDienTu> listHoaDonDienTu, ThongTinHoaDon thongTinHoaDon, List<ThongDiepChung> thongDiepChungs = null)
+        private CotThongBaoSaiSotViewModel GetCotThongBaoSaiSot(List<ThongDiepChiTietGuiCQT> thongDiepChiTiets, string tuyChonKyKeKhai, HoaDonDienTu hoaDonParam, BoKyHieuHoaDon boKyHieuHoaDon, List<HoaDonDienTu> listHoaDonDienTu, ThongTinHoaDon thongTinHoaDon, List<ThongDiepChung> thongDiepChungs = null)
         {
             HoaDonDienTu hoaDon = hoaDonParam;
             //Kiểm tra hóa đơn điều chỉnh cho hóa đơn được nhập từ phần mềm khác
@@ -14367,7 +14873,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             // get tiền chiết khấu gốc theo công thức
                             var tienChietKhauGoc = (item.ThanhTien * item.TyLeChietKhau / 100).Value.MathRoundNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
-                            if (item.TienChietKhau != tienChietKhauGoc)
+                            if (item.TienChietKhau != tienChietKhauGoc && ((hoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT) || (hoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang)))
                             {
                                 var strTienChietKhau = item.TienChietKhau.Value.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
                                 var strTienChietKhauGoc = tienChietKhauGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
@@ -14386,7 +14892,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                             }
 
-                            if (!string.IsNullOrEmpty(item.ThueGTGT) && (hoaDon.LoaiHoaDon != (int)LoaiHoaDon.HoaDonBanHang))
+                            if (!string.IsNullOrEmpty(item.ThueGTGT) && (hoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT))
                             {
                                 decimal thueGTGT = 0;
                                 if (item.ThueGTGT.CheckValidNumber() || item.ThueGTGT.Contains("KHAC"))
@@ -14473,6 +14979,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
 
+                if (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8)
+                {
+                    hoaDon.LoaiHoaDon = 6;
+                }
+
                 // get thông tin hóa đơn
                 var thongTinHoaDons = await _db.QuanLyThongTinHoaDons
                     .Where(x => ((int)x.STT) == hoaDon.LoaiHoaDon && x.LoaiThongTin == 2)
@@ -14532,21 +15043,33 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     };
                 }
 
-                if (param.IsPhatHanh == true)
+                if (param.IsPhatHanh == true && param.SkipCheckHoaDonNhoHonHoaDonDangPhatHanh != true)
                 {
-                    var checkHasHoaDonChuaCapSoBefore = await _db.HoaDonDienTus
-                    .AnyAsync(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && !x.SoHoaDon.HasValue && x.NgayHoaDon.Value.Date < ngayHoaDon);
+                    var listHoaDonChuaCapSoBefore = await _db.HoaDonDienTus
+                    .Where(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && !x.SoHoaDon.HasValue && x.NgayHoaDon.Value.Date < ngayHoaDon)
+                    .ToListAsync();
 
-                    if (checkHasHoaDonChuaCapSoBefore && (hoaDon.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi))
+                    if (listHoaDonChuaCapSoBefore.Any())
                     {
                         return new KetQuaCapSoHoaDon
                         {
                             HoaDon = hoaDon,
                             IsCoHoaDonNhoHonHoaDonDangPhatHanh = true,
                             TitleMessage = "Kiểm tra lại",
-                            ErrorMessage = $"Bạn đang thực hiện phát hành hóa đơn có ký hiệu <span class = 'colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> ngày <span class = 'colorChuYTrongThongBao'><b>{ngayHoaDon:dd/MM/yyyy}</b></span>. " +
-                                            $"Tồn tại hóa đơn có ký hiệu <span class = 'colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> số <span class = 'colorChuYTrongThongBao'><b>&lt;Chưa cấp số&gt;</b></span> có ngày hóa đơn nhỏ hơn ngày hóa đơn của hóa đơn này. " +
-                                            $"Vui lòng kiểm tra lại!"
+                            ErrorMessage = $"<div class='mg-bottom-5'>Bạn đang thực hiện phát hành hóa đơn có ký hiệu <span class='colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> ngày hóa đơn <span class='colorChuYTrongThongBao'><b>{ngayHoaDon:dd/MM/yyyy}</b></span>.</div> " +
+                                            $"<div class='mg-bottom-5'>Tồn tại <b>{listHoaDonChuaCapSoBefore.Count()}</b> hóa đơn có ký hiệu <span class='colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> số hóa đơn <span class='colorChuYTrongThongBao'><b>Chưa cấp số</b></span> có ngày hóa đơn nhỏ hơn ngày hóa đơn của hóa đơn này.</div> " +
+                                            $"<div class='mg-bottom-5'>Cụ thể số lượng hóa đơn chưa cấp số theo trạng thái quy trình:</div>",
+                            HoaDons = listHoaDonChuaCapSoBefore
+                                .GroupBy(x => x.TrangThaiQuyTrinh)
+                                .Select(x => new HoaDonDienTuViewModel
+                                {
+                                    KyHieuHoaDon = boKyHieuHoaDon.KyHieu,
+                                    TrangThaiQuyTrinh = x.Key,
+                                    TenTrangThaiQuyTrinh = ((TrangThaiQuyTrinh)x.Key).GetDescription(),
+                                    Count = x.Count()
+                                })
+                                .OrderBy(x => x.TrangThaiQuyTrinh)
+                                .ToList()
                         };
                     }
                 }
@@ -14708,7 +15231,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// </summary>
         /// <param name="coThongKeSoLuong"></param>
         /// <returns></returns>
-        public async Task<ThongKeSoLuongHoaDonCoSaiSotViewModel> ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(byte coThongKeSoLuong)
+        public async Task<ThongKeSoLuongHoaDonCoSaiSotViewModel> ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(byte coThongKeSoLuong, int? loaiNghiepVu)
         {
             var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.ToList();
             var thongDiepChungs = _db.ThongDiepChungs.ToList();
@@ -14749,7 +15272,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 //đọc ra trước các hóa đơn để lấy ra hóa đơn thay thế, hóa đơn điều chỉnh tại mỗi dòng hóa đơn đang duyệt
                 List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                             where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
+                                                             where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (loaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -14783,6 +15306,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     join bkhhd in _db.BoKyHieuHoaDons on hoaDon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                     where hoaDon.NgayHoaDon.Value.Date >= fromDate
                                      && hoaDon.NgayHoaDon.Value.Date <= toDate
+                                     && (loaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
                                     select new HoaDonDienTuViewModel
                                     {
                                         ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hoaDon, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hoaDon.DieuChinhChoHoaDonId), thongDiepChungs)
@@ -15381,6 +15905,514 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
         /// <summary>
+        /// Import phieu xuat kho from excel
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        public async Task<NhapKhauResult> ImportPhieuXuatKhoAsync(NhapKhauParams @params)
+        {
+            NhapKhauResult nhapKhauResult = new NhapKhauResult();
+            List<HoaDonDienTuImport> result = new List<HoaDonDienTuImport>();
+            var formFile = @params.Files[0];
+
+            using (var stream = new MemoryStream())
+            {
+                await formFile.CopyToAsync(stream);
+
+                using (var package = new ExcelPackage(stream))
+                {
+                    var countSheet = package.Workbook.Worksheets;
+                    ExcelWorksheet worksheet = null;
+
+                    // ignore error sheet
+                    for (int i = 0; i < countSheet.Count; i++)
+                    {
+                        worksheet = package.Workbook.Worksheets[i];
+                        if (worksheet.Dimension == null)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    // Get total all row
+                    int totalRows = worksheet.Dimension.Rows;
+                    int numCol = worksheet.Dimension.Columns;
+
+                    int rowStart = worksheet.Dimension.Start.Row;
+                    int rowEnd = worksheet.Dimension.End.Row;
+                    string cellRange = rowStart.ToString() + ":" + rowEnd.ToString();
+                    var searchCell = from cell in worksheet.Cells[cellRange]
+                                     where cell.Value?.ToString().Contains("Tính chất") == true
+                                     select cell.Start.Row;
+
+                    // Begin row
+                    int begin_row = searchCell.Last() + 1;
+
+                    var khachHangs = await _db.DoiTuongs.Where(x => x.IsKhachHang == true).AsNoTracking().ToListAsync();
+                    var nhanViens = await _db.DoiTuongs.Where(x => x.IsNhanVien == true).AsNoTracking().ToListAsync();
+                    var boKyHieuHoaDons = await _db.BoKyHieuHoaDons.AsNoTracking().ToListAsync();
+                    var hhdvs = await _db.HangHoaDichVus.AsNoTracking().ToListAsync();
+                    var donViTinhs = await _db.DonViTinhs.AsNoTracking().ToListAsync();
+                    var loaiTiens = await _db.LoaiTiens.AsNoTracking().ToListAsync();
+                    var _tuyChons = await _TuyChonService.GetAllAsync();
+                    var tienVND = _mp.Map<LoaiTienViewModel>(loaiTiens.FirstOrDefault(x => x.Ma == "VND"));
+
+                    string formatRequired = "<{0}> không được bỏ trống.";
+                    string formatValid = "Dữ liệu cột <{0}> không hợp lệ.";
+                    string formatExists = "{0} <{1}> không có trong danh mục.";
+                    string overMaxLength = "<{0}> không vượt quá {1} ký tự.";
+
+                    var truongDLHDExcels = new List<TruongDLHDExcel>();
+                    var importExcelModels = new List<ImportExcelModel>();
+
+                    if (@params.LoaiHoaDon == 7)
+                    {
+                        importExcelModels = new NhapKhauParams().PXKVanChuyenNoiBos;
+                    }
+                    else
+                    {
+                        importExcelModels = new NhapKhauParams().PXKVGuiBanDaiLys;
+                    }
+
+                    for (int i = 3; i <= numCol; i++)
+                    {
+                        var maTruong = (worksheet.Cells[begin_row - 2, i].Value ?? string.Empty).ToString();
+                        var tenTruong = (worksheet.Cells[begin_row - 1, i].Value ?? string.Empty).ToString();
+
+                        if (!string.IsNullOrEmpty(maTruong))
+                        {
+                            var findItem = importExcelModels.FirstOrDefault(x => x.MaCot == maTruong);
+                            if (findItem != null)
+                            {
+                                truongDLHDExcels.Add(new TruongDLHDExcel(findItem.TenCot)
+                                {
+                                    MaTruong = findItem.MaCot,
+                                    ColIndex = i,
+                                    TenTruong = findItem.TenCot,
+                                    NhomThongTin = findItem.LoaiCot,
+                                    TenTruongExcel = tenTruong,
+                                });
+                            }
+                        }
+                    }
+
+                    for (int i = begin_row; i <= totalRows; i++)
+                    {
+                        HoaDonDienTuImport item = new HoaDonDienTuImport
+                        {
+                            Row = i,
+                            HasError = true,
+                            STT = (worksheet.Cells[i, 2].Value ?? string.Empty).ToString().ParseInt(),
+                            BoKyHieuHoaDonId = @params.BoKyHieuHoaDonId,
+                            LoaiHoaDon = @params.LoaiHoaDon,
+                            IsVND = true,
+                            TyGia = 1,
+                            LoaiTienId = tienVND.LoaiTienId
+                        };
+
+                        var copyData = result.FirstOrDefault(x => x.STT == item.STT);
+
+                        if (copyData != null)
+                        {
+                            item = (HoaDonDienTuImport)copyData.Clone();
+                            item.Row = i;
+                            item.HasError = true;
+                            item.ErrorMessage = string.Empty;
+
+                            var checkError = result.FirstOrDefault(x => x.STT == item.STT && x.HasError == true);
+
+                            if (checkError != null)
+                            {
+                                item.IsMainError = false;
+                                item.ErrorMessage = $"Dòng chi tiết liên quan (dòng số <{checkError.Row}>) bị lỗi.";
+                            }
+                        }
+                        else
+                        {
+                            #region Số thứ tự hóa đơn
+                            string stt = (worksheet.Cells[i, 2].Value ?? string.Empty).ToString().Trim();
+                            if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(stt))
+                            {
+                                item.ErrorMessage = string.Format(formatRequired, "Số thứ tự hóa đơn");
+                            }
+                            var checkSTTHoaDon = stt.IsValidInt(out int outputSTTHoaDon);
+                            if (string.IsNullOrEmpty(item.ErrorMessage) && !checkSTTHoaDon)
+                            {
+                                item.ErrorMessage = string.Format(formatValid, "Số thứ tự hóa đơn");
+                            }
+                            if (checkSTTHoaDon)
+                            {
+                                item.STT = outputSTTHoaDon;
+                            }
+                            #endregion
+
+                            var nhomThongTinNguoiMua = truongDLHDExcels.Where(x => x.NhomThongTin == 1).ToList();
+                            DoiTuongViewModel khachHang = null;
+                            LoaiTienViewModel loaiTien = null;
+
+                            foreach (var group in nhomThongTinNguoiMua)
+                            {
+                                switch (group.TenTruong)
+                                {
+                                    case nameof(item.NgayHoaDon):
+                                        item.StrNgayHoaDon = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        item.NgayHoaDon = worksheet.Cells[i, group.ColIndex].Value.ParseExactCellDate(out bool isValidNgayHoaDon);
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.StrNgayHoaDon))
+                                        {
+                                            item.ErrorMessage = string.Format(formatRequired, group.TenTruong);
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !isValidNgayHoaDon)
+                                        {
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                        }
+                                        break;
+                                    case nameof(item.CanCuSo):
+                                        item.CanCuSo = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.CanCuSo))
+                                        {
+                                            item.ErrorMessage = string.Format(formatRequired, group.TenTruong);
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.CanCuSo) && item.CanCuSo.Length > 255)
+                                        {
+                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruong, 255);
+                                        }
+                                        break;
+                                    case nameof(item.NgayCanCu):
+                                        item.StrNgayCanCu = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        item.NgayCanCu = worksheet.Cells[i, group.ColIndex].Value.ParseExactCellDate(out bool isValidNgayCanCu);
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && @params.LoaiHoaDon == 8 && string.IsNullOrEmpty(item.StrNgayCanCu))
+                                        {
+                                            item.ErrorMessage = string.Format(formatRequired, group.TenTruong);
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.StrNgayCanCu) && !isValidNgayCanCu)
+                                        {
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                        }
+                                        break;
+                                    case nameof(item.Cua):
+                                        item.Cua = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.Cua) && item.Cua.Length > 400)
+                                        {
+                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruong, 400);
+                                        }
+                                        break;
+                                    case nameof(item.DienGiai):
+                                        item.DienGiai = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.DienGiai) && item.DienGiai.Length > 400)
+                                        {
+                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruong, 400);
+                                        }
+                                        break;
+                                    case nameof(item.DiaChiKhoXuatHang):
+                                        item.DiaChiKhoXuatHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.DiaChiKhoXuatHang))
+                                        {
+                                            item.ErrorMessage = string.Format(formatRequired, group.TenTruong);
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.DiaChiKhoXuatHang) && item.DiaChiKhoXuatHang.Length > 400)
+                                        {
+                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruong, 400);
+                                        }
+                                        break;
+                                    case nameof(item.HoTenNguoiXuatHang):
+                                        item.HoTenNguoiXuatHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.HoTenNguoiXuatHang) && item.HoTenNguoiXuatHang.Length > 100)
+                                        {
+                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruong, 100);
+                                        }
+                                        break;
+                                    case nameof(item.HopDongVanChuyenSo):
+                                        item.HopDongVanChuyenSo = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.HopDongVanChuyenSo) && item.HopDongVanChuyenSo.Length > 255)
+                                        {
+                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruong, 255);
+                                        }
+                                        break;
+                                    case nameof(item.TenNguoiVanChuyen):
+                                        item.TenNguoiVanChuyen = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && @params.LoaiHoaDon == 8 && string.IsNullOrEmpty(item.TenNguoiVanChuyen))
+                                        {
+                                            item.ErrorMessage = string.Format(formatRequired, group.TenTruong);
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.TenNguoiVanChuyen) && item.TenNguoiVanChuyen.Length > 100)
+                                        {
+                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruong, 100);
+                                        }
+                                        break;
+                                    case nameof(item.PhuongThucVanChuyen):
+                                        item.PhuongThucVanChuyen = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.PhuongThucVanChuyen))
+                                        {
+                                            item.ErrorMessage = string.Format(formatRequired, group.TenTruong);
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.PhuongThucVanChuyen) && item.PhuongThucVanChuyen.Length > 50)
+                                        {
+                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruong, 50);
+                                        }
+                                        break;
+                                    case nameof(item.MaKhachHang):
+                                        item.MaKhachHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        khachHang = _doiTuongService.CheckMaOutObject(item.MaKhachHang, khachHangs, true);
+                                        if (khachHang != null)
+                                        {
+                                            item.KhachHangId = khachHang.DoiTuongId;
+                                        }
+                                        break;
+                                    case nameof(item.TenKhachHang):
+                                        item.TenKhachHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        item.TenKhachHang = string.IsNullOrEmpty(item.TenKhachHang) ? khachHang?.Ten : item.TenKhachHang;
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.TenKhachHang) && item.TenKhachHang.Length > 400)
+                                        {
+                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruong, 400);
+                                        }
+                                        break;
+                                    case nameof(item.MaSoThue):
+                                        if (string.IsNullOrEmpty(item.MaSoThue) && khachHang != null)
+                                        {
+                                            item.MaSoThue = khachHang.MaSoThue ?? string.Empty;
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaSoThue) && !item.MaSoThue.CheckValidMaSoThue())
+                                        {
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaSoThue) && string.IsNullOrEmpty(item.TenKhachHang))
+                                        {
+                                            item.ErrorMessage = "Bắt buộc phải nhập thông tin <Tên đơn vị nhận hàng> khi đã có thông tin <Mã số thuế>.";
+                                        }
+                                        break;
+                                    case nameof(item.DiaChiKhoNhanHang):
+                                        item.DiaChiKhoNhanHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        item.DiaChiKhoNhanHang = string.IsNullOrEmpty(item.DiaChiKhoNhanHang) ? khachHang?.DiaChi : item.DiaChiKhoNhanHang;
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.DiaChiKhoNhanHang))
+                                        {
+                                            item.ErrorMessage = string.Format(formatRequired, group.TenTruong);
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.DiaChiKhoNhanHang) && item.DiaChiKhoNhanHang.Length > 400)
+                                        {
+                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruong, 400);
+                                        }
+                                        break;
+                                    case nameof(item.HoTenNguoiNhanHang):
+                                        item.HoTenNguoiNhanHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        item.HoTenNguoiNhanHang = string.IsNullOrEmpty(item.HoTenNguoiNhanHang) ? khachHang?.HoTenNguoiMuaHang : item.HoTenNguoiNhanHang;
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.HoTenNguoiNhanHang) && item.HoTenNguoiNhanHang.Length > 100)
+                                        {
+                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruong, 100);
+                                        }
+                                        break;
+                                    case nameof(item.LoaiTienId):
+                                        item.MaLoaiTien = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        if (string.IsNullOrEmpty(item.MaLoaiTien))
+                                        {
+                                            loaiTien = tienVND;
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaLoaiTien))
+                                        {
+                                            loaiTien = _loaiTienService.CheckMaOutObject(item.MaLoaiTien, loaiTiens);
+                                            if (loaiTien == null)
+                                            {
+                                                item.ErrorMessage = string.Format(formatExists, group.TenTruong, item.MaLoaiTien);
+                                            }
+                                        }
+                                        if (loaiTien != null)
+                                        {
+                                            item.LoaiTienId = loaiTien.LoaiTienId;
+                                            item.IsVND = loaiTien.Ma == "VND";
+                                            item.MaLoaiTien = loaiTien.Ma;
+                                        }
+                                        break;
+                                    case nameof(item.TyGia):
+                                        string tyGia = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        if (string.IsNullOrEmpty(tyGia) && loaiTien != null)
+                                        {
+                                            tyGia = loaiTien.TyGiaQuyDoi.ToString();
+                                        }
+                                        var checkValidTyGia = tyGia.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TY_GIA, out decimal outputTyGia);
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTyGia)
+                                        {
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                        }
+                                        item.TyGia = outputTyGia.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TY_GIA);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+
+                        var nhomThongTinHHDVs = truongDLHDExcels.Where(x => x.NhomThongTin == 2).ToList();
+                        HangHoaDichVuViewModel hangHoaDichVu = null;
+                        HoaDonDienTuChiTietViewModel hddtctVM = new HoaDonDienTuChiTietViewModel();
+
+                        #region Tính chất
+                        string strTinhChat = (worksheet.Cells[i, 1].Value ?? string.Empty).ToString().Trim();
+                        strTinhChat = string.IsNullOrEmpty(strTinhChat) ? "1" : strTinhChat;
+                        bool checkTinhChat = int.TryParse(strTinhChat, out int tinhChat);
+                        if (string.IsNullOrEmpty(item.ErrorMessage))
+                        {
+                            if (!checkTinhChat || (checkTinhChat && (tinhChat != 1 && tinhChat != 4)))
+                            {
+                                item.ErrorMessage = string.Format(formatValid, "Tính chất");
+                            }
+                        }
+                        if (checkTinhChat)
+                        {
+                            item.HoaDonChiTiet.TinhChat = tinhChat;
+                        }
+                        #endregion
+
+                        foreach (var group in nhomThongTinHHDVs)
+                        {
+                            switch (group.TenTruong)
+                            {
+                                case nameof(hddtctVM.MaHang):
+                                    item.HoaDonChiTiet.MaHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                    hangHoaDichVu = _hangHoaDichVuService.CheckMaOutObject(item.HoaDonChiTiet.MaHang, hhdvs);
+                                    if (hangHoaDichVu != null)
+                                    {
+                                        item.HoaDonChiTiet.HangHoaDichVuId = hangHoaDichVu.HangHoaDichVuId;
+                                    }
+                                    break;
+                                case nameof(hddtctVM.TenHang):
+                                    item.HoaDonChiTiet.TenHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                    if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.HoaDonChiTiet.TenHang))
+                                    {
+                                        item.ErrorMessage = string.Format(formatRequired, group.TenTruong);
+                                    }
+                                    if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.HoaDonChiTiet.TenHang) && item.HoaDonChiTiet.TenHang.Length > 400)
+                                    {
+                                        item.ErrorMessage = string.Format(overMaxLength, group.TenTruong, 400);
+                                    }
+                                    item.HoaDonChiTiet.TenHang = string.IsNullOrEmpty(item.HoaDonChiTiet.TenHang) ? hangHoaDichVu?.Ten : item.HoaDonChiTiet.TenHang;
+                                    break;
+                                case nameof(hddtctVM.DonViTinhId):
+                                    item.HoaDonChiTiet.TenDonViTinh = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                    DonViTinhViewModel donViTinh = _donViTinhService.CheckTenOutObject(item.HoaDonChiTiet.TenDonViTinh, donViTinhs);
+                                    if (donViTinh != null)
+                                    {
+                                        item.HoaDonChiTiet.DonViTinhId = donViTinh.DonViTinhId;
+                                    }
+                                    break;
+                                case nameof(hddtctVM.SoLuong):
+                                    string soLuong = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                    var checkValidSoLuong = soLuong.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.SO_LUONG, out decimal outputSoLuong);
+                                    if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidSoLuong)
+                                    {
+                                        item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                    }
+                                    item.HoaDonChiTiet.SoLuong = outputSoLuong.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG);
+                                    break;
+                                case nameof(hddtctVM.SoLuongNhap):
+                                    string soLuongNhap = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                    var checkValidSoLuongNhap = soLuongNhap.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.SO_LUONG, out decimal outputSoLuongNhap);
+                                    if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidSoLuongNhap)
+                                    {
+                                        item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                    }
+                                    item.HoaDonChiTiet.SoLuongNhap = outputSoLuongNhap.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG);
+                                    break;
+                                case nameof(hddtctVM.DonGia):
+                                    string donGia = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                    var checkValidDonGia = donGia.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE), out decimal outputDonGia);
+                                    if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidDonGia)
+                                    {
+                                        item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                    }
+                                    item.HoaDonChiTiet.DonGia = outputDonGia.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE);
+                                    break;
+                                case nameof(hddtctVM.ThanhTien):
+                                    string thanhTien = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                    var checkValidThanhTien = thanhTien.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE), out decimal outputThanhTien);
+                                    if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidThanhTien)
+                                    {
+                                        item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                    }
+                                    item.HoaDonChiTiet.ThanhTien = outputThanhTien.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                                    break;
+                                case nameof(hddtctVM.ThanhTienQuyDoi):
+                                    string thanhTienQuyDoi = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                    var checkValidThanhTienQuyDoi = thanhTienQuyDoi.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, out decimal outputThanhTienQuyDoi);
+                                    if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidThanhTienQuyDoi)
+                                    {
+                                        item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                    }
+                                    item.HoaDonChiTiet.ThanhTienQuyDoi = outputThanhTienQuyDoi.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                        if (string.IsNullOrEmpty(item.ErrorMessage))
+                        {
+                            var checkHoaDon = await CheckHoaDonPhatHanhAsync(new ParamPhatHanhHD
+                            {
+                                SkipCheckHetHieuLucTrongKhoang = true,
+                                SkipChecNgayKyLonHonNgayHoaDon = true,
+                                IsPhatHanh = false,
+                                HoaDon = new HoaDonDienTuViewModel
+                                {
+                                    NgayHoaDon = item.NgayHoaDon,
+                                    BoKyHieuHoaDonId = item.BoKyHieuHoaDonId,
+                                    LoaiHoaDon = item.LoaiHoaDon,
+                                    HoaDonChiTiets = new List<HoaDonDienTuChiTietViewModel>(),
+                                    IsVND = item.IsVND
+                                }
+                            });
+
+                            if (checkHoaDon != null && checkHoaDon.IsYesNo != true)
+                            {
+                                item.ErrorMessage = Regex.Replace(checkHoaDon.ErrorMessage, "<.*?>", string.Empty);
+                                item.HasError = true;
+                            }
+                            else
+                            {
+                                item.ErrorMessage = "<Hợp lệ>";
+                                item.HasError = false;
+                            }
+                        }
+                        else
+                        {
+                            if (item.IsMainError == null)
+                            {
+                                item.IsMainError = true;
+                            }
+                        }
+
+                        result.Add(item);
+                    }
+
+                    // Quét lại error
+                    List<HoaDonDienTuImport> listError = new List<HoaDonDienTuImport>();
+                    foreach (HoaDonDienTuImport item in result)
+                    {
+                        var errorItem = result.FirstOrDefault(x => x.STT == item.STT && x.HasError == true);
+                        if (errorItem != null && !listError.Any(x => x.STT == item.STT))
+                        {
+                            listError.Add(errorItem);
+                        }
+
+                        if (listError.Any(x => x.STT == item.STT) && item.HasError != true)
+                        {
+                            var errorItem2 = listError.FirstOrDefault(x => x.STT == item.STT);
+                            item.HasError = true;
+                            item.ErrorMessage = $"Dòng chi tiết liên quan (dòng số <{errorItem2.Row}>) bị lỗi.";
+                        }
+                    }
+
+                    nhapKhauResult.ListResult = result;
+                    nhapKhauResult.ListTruongDuLieu = truongDLHDExcels;
+                }
+            }
+
+            return nhapKhauResult;
+        }
+
+        /// <summary>
         /// Đọc dữ liệu hóa đơn để import vào chức năng đề nghị ghi nhận doanh thu của phần mềm kế toán bách khoa.
         /// </summary>
         /// <param name="thamSoLayDuLieu">Các điều kiện để đọc dữ liệu.</param>
@@ -15886,7 +16918,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KyDienTuLoi ||
                         hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiTCTNLoi) &&
                         (!string.IsNullOrEmpty(pagingParams.HoaDonDienTuId) ? pagingParams.HoaDonDienTuId == hddt.HoaDonDienTuId : ((!fromDate.HasValue || (fromDate <= hddt.NgayHoaDon)) && (!toDate.HasValue || (toDate >= hddt.NgayHoaDon)))) &&
-                        (pagingParams.BoKyHieuHoaDonId == "-1" ? boKyHieuAll.Select(x => x.BoKyHieuHoaDonId).Contains(hddt.BoKyHieuHoaDonId) : (pagingParams.BoKyHieuHoaDonId == hddt.BoKyHieuHoaDonId))
+                        (pagingParams.BoKyHieuHoaDonId == "-1" ? boKyHieuAll.Select(x => x.BoKyHieuHoaDonId).Contains(hddt.BoKyHieuHoaDonId) : (pagingParams.BoKyHieuHoaDonId == hddt.BoKyHieuHoaDonId)) &&
+                        (pagingParams.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8))
                         orderby hddt.NgayHoaDon, bkh.KyHieu, hddt.CreatedDate
                         select new HoaDonDienTuViewModel
                         {
@@ -16042,6 +17075,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 .OrderBy(x => x.KyHieuHoaDon)
                 .ToList();
 
+            var ngayHoaDonMax = groups.SelectMany(x => x.Children).Max(x => x.NgayHoaDon);
+
+            var listHoaDonNgayNhoHon = await _db.HoaDonDienTus
+                .Where(x => list.Any(y => y.BoKyHieuHoaDonId == x.BoKyHieuHoaDonId) && ((x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.ChuaKyDienTu) || (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KyDienTuLoi)) && x.NgayHoaDon.Value.Date < ngayHoaDonMax)
+                .ToListAsync();
+
+            var listHoaDonNgayNhoHonVM = _mp.Map<List<HoaDonDienTuViewModel>>(listHoaDonNgayNhoHon);
+
             foreach (var group in groups)
             {
                 long? soHoaDon = null;
@@ -16056,7 +17097,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 else
                 {
                     // Có hóa đơn có ngày nhỏ hơn hóa đơn đang phát hành
-                    group.HasHoaDonNhoHon = await _db.HoaDonDienTus.AnyAsync(x => x.BoKyHieuHoaDonId == group.BoKyHieuHoaDonId && ((x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.ChuaKyDienTu) || (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KyDienTuLoi)) && x.NgayHoaDon.Value.Date < group.Children.Max(y => y.NgayHoaDon));
+                    group.HasHoaDonNhoHon = listHoaDonNgayNhoHon.Any(x => x.BoKyHieuHoaDonId == group.BoKyHieuHoaDonId && x.NgayHoaDon.Value.Date < group.NgayHoaDon);
+                    group.Count = listHoaDonNgayNhoHon.Count(x => x.BoKyHieuHoaDonId == group.BoKyHieuHoaDonId && x.NgayHoaDon.Value.Date < group.NgayHoaDon);
+                    group.HoaDons = listHoaDonNgayNhoHonVM
+                        .Where(x => x.BoKyHieuHoaDonId == group.BoKyHieuHoaDonId && x.NgayHoaDon.Value.Date < group.NgayHoaDon)
+                        .GroupBy(x => x.TrangThaiQuyTrinh)
+                        .Select(x => new HoaDonDienTuViewModel
+                        {
+                            KyHieuHoaDon = group.KyHieuHoaDon,
+                            TrangThaiQuyTrinh = x.Key,
+                            TenTrangThaiQuyTrinh = ((TrangThaiQuyTrinh)x.Key).GetDescription(),
+                            Count = x.Count()
+                        })
+                        .OrderBy(x => x.TrangThaiQuyTrinh)
+                        .ToList();
                 }
 
                 foreach (var child in group.Children)
@@ -16358,7 +17412,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// </summary>
         /// <param name="pagingParams"></param>
         /// <returns></returns>
-        public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonDeGuiEmailDongLoatAsync(HoaDonParams pagingParams)
+        public async Task<PagedList<HoaDonDienTuViewModel>> GetListHoaDonDeGuiEmailDongLoatAsync(HoaDonParams pagingParams)
         {
             DateTime? fromDate = !string.IsNullOrEmpty(pagingParams.FromDate) ? DateTime.Parse(pagingParams.FromDate) : (DateTime?)null;
             DateTime? toDate = !string.IsNullOrEmpty(pagingParams.ToDate) ? DateTime.Parse(pagingParams.ToDate) : (DateTime?)null;
@@ -16373,7 +17427,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         join kh in _db.DoiTuongs on hddt.KhachHangId equals kh.DoiTuongId into tempKhachHangs
                         from kh in tempKhachHangs.DefaultIfEmpty()
                         where GetHoaDonThoaManDieuKienGuiEmail(pagingParams.IsBanNhap, hddt, bkh) && boKyHieuIds.Contains(hddt.BoKyHieuHoaDonId) &&
-                        (!string.IsNullOrEmpty(pagingParams.HoaDonDienTuId) ? pagingParams.HoaDonDienTuId == hddt.HoaDonDienTuId : ((!fromDate.HasValue || (fromDate <= hddt.NgayHoaDon)) && (!toDate.HasValue || (toDate >= hddt.NgayHoaDon))))
+                        (!string.IsNullOrEmpty(pagingParams.HoaDonDienTuId) ? pagingParams.HoaDonDienTuId == hddt.HoaDonDienTuId : ((!fromDate.HasValue || (fromDate <= hddt.NgayHoaDon)) && (!toDate.HasValue || (toDate >= hddt.NgayHoaDon)))) &&
+                        (pagingParams.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8))
                         orderby hddt.NgayHoaDon, bkh.KyHieu, hddt.SoHoaDon, hddt.CreatedDate
                         select new HoaDonDienTuViewModel
                         {
@@ -16407,6 +17462,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             HoTenNguoiNhanHD = (kh != null && !string.IsNullOrEmpty(kh.HoTenNguoiNhanHD)) ? kh.HoTenNguoiNhanHD : hddt.HoTenNguoiNhanHD,
                             EmailNguoiNhanHD = (kh != null && !string.IsNullOrEmpty(kh.EmailNguoiNhanHD)) ? kh.EmailNguoiNhanHD : hddt.EmailNguoiNhanHD
                         };
+
+            if (pagingParams.HoaDonDienTuIds.Any())
+            {
+                query = query.Where(x => pagingParams.HoaDonDienTuIds.Contains(x.HoaDonDienTuId));
+            }
 
             if (pagingParams.TimKiemTheo != null)
             {
@@ -16448,7 +17508,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
 
-            var result = await query.ToListAsync();
+            if (pagingParams.PageSize == -1)
+            {
+                pagingParams.PageSize = await query.CountAsync();
+            }
+
+            var result = await PagedList<HoaDonDienTuViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
 
             var nhatKyGuiEmails = await _db.NhatKyGuiEmails
                 .Where(x => x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui)
@@ -16466,7 +17531,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 })
                 .ToDictionaryAsync(x => x.NhatKyGuiEmailId);
 
-            foreach (var item in result)
+            foreach (var item in result.Items)
             {
                 if (string.IsNullOrEmpty(item.HoTenNguoiNhanHD) && nhatKyGuiEmails.ContainsKey(item.HoaDonDienTuId))
                 {

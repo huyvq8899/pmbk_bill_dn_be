@@ -4,13 +4,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.e
 {
-    public partial class DSHHDVu
-    {
-        public List<HHDVu> HHDVu { get; set; }
-    }
-
     public partial class HHDVu
     {
         /// <summary>

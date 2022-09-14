@@ -1,5 +1,6 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a;
 using System.Collections.Generic;
+using TTChung = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.c.TTChung;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
 {

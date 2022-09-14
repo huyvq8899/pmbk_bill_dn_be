@@ -18,5 +18,7 @@ namespace Services.ViewModels.Config
         public int STT { get; set; }
         public bool HienThi { get; set; }
         public string GiaTri { get; set; }
+        //////////////////////////
+        public bool? Disabled { get; set; }
     }
 }
