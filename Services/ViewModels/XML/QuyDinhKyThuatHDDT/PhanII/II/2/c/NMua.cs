@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.c
 {
-    public partial class NBan
+    public partial class NMua
     {
         /// <summary>
-        /// <para>Tên (Đơn vị bán tài sản NN)</para>
+        /// <para>Tên (Người mua tài sản NN)</para>
         /// <para>Độ dài tối đa: 400</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc</para>
+        /// <para>Bắt buộc (Đối với trường hợp  người mua là cơ quan, tổ chức, đơn vị, doanh nghiệp)</para>
         /// </summary>
-        [Required]
         [MaxLength(400)]
         public string Ten { get; set; }
 
@@ -20,16 +19,16 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         /// <para>Mã số thuế</para>
         /// <para>Độ dài tối đa: 14</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc (Trường hợp không có Mã đơn vị quan hệ ngân sách)</para>
+        /// <para>Bắt buộc (Đối với trường hợp  người mua là cơ quan, tổ chức, đơn vị, doanh nghiệp không có Mã đơn vị quan hệ ngân sách)</para>
         /// </summary>
         [MaxLength(14)]
         public string MST { get; set; }
 
         /// <summary>
-        /// <para>Mã đơn vị quan hệ ngân sách (Mã số đơn vị có quan hệ với ngân sách của đơn vị bán tài sản công)</para>
+        /// <para>Mã đơn vị quan hệ ngân sách (Mã số đơn vị có quan hệ với ngân sách của đơn vị)</para>
         /// <para>Độ dài tối đa: 7</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc (Trường hợp không có Mã số thuế)</para>
+        /// <para>Bắt buộc (Đối với trường hợp  người mua là cơ quan, tổ chức, đơn vị, doanh nghiệp không có Mã số thuế)</para>
         /// </summary>
         [MaxLength(7)]
         public string MDVQHNSach { get; set; }
@@ -38,9 +37,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         /// <para>Địa chỉ</para>
         /// <para>Độ dài tối đa: 400</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc</para>
+        /// <para>Bắt buộc (Đối với trường hợp người mua là cơ quan, tổ chức, đơn vị, doanh nghiệp)</para>
         /// </summary>
-        [Required]
         [MaxLength(400)]
         public string DChi { get; set; }
 
@@ -63,6 +61,15 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         public string DCTDTu { get; set; }
 
         /// <summary>
+        /// <para>Họ và tên người mua hàng</para>
+        /// <para>Độ dài tối đa: 100</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc (Đối với trường hợp  người mua với tư cách cá nhân)</para>
+        /// </summary>
+        [MaxLength(100)]
+        public string HVTNMHang { get; set; }
+
+        /// <summary>
         /// <para>Số tài khoản ngân hàng</para>
         /// <para>Độ dài tối đa: 30</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
@@ -72,7 +79,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         public string STKNHang { get; set; }
 
         /// <summary>
-        /// <para>Số tài khoản ngân hàng</para>
+        /// <para>Tên ngân hàng</para>
         /// <para>Độ dài tối đa: 400</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
@@ -81,56 +88,27 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         public string TNHang { get; set; }
 
         /// <summary>
-        /// <para>Fax</para>
-        /// <para>Độ dài tối đa: 20</para>
+        /// <para>Địa điểm vận chuyển hàng đến</para>
+        /// <para>Độ dài tối đa: 400</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Không bắt buộc</para>
+        /// <para>Bắt buộc (Đối với trường hợp  tài sản là hàng hóa nhập khẩu bị tịch thu)</para>
         /// </summary>
-        [MaxLength(20)]
-        public string Fax { get; set; }
+        [MaxLength(400)]
+        public string DDVCHDen { get; set; }
 
         /// <summary>
-        /// <para>Website</para>
-        /// <para>Độ dài tối đa: 50</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Không bắt buộc</para>
-        /// </summary>
-        [MaxLength(50)]
-        public string Website { get; set; }
-
-        /// <summary>
-        /// <para>Số quyết định (Số quyết định bán tài sản)</para>
-        /// <para>Độ dài tối đa: 50</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Không bắt buộc</para>
-        /// </summary>
-        [MaxLength(50)]
-        public string SQDinh { get; set; }
-
-        /// <summary>
-        /// <para>Ngày quyết định (Ngày quyết định bán tài sản)</para>
+        /// <para>Thời gian vận chuyển hàng đến từ</para>
         /// <para>Kiểu dữ liệu: Ngày</para>
-        /// <para>Không bắt buộc</para>
+        /// <para>Bắt buộc (Đối với trường hợp  tài sản là hàng hóa nhập khẩu bị tịch thu)</para>
         /// </summary>
-        public string NQDinh { get; set; }
+        public string TGVCHDTu { get; set; }
 
         /// <summary>
-        /// <para>Cơ quan ban hành quyết định (Cơ quan ban hành quyết định bán tài sản)</para>
-        /// <para>Độ dài tối đa: 200</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Không bắt buộc</para>
+        /// <para>Thời gian vận chuyển hàng đến đến</para>
+        /// <para>Kiểu dữ liệu: Ngày</para>
+        /// <para>Bắt buộc (Đối với trường hợp  tài sản là hàng hóa nhập khẩu bị tịch thu)</para>
         /// </summary>
-        [MaxLength(200)]
-        public string CQBHQDinh { get; set; }
-
-        /// <summary>
-        /// <para>Hình thức bán</para>
-        /// <para>Độ dài tối đa: 200</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Không bắt buộc</para>
-        /// </summary>
-        [MaxLength(200)]
-        public string HTBan { get; set; }
+        public string TGVCHDDen { get; set; }
 
         public List<TTin> TTKhac { get; set; }
     }

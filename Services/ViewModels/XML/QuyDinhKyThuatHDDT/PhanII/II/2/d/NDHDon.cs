@@ -1,4 +1,9 @@
-﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
+﻿
+using NBan = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.NBan;
+using DSHHDVu = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.c.DSHHDVu;
+using TToan = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.c.TToan;
+
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
 {
     public partial class NDHDon
     {

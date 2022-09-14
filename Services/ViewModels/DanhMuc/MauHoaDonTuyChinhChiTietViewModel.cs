@@ -1,5 +1,4 @@
 ﻿using DLL.Enums;
-using Newtonsoft.Json;
 using Services.ViewModels.Config;
 using System;
 using System.Collections.Generic;
@@ -25,6 +24,7 @@ namespace Services.ViewModels.DanhMuc
         public bool? Checked { get; set; }
         public bool? Disabled { get; set; }
         public int? CustomKey { get; set; }
+        public bool? IsTieuDeKy { get; set; }
 
         public List<MauHoaDonTuyChinhChiTietViewModel> Children { get; set; }
     }

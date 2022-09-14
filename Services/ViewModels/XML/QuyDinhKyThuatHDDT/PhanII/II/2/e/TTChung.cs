@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.e
 {
     public partial class TTChung
     {
@@ -55,7 +55,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         /// </summary>
         [Required]
         [MaxLength(8)]
-        public int? SHDon { get; set; }
+        public long? SHDon { get; set; }
 
         /// <summary>
         /// <para>Ngày lập</para>
@@ -84,31 +84,13 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         public decimal? TGia { get; set; }
 
         /// <summary>
-        /// <para>Mã số thuế đơn vị cung cấp hóa đơn điện tử</para>
+        /// <para>Mã số thuế tổ chức cung cấp giải pháp hóa đơn điện tử</para>
         /// <para>Độ dài tối đa: 14</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
         [MaxLength(14)]
-        public string MSTDVCCHDDTu { get; set; }
-
-        /// <summary>
-        /// <para>Mã số thuế đơn vị nhận ủy nhiệm lập hóa đơn</para>
-        /// <para>Độ dài tối đa: 14</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Không bắt buộc</para>
-        /// </summary>
-        [MaxLength(14)]
-        public string MSTDVNUNLHDon { get; set; }
-
-        /// <summary>
-        /// <para>Tên đơn vị nhận ủy nhiệm lập hóa đơn</para>
-        /// <para>Độ dài tối đa: 400</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Không bắt buộc</para>
-        /// </summary>
-        [MaxLength(400)]
-        public string TDVNUNLHDon { get; set; }
+        public string MSTTCGP { get; set; }
 
         public TTHDLQuan TTHDLQuan { get; set; }
 

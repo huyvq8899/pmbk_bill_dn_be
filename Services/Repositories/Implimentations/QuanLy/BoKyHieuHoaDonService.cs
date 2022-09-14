@@ -63,7 +63,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                 // nếu số lượng hiện tại ở bộ ký hiệu khác số hiện tại trên hóa đơn thì update
                 if (entity.SoLonNhatDaLapDenHienTai != soHoaDon && soHoaDon > (entity.SoLonNhatDaLapDenHienTai ?? 0))
                 {
-                    if (soHoaDon > entity.SoLonNhatDaLapDenHienTai)
+                    if (soHoaDon > (entity.SoLonNhatDaLapDenHienTai ?? 0))
                     {
                         entity.SoLonNhatDaLapDenHienTai = soHoaDon;
                     }
@@ -1200,6 +1200,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                 if (ndtKhai.LHDSDung.CTu == 1)
                 {
                     result.LoaiHoaDons.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
+                    result.LoaiHoaDons.Add(LoaiHoaDon.PXKKiemVanChuyenNoiBo);
+                    result.LoaiHoaDons.Add(LoaiHoaDon.PXKHangGuiBanDaiLy);
                 }
             }
 

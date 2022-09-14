@@ -1375,6 +1375,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
             // get begin row
             beginRow = model.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.ThietLapDongKyHieuCot).GiaTri == "true" ? 2 : 1;
 
+            if (model.MauHoaDonTuyChinhChiTiets.Any(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoLuongNhapXuat && x.Checked == true))
+            {
+                beginRow += 1;
+            }
+
             return (document, beginRow);
         }
 
@@ -1548,6 +1553,26 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
 
             return true;
+        }
+
+        public async Task<bool> ClearOldFormatMauHoaDonsAsync()
+        {
+            // get or add doc folder
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
+            var oldFiles = await _db.MauHoaDonFiles.ToListAsync();
+            foreach (var item in oldFiles)
+            {
+                var oldFilePath = Path.Combine(docFolderPath, item.FileName);
+                if (File.Exists(oldFilePath))
+                {
+                    File.Delete(oldFilePath);
+                }
+            }
+            // remove files in db
+            _db.MauHoaDonFiles.RemoveRange(oldFiles);
+            var result = await _db.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

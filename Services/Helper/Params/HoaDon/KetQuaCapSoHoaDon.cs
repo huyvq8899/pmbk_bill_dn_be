@@ -1,4 +1,5 @@
 ﻿using Services.ViewModels.QuanLyHoaDonDienTu;
+using System.Collections.Generic;
 
 namespace Services.Helper.Params.HoaDon
 {
@@ -26,5 +27,6 @@ namespace Services.Helper.Params.HoaDon
         public string ErrorMessage { get; set; } = string.Empty;
         public bool? IsYesNo { get; set; }
         public HoaDonDienTuViewModel HoaDon { get; set; }
+        public List<HoaDonDienTuViewModel> HoaDons { get; set; }
     }
 }

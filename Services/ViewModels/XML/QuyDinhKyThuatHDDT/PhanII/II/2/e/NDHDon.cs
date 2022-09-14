@@ -1,7 +1,4 @@
-﻿
-using NBan = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.NBan;
-using DSHHDVu = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d.DSHHDVu;
-using TToan = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d.TToan;
+﻿using System.Collections.Generic;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.e
 {
@@ -9,7 +6,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.e
     {
         public NBan NBan { get; set; }
         public NMua NMua { get; set; }
-        public DSHHDVu DSHHDVu { get; set; }
-        public TToan TToan { get; set; }
+        public List<HHDVu> DSHHDVu { get; set; }
     }
 }

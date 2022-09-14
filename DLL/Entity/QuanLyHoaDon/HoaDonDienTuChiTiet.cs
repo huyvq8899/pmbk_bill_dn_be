@@ -19,6 +19,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string DonViTinhId { get; set; }
         public string TenDonViTinh { get; set; }
         public decimal? SoLuong { get; set; }
+        public decimal? SoLuongNhap { get; set; }
         public decimal? DonGia { get; set; }
         public decimal? DonGiaSauThue { get; set; }
         public decimal? DonGiaQuyDoi { get; set; }

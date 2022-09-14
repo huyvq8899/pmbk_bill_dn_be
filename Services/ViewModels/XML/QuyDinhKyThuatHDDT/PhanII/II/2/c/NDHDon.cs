@@ -1,6 +1,4 @@
-﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a;
-
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.c
+﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.c
 {
     public partial class NDHDon
     {

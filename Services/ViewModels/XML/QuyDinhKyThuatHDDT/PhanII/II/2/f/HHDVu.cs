@@ -4,13 +4,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
 {
-    public partial class DSHHDVu
-    {
-        public List<HHDVu> HHDVu { get; set; }
-    }
-
     public partial class HHDVu
     {
         /// <summary>
@@ -55,7 +50,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         /// <para>Đơn vị tính</para>
         /// <para>Độ dài tối đa: 50</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 6, khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP và trường hợp TChat khác giá trị “1- Hàng hóa, dịch vụ” )</para>
+        /// <para>Bắt buộc (trừ trường hợp TChat có giá trị là “2-Khuyến mại, 4-Ghi chú, diễn giải”)</para>
         /// </summary>
         [MaxLength(50)]
         public string DVTinh { get; set; }
@@ -64,7 +59,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         /// <para>Số lượng</para>
         /// <para>Độ dài tối đa: 19,4</para>
         /// <para>Kiểu dữ liệu: Số</para>
-        /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 6, khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP và trường hợp TChat khác giá trị “1- Hàng hóa, dịch vụ” )</para>
+        /// <para>Bắt buộc (trừ trường hợp TChat có giá trị là “2-Khuyến mại, 4-Ghi chú, diễn giải”)</para>
         /// </summary>
         [Column(TypeName = "decimal(19, 4)")]
         public decimal? SLuong { get; set; }
@@ -73,7 +68,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         /// <para>Đơn giá</para>
         /// <para>Độ dài tối đa: 19,4</para>
         /// <para>Kiểu dữ liệu: Số</para>
-        /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 6, khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP và trường hợp TChat khác giá trị “1- Hàng hóa, dịch vụ”)</para>
+        /// <para>Bắt buộc (trừ trường hợp TChat có giá trị là “2-Khuyến mại, 4-Ghi chú, diễn giải”)</para>
         /// </summary>
         [Column(TypeName = "decimal(19, 4)")]
         public decimal? DGia { get; set; }
@@ -82,7 +77,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         /// <para>Thành tiền (Thành tiền chưa có thuế GTGT)</para>
         /// <para>Độ dài tối đa: 19,4</para>
         /// <para>Kiểu dữ liệu: Số</para>
-        /// <para>Bắt buộc (Trừ trường hợp TChat có giá trị là “2-Khuyến mại, 4-Ghi chú, diễn giải”)</para>
+        /// <para>Bắt buộc (trừ trường hợp TChat có giá trị là “2-Khuyến mại, 4-Ghi chú, diễn giải”)</para>
         /// </summary>
         [Column(TypeName = "decimal(19, 4)")]
         public decimal? ThTien { get; set; }

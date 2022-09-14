@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
 using Services.Helper;
 using Services.Helper.Params.BaoCao;
+using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces.BaoCao;
 using Services.ViewModels.BaoCao;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ namespace API.Controllers
         }
 
         [HttpPost("ExportExcelBangKeHangHoaBanRa")]
-        public async Task<IActionResult> ExportExcelBangKeHangHoaBanRa(PagingParams @params)
+        public async Task<IActionResult> ExportExcelBangKeHangHoaBanRa(HoaDonParams @params)
         {
             var result = await _IBaoCaoService.ExportExcelBangKeHangHoaBanRa(@params);
             return Ok(new { Path = result });

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g
 {
     public partial class TToan
     {
