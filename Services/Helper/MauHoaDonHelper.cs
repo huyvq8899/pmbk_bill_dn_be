@@ -2758,6 +2758,8 @@ namespace Services.Helper
                                 {
                                     case LoaiChiTietTuyChonNoiDung.TieuDeKyNguoiChuyenDoi:
                                         cell.AddParagraph();
+                                        cell.AddParagraph();
+                                        cell.AddParagraph();
 
                                         par = cell.AddParagraph();
                                         par.Format.HorizontalAlignment = HorizontalAlignment.Center;
