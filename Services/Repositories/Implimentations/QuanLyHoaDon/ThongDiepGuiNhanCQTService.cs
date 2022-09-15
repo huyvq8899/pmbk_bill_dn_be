@@ -38,6 +38,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Xml.XPath;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -129,7 +130,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                        orderby chiTiet.STT
                                                        select new ThongDiepChiTietGuiCQTViewModel
                                                        {
-                                                           SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.ChungTuLienQuan == chiTiet.ChungTuLienQuan).OrderBy(x=>x.CreatedDate).Select(y => y.ThongDiepGuiCQTId).Distinct().ToList().IndexOf(thongDiep.Id) + 1,
+                                                           SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.ChungTuLienQuan == chiTiet.ChungTuLienQuan).OrderBy(x => x.CreatedDate).Select(y => y.ThongDiepGuiCQTId).Distinct().ToList().IndexOf(thongDiep.Id) + 1,
                                                            Id = chiTiet.Id,
                                                            ThongDiepGuiCQTId = chiTiet.ThongDiepGuiCQTId,
                                                            HoaDonDienTuId = chiTiet.HoaDonDienTuId,
@@ -334,7 +335,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         toDate = DateTime.Parse(@params.ToDate);
                     }
-                    queryHoaDonDienTu = await _db.HoaDonDienTus.Include(x => x.BoKyHieuHoaDon).Where(x=> x.BoKyHieuHoaDon.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon
+                    queryHoaDonDienTu = await _db.HoaDonDienTus.Include(x => x.BoKyHieuHoaDon).Where(x => x.BoKyHieuHoaDon.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon
                                             && (DateTime.Parse(x.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null) && (DateTime.Parse(x.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null)
                                         ).ToListAsync();
                 }
@@ -499,7 +500,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                              ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
 
                                                 //nếu chọn HinhThuc2 hoặc HinhThuc5 thì hóa đơn thay thế phải được cấp mã rồi 
-                                                && (queryHoaDonDienTu.Where(x => x.ThayTheChoHoaDonId == hoadon.HoaDonDienTuId && x.SoHoaDon.HasValue && (hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5) 
+                                                && (queryHoaDonDienTu.Where(x => x.ThayTheChoHoaDonId == hoadon.HoaDonDienTuId && x.SoHoaDon.HasValue && (hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5)
                                                     && (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa || x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe)).OrderByDescending(y => y.CreatedDate).Take(1).FirstOrDefault() != null || (hoadon.HinhThucXoabo != (int)HinhThucXoabo.HinhThuc2 && hoadon.HinhThucXoabo != (int)HinhThucXoabo.HinhThuc5))
 
                                              select new HoaDonSaiSotViewModel
@@ -583,7 +584,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                          && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
                                                          && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
                                                          && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
-                                                      ) 
+                                                      )
                                                      || (dc.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
                                                          && dc.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
                                                          && dc.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
@@ -624,7 +625,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      };
 
                         var bdc = queryHoaDonBiDieuChinh.ToList();
-                        queryHoaDonBiDieuChinh = queryHoaDonBiDieuChinh.Where(x => _db.ThongDiepChiTietGuiCQTs.Count(o => o.ChungTuLienQuan == x.ChungTuLienQuan) < 1 || (x.ChungTuLienQuan.Split(";").Length > 1  && hoaDonDienTus.FirstOrDefault(y=>y.HoaDonDienTuId == x.ChungTuLienQuan.Split(";")[1]).IsDaLapThongBao04 == false));
+                        queryHoaDonBiDieuChinh = queryHoaDonBiDieuChinh.Where(x => _db.ThongDiepChiTietGuiCQTs.Count(o => o.ChungTuLienQuan == x.ChungTuLienQuan) < 1 || (x.ChungTuLienQuan.Split(";").Length > 1 && hoaDonDienTus.FirstOrDefault(y => y.HoaDonDienTuId == x.ChungTuLienQuan.Split(";")[1]).IsDaLapThongBao04 == false));
 
                         query = (queryHoaDonHuy.Union(queryHoaDonSaiThongTin).Union(queryHoaDonBiDieuChinh)).ToList();
                     }
@@ -635,7 +636,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
 
-                foreach(var item in query)
+                foreach (var item in query)
                 {
                     item.SoLanGuiCQT = await (from td in _db.ThongDiepGuiCQTs
                                               join ct in _db.ThongDiepChiTietGuiCQTs on td.Id equals ct.ThongDiepGuiCQTId
@@ -762,7 +763,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         query = query.OrderByDescending(x => x.NgayLapHoaDon).ToList();
                     }
                 }
-                
+
                 return query;
             }
             catch (Exception ex)
@@ -2235,23 +2236,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          LoaiApDungHoaDon = hoaDon.LoaiApDungHoaDon,
                                          LoaiSaiSot = GetLoaiSaiSot(hoaDon.PhanLoaiHDSaiSot),
                                          LyDo = hoaDon.LyDo,
-
                                          LoaiHoaDon = (hoaDonHeThong != null) ? ((LoaiHoaDon)hoaDonHeThong.LoaiHoaDon).GetDescription() : GetLoaiHoaDon(hoaDonKhac.MauSoHoaDon),
-
-                                         TrangThaiHoaDon = new TrangThaiHoaDon_BangKeSaiSot_ViewModel { TrangThai = hoaDon.TrangThaiHoaDon, DienGiaiTrangThai = hoaDon.DienGiaiTrangThai, LoaiDieuChinh= hoaDonHeThong.LoaiDieuChinh },
-
+                                         TrangThaiHoaDon = new TrangThaiHoaDon_BangKeSaiSot_ViewModel { 
+                                             TrangThai = hoaDon.TrangThaiHoaDon, 
+                                             DienGiaiTrangThai = hoaDon.DienGiaiTrangThai, 
+                                             LoaiDieuChinh = hoaDonHeThong.LoaiDieuChinh 
+                                         },
                                          ChungTuLienQuan = hoaDon.ChungTuLienQuan,
 
                                          NgayThongBao = thongDiepGuiCQT.NgayGui,
 
                                          LoaiThongBaoSaiSot = GetLoaiThongBaoSaiSot(thongDiepGuiCQT.ThongBaoHoaDonRaSoatId, thongDiepGuiCQT.IsTBaoHuyGiaiTrinhKhacCuaNNT).LoaiThongBaoSaiSot,
                                          TenLoaiThongBaoSaiSot = GetLoaiThongBaoSaiSot(thongDiepGuiCQT.ThongBaoHoaDonRaSoatId, thongDiepGuiCQT.IsTBaoHuyGiaiTrinhKhacCuaNNT).TenLoaiThongBaoSaiSot,
-
+                                         MauSoTBaoCuaCQT = (thongBao302 != null) ? "01/TB-RSĐT" : "",
                                          SoTBaoCuaCQT = (thongBao302 != null) ? thongBao302.SoThongBaoCuaCQT : thongBao302_HoaDonKhac.SoThongBaoCuaCQT,
                                          NgayTBaoCuaCQT = (thongBao302 != null) ? thongBao302.NgayThongBao : thongBao302_HoaDonKhac.NgayThongBao,
 
                                          MaThongDiepGui = thongDiepChung.MaThongDiep,
-
+                                         MauSoTBaoPhanHoiTuCQT = thongDiepChung.MaLoaiThongDiep == 301 ? "01/TB-SSĐT" : "",
                                          SoTBaoPhanHoiTuCQT = thongDiepChung.SoTBaoPhanHoiCuaCQT,
                                          NgayTBaoPhanHoiTuCQT = thongDiepChung.NgayTBaoPhanHoiCuaCQT,
 
@@ -2317,7 +2319,83 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 queryBangKe = queryBangKe.OrderByDescending(x => x.NgayThongBao).ThenBy(x => x.LoaiThongBaoSaiSot).ThenBy(x => x.SoTBaoCuaCQT).ThenByDescending(x => x.NgayTBaoCuaCQT).ThenBy(x => x.MaThongDiepGui).ThenBy(x => x.SoTBaoPhanHoiTuCQT).ThenBy(x => x.NgayTBaoPhanHoiTuCQT).ToList();
             }
+            #region Filter and Sort
+            if (thongKeHoaDonSaiSotParams.FilterColumns != null && thongKeHoaDonSaiSotParams.FilterColumns.Any())
+            {
+                thongKeHoaDonSaiSotParams.FilterColumns = thongKeHoaDonSaiSotParams.FilterColumns.Where(x => x.IsFilter == true).ToList();
 
+                foreach (var filterCol in thongKeHoaDonSaiSotParams.FilterColumns)
+                {
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(thongKeHoaDonSaiSotParams.Filter.SoHoaDon):
+                            queryBangKe = GenericFilterColumn<BangKeHoaDonSaiSot_ViewModel>.Query(queryBangKe, x => x.SoHoaDon, filterCol, FilterValueType.String).ToList();
+                            break;
+                        case nameof(thongKeHoaDonSaiSotParams.Filter.MauHoaDon):
+                            queryBangKe = GenericFilterColumn<BangKeHoaDonSaiSot_ViewModel>.Query(queryBangKe, x => x.MauHoaDon, filterCol, FilterValueType.String).ToList();
+                            break;
+                        case nameof(thongKeHoaDonSaiSotParams.Filter.KyHieuHoaDon):
+                            queryBangKe = GenericFilterColumn<BangKeHoaDonSaiSot_ViewModel>.Query(queryBangKe, x => x.KyHieuHoaDon, filterCol, FilterValueType.String).ToList();
+                            break;
+                        case nameof(thongKeHoaDonSaiSotParams.Filter.MaLoaiTien):
+                            queryBangKe = GenericFilterColumn<BangKeHoaDonSaiSot_ViewModel>.Query(queryBangKe, x => x.MaLoaiTien, filterCol, FilterValueType.String).ToList();
+                            break;
+                        case nameof(thongKeHoaDonSaiSotParams.Filter.MaCQTCap):
+                            queryBangKe = GenericFilterColumn<BangKeHoaDonSaiSot_ViewModel>.Query(queryBangKe, x => x.MaCQTCap, filterCol, FilterValueType.String).ToList();
+                            break;
+                        case nameof(thongKeHoaDonSaiSotParams.Filter.TongTienThanhToan):
+                            queryBangKe = GenericFilterColumn<BangKeHoaDonSaiSot_ViewModel>.Query(queryBangKe, x => x.TongTienThanhToan, filterCol, FilterValueType.Decimal).ToList();
+                            break;
+                        case "NgayHoaDon":
+                            queryBangKe = GenericFilterColumn<BangKeHoaDonSaiSot_ViewModel>.Query(queryBangKe, x => x.NgayLapHoaDon, filterCol, FilterValueType.DateTime).ToList();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(thongKeHoaDonSaiSotParams.SortKey))
+            {
+                if (thongKeHoaDonSaiSotParams.SortKey == "KyHieuHoaDon" && thongKeHoaDonSaiSotParams.SortValue == "ascend")
+                {
+                    queryBangKe = queryBangKe.OrderBy(x => x.KyHieuHoaDon).ToList();
+                }
+                if (thongKeHoaDonSaiSotParams.SortKey == "KyHieuHoaDon" && thongKeHoaDonSaiSotParams.SortValue == "descend")
+                {
+                    queryBangKe = queryBangKe.OrderByDescending(x => x.KyHieuHoaDon).ToList();
+                }
+
+                if (thongKeHoaDonSaiSotParams.SortKey == "SoNgay" && thongKeHoaDonSaiSotParams.SortValue == "ascend")
+                {
+                    queryBangKe = queryBangKe.OrderBy(x => x.NgayLapHoaDon).ToList();
+                }
+                if (thongKeHoaDonSaiSotParams.SortKey == "SoNgay" && thongKeHoaDonSaiSotParams.SortValue == "descend")
+                {
+                    queryBangKe = queryBangKe.OrderByDescending(x => x.NgayLapHoaDon).ToList();
+                }
+
+
+                if (thongKeHoaDonSaiSotParams.SortKey == "MaCQTCap" && thongKeHoaDonSaiSotParams.SortValue == "ascend")
+                {
+                    queryBangKe = queryBangKe.OrderBy(x => x.MaCQTCap).ToList();
+                }
+                if (thongKeHoaDonSaiSotParams.SortKey == "MaCQTCap" && thongKeHoaDonSaiSotParams.SortValue == "descend")
+                {
+                    queryBangKe = queryBangKe.OrderByDescending(x => x.MaCQTCap).ToList();
+                }
+
+                if (thongKeHoaDonSaiSotParams.SortKey == "TongTienThanhToan" && thongKeHoaDonSaiSotParams.SortValue == "ascend")
+                {
+                    queryBangKe = queryBangKe.OrderBy(x => x.TongTienThanhToan).ToList();
+                }
+                if (thongKeHoaDonSaiSotParams.SortKey == "TongTienThanhToan" && thongKeHoaDonSaiSotParams.SortValue == "descend")
+                {
+                    queryBangKe = queryBangKe.OrderByDescending(x => x.TongTienThanhToan).ToList();
+                }
+
+            }
+            #endregion
             //bảng màu để tô các dòng khác nhau
             string[] colorHexes = { "FFC000", "FFFF00", "92D050", "00B0F0", "00FF7F", "40E0D0", "00FA9A", "EE82EE", "66CDAA", "8FBC8F", "7FFFD4", "7FFF00", "ADFF2F", "87CEFA", "FFD700", "F0E68C", "FFE4B5", "FFA500", "FFB6C1", "FF6347" };
 
@@ -2513,15 +2591,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     foreach (var item in exportParams.ListBangKeSaiSot)
                     {
-                        worksheet.Cells[idx, 1].Value = item.MauHoaDon + "\r\n" + item.KyHieuHoaDon;
-
-                        worksheet.Cells[idx, 2].Value = item.SoHoaDon + "\r\n" + item.NgayLapHoaDon?.ToString("dd/MM/yyyy");
-                        worksheet.Cells[idx, 3].Value = item.MaCQTCap;
-                        worksheet.Cells[idx, 4].Value = item.TongTienThanhToan?.ToString() + " " + item.MaLoaiTien;
-                        worksheet.Cells[idx, 5].Value = (item.LoaiApDungHoaDon == 0) ? "" : item.LoaiApDungHoaDon.ToString();
-                        worksheet.Cells[idx, 6].Value = item.LoaiSaiSot;
-                        worksheet.Cells[idx, 7].Value = item.LyDo;
-                        worksheet.Cells[idx, 8].Value = item.LoaiHoaDon;
+                        worksheet.Cells[idx, 1].Value = item.MauHoaDon;
+                        worksheet.Cells[idx, 2].Value = item.KyHieuHoaDon;
+                        worksheet.Cells[idx, 3].Value = item.SoHoaDon;
+                        worksheet.Cells[idx, 4].Value = item.NgayLapHoaDon?.ToString("dd/MM/yyyy");
+                        worksheet.Cells[idx, 5].Value = item.MaCQTCap;
+                        worksheet.Cells[idx, 6].Value = item.TongTienThanhToan?.ToString();
+                        worksheet.Cells[idx, 7].Value = item.MaLoaiTien;
+                        worksheet.Cells[idx, 8].Value = (item.LoaiApDungHoaDon == 0) ? "" : item.LoaiApDungHoaDon.ToString();
+                        worksheet.Cells[idx, 9].Value = item.LoaiHoaDon;
 
                         //trạng thái hóa đơn
                         string tenTrangThai = "";
@@ -2539,16 +2617,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         tenTrangThai = "Hóa đơn hủy";
                                         break;
                                     case 3:
-                                        tenTrangThai = "Thay thế";
+                                        tenTrangThai = "Hóa đơn thay thế";
                                         break;
                                     case 4:
-                                        tenTrangThai = "Điều chỉnh";
+                                        tenTrangThai = "Hóa đơn điều chỉnh";
                                         break;
                                     default:
                                         tenTrangThai = "";
                                         break;
                                 }
-                                tenTrangThai += item.TrangThaiHoaDon.DienGiaiTrangThai?.Replace("&nbsp;", " ");
+                                //tenTrangThai += item.TrangThaiHoaDon.DienGiaiTrangThai?.Replace("&nbsp;", " ");
                             }
                         }
                         else
@@ -2562,26 +2640,33 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         tenTrangThai = "Hóa đơn gốc";
                                         break;
                                     case 3:
-                                        tenTrangThai = "Thay thế";
+                                        tenTrangThai = "Hóa đơn thay thế";
                                         break;
                                     case 4:
-                                        tenTrangThai = "Điều chỉnh";
+                                        tenTrangThai = "Hóa đơn điều chỉnh";
                                         break;
                                     default:
                                         tenTrangThai = "";
                                         break;
                                 }
-                                tenTrangThai += item.TrangThaiHoaDon.DienGiaiTrangThai?.Replace("&nbsp;", " ");
+                                //tenTrangThai += item.TrangThaiHoaDon.DienGiaiTrangThai?.Replace("&nbsp;", " ");
                             }
                         }
-                        worksheet.Cells[idx, 9].Value = tenTrangThai;
-                        worksheet.Cells[idx, 10].Value = item.ChungTuLienQuan;
-                        worksheet.Cells[idx, 11].Value = item.NgayThongBao?.ToString("dd/MM/yyyy");
-                        worksheet.Cells[idx, 12].Value = item.LoaiThongBaoSaiSot;
-                        worksheet.Cells[idx, 13].Value = item.SoTBaoCuaCQT + "\r\n" + item.NgayTBaoCuaCQT?.ToString("dd/MM/yyyy");
-                        worksheet.Cells[idx, 14].Value = item.MaThongDiepGui;
-                        worksheet.Cells[idx, 15].Value = item.SoTBaoPhanHoiTuCQT + "\r\n" + item.NgayTBaoPhanHoiTuCQT?.ToString("dd/MM/yyyy");
-                        worksheet.Cells[idx, 16].Value = item.TenTrangThaiGui;
+                        var chungTuLienQuan = (!string.IsNullOrWhiteSpace(item.ChungTuLienQuan) && item.ChungTuLienQuan.IndexOf(";") > 0) ? item.ChungTuLienQuan.Split(';') : null;
+                        worksheet.Cells[idx, 10].Value = tenTrangThai;
+                        worksheet.Cells[idx, 11].Value = chungTuLienQuan == null ? "" : chungTuLienQuan[0];
+                        worksheet.Cells[idx, 12].Value = item.LoaiSaiSot;
+                        worksheet.Cells[idx, 13].Value = item.LyDo;
+                        worksheet.Cells[idx, 14].Value = item.NgayThongBao?.ToString("dd/MM/yyyy");
+                        worksheet.Cells[idx, 15].Value = item.LoaiThongBaoSaiSot;
+                        worksheet.Cells[idx, 16].Value = item.MauSoTBaoCuaCQT;
+                        worksheet.Cells[idx, 17].Value = item.SoTBaoCuaCQT;
+                        worksheet.Cells[idx, 18].Value = item.NgayTBaoCuaCQT?.ToString("dd/MM/yyyy");
+                        worksheet.Cells[idx, 19].Value = item.MaThongDiepGui;
+                        worksheet.Cells[idx, 20].Value = item.MauSoTBaoPhanHoiTuCQT;
+                        worksheet.Cells[idx, 21].Value = item.SoTBaoPhanHoiTuCQT;
+                        worksheet.Cells[idx, 22].Value = item.NgayTBaoPhanHoiTuCQT?.ToString("dd/MM/yyyy");
+                        worksheet.Cells[idx, 23].Value = item.TenTrangThaiGui;
 
                         idx += 1;
                     }

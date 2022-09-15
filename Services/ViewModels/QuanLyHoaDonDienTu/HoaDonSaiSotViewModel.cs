@@ -160,10 +160,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public byte? LoaiThongBaoSaiSot { get; set; }
         public string TenLoaiThongBaoSaiSot { get; set; }
 
+        public string MauSoTBaoCuaCQT { get; set; }
         public string SoTBaoCuaCQT { get; set; }
         public DateTime? NgayTBaoCuaCQT { get; set; }
 
         public string MaThongDiepGui { get; set; }
+        public string MauSoTBaoPhanHoiTuCQT { get; set; }
         public string SoTBaoPhanHoiTuCQT { get; set; }
         public DateTime? NgayTBaoPhanHoiTuCQT { get; set; }
         public int? TrangThaiGui { get; set; }
