@@ -2343,11 +2343,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         case nameof(thongKeHoaDonSaiSotParams.Filter.MaCQTCap):
                             queryBangKe = GenericFilterColumn<BangKeHoaDonSaiSot_ViewModel>.Query(queryBangKe, x => x.MaCQTCap, filterCol, FilterValueType.String).ToList();
                             break;
+                        case nameof(thongKeHoaDonSaiSotParams.Filter.MaThongDiepGui):
+                            queryBangKe = GenericFilterColumn<BangKeHoaDonSaiSot_ViewModel>.Query(queryBangKe, x => x.MaThongDiepGui, filterCol, FilterValueType.String).ToList();
+                            break;
                         case nameof(thongKeHoaDonSaiSotParams.Filter.TongTienThanhToan):
                             queryBangKe = GenericFilterColumn<BangKeHoaDonSaiSot_ViewModel>.Query(queryBangKe, x => x.TongTienThanhToan, filterCol, FilterValueType.Decimal).ToList();
                             break;
                         case "NgayHoaDon":
                             queryBangKe = GenericFilterColumn<BangKeHoaDonSaiSot_ViewModel>.Query(queryBangKe, x => x.NgayLapHoaDon, filterCol, FilterValueType.DateTime).ToList();
+                            break;
+                        case "NgayThongBao":
+                            queryBangKe = GenericFilterColumn<BangKeHoaDonSaiSot_ViewModel>.Query(queryBangKe, x => x.NgayThongBao, filterCol, FilterValueType.DateTime).ToList();
                             break;
                         default:
                             break;
@@ -2374,8 +2380,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     queryBangKe = queryBangKe.OrderByDescending(x => x.NgayLapHoaDon).ToList();
                 }
-
-
+                if (thongKeHoaDonSaiSotParams.SortKey == "NgayThongBao" && thongKeHoaDonSaiSotParams.SortValue == "ascend")
+                {
+                    queryBangKe = queryBangKe.OrderBy(x => x.NgayThongBao).ToList();
+                }
+                if (thongKeHoaDonSaiSotParams.SortKey == "NgayThongBao" && thongKeHoaDonSaiSotParams.SortValue == "descend")
+                {
+                    queryBangKe = queryBangKe.OrderByDescending(x => x.NgayThongBao).ToList();
+                }
                 if (thongKeHoaDonSaiSotParams.SortKey == "MaCQTCap" && thongKeHoaDonSaiSotParams.SortValue == "ascend")
                 {
                     queryBangKe = queryBangKe.OrderBy(x => x.MaCQTCap).ToList();
@@ -2383,6 +2395,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (thongKeHoaDonSaiSotParams.SortKey == "MaCQTCap" && thongKeHoaDonSaiSotParams.SortValue == "descend")
                 {
                     queryBangKe = queryBangKe.OrderByDescending(x => x.MaCQTCap).ToList();
+                }
+                if (thongKeHoaDonSaiSotParams.SortKey == "MaThongDiepGui" && thongKeHoaDonSaiSotParams.SortValue == "ascend")
+                {
+                    queryBangKe = queryBangKe.OrderBy(x => x.MaThongDiepGui).ToList();
+                }
+                if (thongKeHoaDonSaiSotParams.SortKey == "MaThongDiepGui" && thongKeHoaDonSaiSotParams.SortValue == "descend")
+                {
+                    queryBangKe = queryBangKe.OrderByDescending(x => x.MaThongDiepGui).ToList();
                 }
 
                 if (thongKeHoaDonSaiSotParams.SortKey == "TongTienThanhToan" && thongKeHoaDonSaiSotParams.SortValue == "ascend")
@@ -2677,19 +2697,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         worksheet.Cells[idx, 1].Value = item.NgayThongBao?.ToString("dd/MM/yyyy");
                         worksheet.Cells[idx, 2].Value = item.LoaiThongBaoSaiSot;
-                        worksheet.Cells[idx, 3].Value = item.SoTBaoCuaCQT + "\r\n" + item.NgayTBaoCuaCQT?.ToString("dd/MM/yyyy");
-                        worksheet.Cells[idx, 4].Value = item.MaThongDiepGui;
-                        worksheet.Cells[idx, 5].Value = item.SoTBaoPhanHoiTuCQT + "\r\n" + item.NgayTBaoPhanHoiTuCQT?.ToString("dd/MM/yyyy");
-                        worksheet.Cells[idx, 6].Value = item.TenTrangThaiGui;
+                        worksheet.Cells[idx, 3].Value = item.MauSoTBaoCuaCQT;
+                        worksheet.Cells[idx, 4].Value = item.SoTBaoCuaCQT;
+                        worksheet.Cells[idx, 5].Value = item.NgayTBaoCuaCQT?.ToString("dd/MM/yyyy");
+                        worksheet.Cells[idx, 6].Value = item.MaThongDiepGui;
+                        worksheet.Cells[idx, 7].Value = item.MauSoTBaoPhanHoiTuCQT;
+                        worksheet.Cells[idx, 8].Value = item.SoTBaoPhanHoiTuCQT;
+                        worksheet.Cells[idx, 9].Value = item.NgayTBaoPhanHoiTuCQT?.ToString("dd/MM/yyyy");
+                        worksheet.Cells[idx, 10].Value = item.TenTrangThaiGui;
 
-                        worksheet.Cells[idx, 7].Value = item.MauHoaDon + "\r\n" + item.KyHieuHoaDon;
-                        worksheet.Cells[idx, 8].Value = item.SoHoaDon + "\r\n" + item.NgayLapHoaDon?.ToString("dd/MM/yyyy");
-                        worksheet.Cells[idx, 9].Value = item.MaCQTCap;
-                        worksheet.Cells[idx, 10].Value = item.TongTienThanhToan?.ToString() + " " + item.MaLoaiTien;
-                        worksheet.Cells[idx, 11].Value = (item.LoaiApDungHoaDon == 0) ? "" : item.LoaiApDungHoaDon.ToString();
-                        worksheet.Cells[idx, 12].Value = item.LoaiSaiSot;
-                        worksheet.Cells[idx, 13].Value = item.LyDo;
-                        worksheet.Cells[idx, 14].Value = item.LoaiHoaDon;
+                        worksheet.Cells[idx, 11].Value = item.MauHoaDon;
+                        worksheet.Cells[idx, 12].Value = item.KyHieuHoaDon;
+                        worksheet.Cells[idx, 13].Value = item.SoHoaDon;
+                        worksheet.Cells[idx, 14].Value = item.NgayLapHoaDon?.ToString("dd/MM/yyyy");
+                        worksheet.Cells[idx, 15].Value = item.MaCQTCap;
+                        worksheet.Cells[idx, 16].Value = item.TongTienThanhToan?.ToString();
+                        worksheet.Cells[idx, 17].Value = item.MaLoaiTien;
+                        worksheet.Cells[idx, 18].Value = (item.LoaiApDungHoaDon == 0) ? "" : item.LoaiApDungHoaDon.ToString();
+                        worksheet.Cells[idx, 19].Value = item.LoaiHoaDon;
 
                         //trạng thái hóa đơn
                         string tenTrangThai = "";
@@ -2707,16 +2732,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         tenTrangThai = "Hóa đơn hủy";
                                         break;
                                     case 3:
-                                        tenTrangThai = "Thay thế";
+                                        tenTrangThai = "Hóa đơn thay thế";
                                         break;
                                     case 4:
-                                        tenTrangThai = "Điều chỉnh";
+                                        tenTrangThai = "Hóa đơn điều chỉnh";
                                         break;
                                     default:
                                         tenTrangThai = "";
                                         break;
                                 }
-                                tenTrangThai += item.TrangThaiHoaDon.DienGiaiTrangThai?.Replace("&nbsp;", " ");
+                                //tenTrangThai += item.TrangThaiHoaDon.DienGiaiTrangThai?.Replace("&nbsp;", " ");
                             }
                         }
                         else
@@ -2730,21 +2755,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         tenTrangThai = "Hóa đơn gốc";
                                         break;
                                     case 3:
-                                        tenTrangThai = "Thay thế";
+                                        tenTrangThai = "Hóa đơn thay thế";
                                         break;
                                     case 4:
-                                        tenTrangThai = "Điều chỉnh";
+                                        tenTrangThai = "Hóa đơn điều chỉnh";
                                         break;
                                     default:
                                         tenTrangThai = "";
                                         break;
                                 }
-                                tenTrangThai += item.TrangThaiHoaDon.DienGiaiTrangThai?.Replace("&nbsp;", " ");
+                                //tenTrangThai += item.TrangThaiHoaDon.DienGiaiTrangThai?.Replace("&nbsp;", " ");
                             }
                         }
-                        worksheet.Cells[idx, 15].Value = tenTrangThai;
-                        worksheet.Cells[idx, 16].Value = item.ChungTuLienQuan;
-
+                        worksheet.Cells[idx, 20].Value = tenTrangThai;
+                        var chungTuLienQuan = (!string.IsNullOrWhiteSpace(item.ChungTuLienQuan) && item.ChungTuLienQuan.IndexOf(";") > 0) ? item.ChungTuLienQuan.Split(';') : null;
+                        worksheet.Cells[idx, 21].Value = chungTuLienQuan == null ? "" : chungTuLienQuan[0];
+                        worksheet.Cells[idx, 22].Value = item.LoaiSaiSot;
+                        worksheet.Cells[idx, 23].Value = item.LyDo;
                         idx += 1;
                     }
                 }
