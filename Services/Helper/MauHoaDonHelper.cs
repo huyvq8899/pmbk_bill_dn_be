@@ -1310,13 +1310,23 @@ namespace Services.Helper
                             table.Rows[i].Cells[col - 1].Width = 50;
                         }
 
-                        if (listHHTT_STK.Any() && listHHTT_STK.Count == 3)
+                        if (listHHTT_STK.Any())
                         {
-                            for (int j = 0; j < listHHTT_STK.Count; j++)
+                            if (listHHTT_STK.Count == 2 && canTieuDe == 1)
                             {
-                                if (j != 0 && listHHTT_STK[j].LoaiChiTiet == LoaiChiTietTuyChonNoiDung.DongTienThanhToan)
+                                for (int j = 0; j < listHHTT_STK.Count; j++)
                                 {
-                                    table.Rows[i].Cells[canTieuDe == 1 ? j : (j + 1)].Width = isHienThiQRCode ? 50 : 100;
+                                    table.Rows[i].Cells[j].Width = (table.Width / 2) - ((j != 0 && isHienThiQRCode) ? 50 : 0);
+                                }
+                            }
+                            else if (listHHTT_STK.Count == 3)
+                            {
+                                for (int j = 0; j < listHHTT_STK.Count; j++)
+                                {
+                                    if (j != 0 && listHHTT_STK[j].LoaiChiTiet == LoaiChiTietTuyChonNoiDung.DongTienThanhToan)
+                                    {
+                                        table.Rows[i].Cells[canTieuDe == 1 ? j : (j + 1)].Width = isHienThiQRCode ? 50 : 100;
+                                    }
                                 }
                             }
                         }
@@ -2747,6 +2757,8 @@ namespace Services.Helper
                                 switch (group.Key)
                                 {
                                     case LoaiChiTietTuyChonNoiDung.TieuDeKyNguoiChuyenDoi:
+                                        cell.AddParagraph();
+                                        cell.AddParagraph();
                                         cell.AddParagraph();
 
                                         par = cell.AddParagraph();

@@ -1560,7 +1560,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
             // get or add doc folder
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
-            var oldFiles = await _db.MauHoaDonFiles.ToListAsync();
+            var oldFiles = await _db.MauHoaDonFiles.Where(x => x.Type == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi ||
+                                                                x.Type == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_CoChietKhau ||
+                                                                x.Type == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_NgoaiTe ||
+                                                                x.Type == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_All)
+                                                    .ToListAsync();
             foreach (var item in oldFiles)
             {
                 var oldFilePath = Path.Combine(docFolderPath, item.FileName);
