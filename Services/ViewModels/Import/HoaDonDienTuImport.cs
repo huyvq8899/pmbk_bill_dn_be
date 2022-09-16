@@ -106,6 +106,17 @@ namespace Services.ViewModels.Import
         public string TenNguoiVanChuyen { get; set; }
         public string PhuongThucVanChuyen { get; set; }
         ////////////////////////////////////////////////
+        public string TruongThongTinBoSung1 { get; set; }
+        public string TruongThongTinBoSung2 { get; set; }
+        public string TruongThongTinBoSung3 { get; set; }
+        public string TruongThongTinBoSung4 { get; set; }
+        public string TruongThongTinBoSung5 { get; set; }
+        public string TruongThongTinBoSung6 { get; set; }
+        public string TruongThongTinBoSung7 { get; set; }
+        public string TruongThongTinBoSung8 { get; set; }
+        public string TruongThongTinBoSung9 { get; set; }
+        public string TruongThongTinBoSung10 { get; set; }
+        ////////////////////////////////////////////////
         public decimal? TongTienHang { get; set; }
 
         public decimal? TongTienChietKhau { get; set; }

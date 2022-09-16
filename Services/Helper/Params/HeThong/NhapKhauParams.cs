@@ -185,25 +185,25 @@ namespace Services.Helper.Params.HeThong
         [Description("HHDV 25")] // mã nhân viên
         MaNhanVien,
         [Description("HHDV 27")] // trường thông tin bổ sung 1
-        TruongMoRongChiTiet1,
+        TruongThongTinBoSung1,
         [Description("HHDV 28")] // trường thông tin bổ sung 2
-        TruongMoRongChiTiet2,
+        TruongThongTinBoSung2,
         [Description("HHDV 29")] // trường thông tin bổ sung 3
-        TruongMoRongChiTiet3,
+        TruongThongTinBoSung3,
         [Description("HHDV 30")] // trường thông tin bổ sung 4
-        TruongMoRongChiTiet4,
+        TruongThongTinBoSung4,
         [Description("HHDV 31")] // trường thông tin bổ sung 5
-        TruongMoRongChiTiet5,
+        TruongThongTinBoSung5,
         [Description("HHDV 32")] // trường thông tin bổ sung 6
-        TruongMoRongChiTiet6,
+        TruongThongTinBoSung6,
         [Description("HHDV 33")] // trường thông tin bổ sung 7
-        TruongMoRongChiTiet7,
+        TruongThongTinBoSung7,
         [Description("HHDV 34")] // trường thông tin bổ sung 8
-        TruongMoRongChiTiet8,
+        TruongThongTinBoSung8,
         [Description("HHDV 35")] // trường thông tin bổ sung 9
-        TruongMoRongChiTiet9,
+        TruongThongTinBoSung9,
         [Description("HHDV 36")] // trường thông tin bổ sung 10
-        TruongMoRongChiTiet10,
+        TruongThongTinBoSung10,
         [Description("HHDV 37")] // Mặt hàng giảm
         IsMatHangDuocGiam,
         [Description("HHDV 38")] // tỷ lệ % trên doanh thu
@@ -226,8 +226,8 @@ namespace Services.Helper.Params.HeThong
             {
                 case MaTruongDLHDExcel.NhanVienBanHangId:
                 case MaTruongDLHDExcel.NgayHoaDon:
-                case MaTruongDLHDExcel.MaHang: // mã khách hàng
-                    DoRong = 100;
+                case MaTruongDLHDExcel.MaKhachHang: // mã khách hàng
+                case MaTruongDLHDExcel.MaHang: // mã hàng
                     DoRong = 100;
                     break;
                 case MaTruongDLHDExcel.HoTenNguoiMuaHang: // người mua hàng
@@ -322,35 +322,35 @@ namespace Services.Helper.Params.HeThong
                 case MaTruongDLHDExcel.MaNhanVien:
                     DoRong = 100;
                     break;
-                case MaTruongDLHDExcel.TruongMoRongChiTiet1:
-                    DoRong = 100;
+                case MaTruongDLHDExcel.TruongThongTinBoSung1:
+                    DoRong = 200;
                     break;
-                case MaTruongDLHDExcel.TruongMoRongChiTiet2:
-                    DoRong = 100;
+                case MaTruongDLHDExcel.TruongThongTinBoSung2:
+                    DoRong = 200;
                     break;
-                case MaTruongDLHDExcel.TruongMoRongChiTiet3:
-                    DoRong = 100;
+                case MaTruongDLHDExcel.TruongThongTinBoSung3:
+                    DoRong = 200;
                     break;
-                case MaTruongDLHDExcel.TruongMoRongChiTiet4:
-                    DoRong = 100;
+                case MaTruongDLHDExcel.TruongThongTinBoSung4:
+                    DoRong = 200;
                     break;
-                case MaTruongDLHDExcel.TruongMoRongChiTiet5:
-                    DoRong = 100;
+                case MaTruongDLHDExcel.TruongThongTinBoSung5:
+                    DoRong = 200;
                     break;
-                case MaTruongDLHDExcel.TruongMoRongChiTiet6:
-                    DoRong = 100;
+                case MaTruongDLHDExcel.TruongThongTinBoSung6:
+                    DoRong = 200;
                     break;
-                case MaTruongDLHDExcel.TruongMoRongChiTiet7:
-                    DoRong = 100;
+                case MaTruongDLHDExcel.TruongThongTinBoSung7:
+                    DoRong = 200;
                     break;
-                case MaTruongDLHDExcel.TruongMoRongChiTiet8:
-                    DoRong = 100;
+                case MaTruongDLHDExcel.TruongThongTinBoSung8:
+                    DoRong = 200;
                     break;
-                case MaTruongDLHDExcel.TruongMoRongChiTiet9:
-                    DoRong = 100;
+                case MaTruongDLHDExcel.TruongThongTinBoSung9:
+                    DoRong = 200;
                     break;
-                case MaTruongDLHDExcel.TruongMoRongChiTiet10:
-                    DoRong = 100;
+                case MaTruongDLHDExcel.TruongThongTinBoSung10:
+                    DoRong = 200;
                     break;
                 case MaTruongDLHDExcel.IsMatHangDuocGiam: // mặt hàng giảm
                     DoRong = 120;
@@ -429,7 +429,7 @@ namespace Services.Helper.Params.HeThong
                 case "TruongMoRongChiTiet8":
                 case "TruongMoRongChiTiet9":
                 case "TruongMoRongChiTiet10":
-                    DoRong = 170;
+                    DoRong = 200;
                     break;
                 default:
                     break;
