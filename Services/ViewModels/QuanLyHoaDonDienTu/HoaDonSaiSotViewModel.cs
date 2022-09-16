@@ -165,6 +165,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public DateTime? NgayTBaoCuaCQT { get; set; }
 
         public string MaThongDiepGui { get; set; }
+        public string MaThongDiepPhanHoi { get; set; }
         public string MauSoTBaoPhanHoiTuCQT { get; set; }
         public string SoTBaoPhanHoiTuCQT { get; set; }
         public DateTime? NgayTBaoPhanHoiTuCQT { get; set; }

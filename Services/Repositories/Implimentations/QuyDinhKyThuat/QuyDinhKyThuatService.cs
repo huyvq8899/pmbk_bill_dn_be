@@ -1261,7 +1261,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             TrangThaiGui = entityTD.TrangThaiGui,
                             HinhThuc = 0,
                             NgayThongBao = DateTime.Now,
-                            FileXML = fileName
+                            FileXML = fileName,
+                            MauSoTBaoPhanHoiCuaCQT = tDiep204.DLieu.TBao.DLTBao.MSo,
+                            SoTBaoPhanHoiCuaCQT = tDiep204.DLieu.TBao.DLTBao.So,
+                            NgayTBaoPhanHoiCuaCQT = DateTime.Parse(tDiep204.DLieu.TBao.DLTBao.NTBao)
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc204);
 
@@ -1322,7 +1325,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             HinhThuc = (int)HThuc.ChinhThuc,
                             NgayThongBao = DateTime.Now,
                             TrangThaiGui = (tDiep301.DLieu.TBao.DLTBao.DSHDon.Count(x => x.TTTNCCQT == 2) > 0) ? (int)TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan : (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon,
-                            FileXML = fileName
+                            FileXML = fileName,
+                            MauSoTBaoPhanHoiCuaCQT = tDiep301.DLieu.TBao.DLTBao.MSo,
+                            SoTBaoPhanHoiCuaCQT = tDiep301.DLieu.TBao.STBao.So,
+                            NgayTBaoPhanHoiCuaCQT = DateTime.Parse(tDiep301.DLieu.TBao.STBao.NTBao)
                         };
 
                         //update lại trạng thái thông điệp 300
@@ -1372,7 +1378,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             HinhThuc = (int)HThuc.ChinhThuc,
                             ThoiHan = tDiep302.DLieu.TBao.DLTBao.THan,
                             NgayThongBao = DateTime.Parse(tDiep302.DLieu.TBao.STBao.NTBao),
-                            FileXML = fileName
+                            FileXML = fileName,
+                            MauSoTBaoPhanHoiCuaCQT = tDiep302.DLieu.TBao.DLTBao.MSo,
+                            SoTBaoPhanHoiCuaCQT = tDiep302.DLieu.TBao.STBao.So,
+                            NgayTBaoPhanHoiCuaCQT = DateTime.Parse(tDiep302.DLieu.TBao.STBao.NTBao)
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc302);
                         await _thongDiepGuiNhanCQTService.ThemThongBaoHoaDonRaSoat(tDiep302);

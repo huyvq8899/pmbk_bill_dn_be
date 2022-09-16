@@ -2251,16 +2251,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          MauSoTBaoCuaCQT = (thongBao302 != null) ? "01/TB-RSĐT" : "",
                                          SoTBaoCuaCQT = (thongBao302 != null) ? thongBao302.SoThongBaoCuaCQT : thongBao302_HoaDonKhac.SoThongBaoCuaCQT,
                                          NgayTBaoCuaCQT = (thongBao302 != null) ? thongBao302.NgayThongBao : thongBao302_HoaDonKhac.NgayThongBao,
-
+                                         
                                          MaThongDiepGui = thongDiepChung.MaThongDiep,
+                                         MaThongDiepPhanHoi=thongDiepChung.MaThongDiepPhanHoi,
                                          MauSoTBaoPhanHoiTuCQT = thongDiepChung.MaLoaiThongDiep == 301 ? "01/TB-SSĐT" : "",
                                          SoTBaoPhanHoiTuCQT = thongDiepChung.SoTBaoPhanHoiCuaCQT,
                                          NgayTBaoPhanHoiTuCQT = thongDiepChung.NgayTBaoPhanHoiCuaCQT,
-
+                                         
                                          TrangThaiGui = thongDiepChung.TrangThaiGui.HasValue ? thongDiepChung.TrangThaiGui : null,
 
                                          TenTrangThaiGui = thongDiepChung.TrangThaiGui.HasValue ? thongDiepChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe ? "Hóa đơn hợp lệ" : ((TrangThaiGuiThongDiep)thongDiepChung.TrangThaiGui).GetDescription() : null,
-
+                                         
                                          ThongDiepChungId = thongDiepChung.ThongDiepChungId,
                                          IdTDiepTBaoPhanHoiCuaCQT = thongDiepChung.IdTDiepTBaoPhanHoiCuaCQT,
 
@@ -2543,6 +2544,31 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
 
+            foreach (var item in queryBangKe)
+            {
+                var maThongDiepPhanHoi = item.MaThongDiepPhanHoi;
+                if (!string.IsNullOrEmpty(maThongDiepPhanHoi))
+                {
+                    var thongDiepPhanHoi = _db.ThongDiepChungs.Where(x => x.MaThongDiep == maThongDiepPhanHoi).OrderByDescending(x=>x.CreatedDate).FirstOrDefault();
+                    if (thongDiepPhanHoi !=null)
+                    {
+                        if(thongDiepPhanHoi.MaLoaiThongDiep == 302)
+                        {
+                            item.MauSoTBaoCuaCQT = thongDiepPhanHoi.MauSoTBaoPhanHoiCuaCQT;
+                            item.SoTBaoCuaCQT = thongDiepPhanHoi.SoTBaoPhanHoiCuaCQT;
+                            item.NgayTBaoCuaCQT = thongDiepPhanHoi.NgayTBaoPhanHoiCuaCQT;
+                        }
+                        else
+                        {
+                            item.MauSoTBaoPhanHoiTuCQT = thongDiepPhanHoi.MauSoTBaoPhanHoiCuaCQT;
+                            item.SoTBaoPhanHoiTuCQT = thongDiepPhanHoi.SoTBaoPhanHoiCuaCQT;
+                            item.NgayTBaoPhanHoiTuCQT = thongDiepPhanHoi.NgayTBaoPhanHoiCuaCQT;
+                            item.IdTDiepTBaoPhanHoiCuaCQT = thongDiepPhanHoi.ThongDiepChungId;
+                        }                        
+                    }
+                }
+            }
+
             return queryBangKe;
         }
 
@@ -2606,7 +2632,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 // Fill data
                 int idx = begin_row + (totalRows == 0 ? 1 : 0);
-
                 if (exportParams.Params.LoaiThongke == 1) //theo hóa đơn
                 {
                     foreach (var item in exportParams.ListBangKeSaiSot)

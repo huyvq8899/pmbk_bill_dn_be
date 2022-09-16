@@ -137,6 +137,12 @@ namespace DLL.Entity.QuyDinhKyThuat
         /// Số thông báo phản hồi của CQT 
         /// Kiểu dữ liệu: string
         /// </summary>
+        public string MauSoTBaoPhanHoiCuaCQT { get; set; }
+        
+        /// <summary>
+        /// Số thông báo phản hồi của CQT 
+        /// Kiểu dữ liệu: string
+        /// </summary>
         public string SoTBaoPhanHoiCuaCQT { get; set; }
 
         /// <summary>
