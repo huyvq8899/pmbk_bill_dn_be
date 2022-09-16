@@ -547,7 +547,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      {
                                                          SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
                                                          HoaDonDienTuId = hoadon.HoaDonDienTuId,
-                                                         ChungTuLienQuan = string.Format("{0}{1};{2}", "TBSSTT-Email-", hoadon.NgayGuiTBaoSaiSotKhongPhaiLapHD.Value.ToString("dd/MM/yyyy HH:mm:ss"), (hoadon.EmailTBaoSaiSotKhongPhaiLapHDId ?? "")),
+                                                         ChungTuLienQuan = hoadon.NgayGuiTBaoSaiSotKhongPhaiLapHD !=null ? string.Format("{0}{1};{2}", "TBSSTT-Email-", hoadon.NgayGuiTBaoSaiSotKhongPhaiLapHD.Value.ToString("dd/MM/yyyy HH:mm:ss"), (hoadon.EmailTBaoSaiSotKhongPhaiLapHDId ?? "")) : "",
                                                          TrangThaiHoaDon = XacDinhTrangThaiHoaDon(hoadon, bkhhd, queryHoaDonDienTu),
                                                          DienGiaiTrangThai = "",
                                                          PhanLoaiHDSaiSot = 4,
