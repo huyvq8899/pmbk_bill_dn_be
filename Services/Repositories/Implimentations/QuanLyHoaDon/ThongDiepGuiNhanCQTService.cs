@@ -436,204 +436,199 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         toDate = DateTime.Parse(@params.ToDate);
                     }
 
-                    if (@params.TrangThaiGuiHoaDon == (int)TrangThaiGuiHoaDon.ChuaGui)
-                    {
-                        var queryHoaDonHuy = from hoadon in queryHoaDonDienTu
-                                             join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
-                                             where
-                                             (hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
-                                             && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
-                                             && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
-                                             && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
-                                             && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
-                                             )
-                                             && !listEmail.Contains(hoadon.HoaDonDienTuId)
-                                     && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon
-                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
-                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) &&
-                                             (hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1
-                                             || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4
-                                             || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc6)
-                                             && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
-                                             select new HoaDonSaiSotViewModel
-                                             {
-                                                 SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
-                                                 HoaDonDienTuId = hoadon.HoaDonDienTuId,
-                                                 ChungTuLienQuan = string.Format("{0};{1}", (hoadon.SoCTXoaBo ?? ""), "XHD-" + hoadon.HoaDonDienTuId),
-                                                 TrangThaiHoaDon = 2,
-                                                 DienGiaiTrangThai = "&nbsp;|&nbsp;Hóa đơn gốc (SS)",
-                                                 PhanLoaiHDSaiSot = 1,
-                                                 PhanLoaiHDSaiSotMacDinh = 1,
-                                                 LoaiApDungHDDT = 1,
-                                                 TenLoaiApDungHDDT = ((HinhThucHoaDonCanThayThe)1).GetDescription(),
-                                                 MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoadon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
-                                                 MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
-                                                 KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
-                                                 SoHoaDon = hoadon.SoHoaDon,
-                                                 NgayLapHoaDon = hoadon.NgayHoaDon,
-                                                 LoaiSaiSotDeTimKiem = 0, //hủy hóa đơn do sai sót dựa trên giao diện
-                                                 LyDo = GetGoiYLyDoSaiSot(hoadon, queryHoaDonDienTu, queryThongBaoSaiThongTin, ""),
-                                                 IdsChungTuLienQuan = GetIdChungTuLienQuan(hoadon.HoaDonDienTuId, queryHoaDonDienTu, false)
-                                             };
-                        query = queryHoaDonHuy.ToList();
-                    }
+                    var queryHoaDonHuyChuaGui = from hoadon in queryHoaDonDienTu
+                                                join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                                                where
+                                                (hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
+                                                && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
+                                                && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
+                                                && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
+                                                && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
+                                                )
+                                                && !listEmail.Contains(hoadon.HoaDonDienTuId)
+                                        && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon
+                                        && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
+                                        && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) &&
+                                                (hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1
+                                                || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4
+                                                || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc6)
+                                                && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
+                                                select new HoaDonSaiSotViewModel
+                                                {
+                                                    SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
+                                                    HoaDonDienTuId = hoadon.HoaDonDienTuId,
+                                                    ChungTuLienQuan = string.Format("{0};{1}", (hoadon.SoCTXoaBo ?? ""), "XHD-" + hoadon.HoaDonDienTuId),
+                                                    TrangThaiHoaDon = 2,
+                                                    DienGiaiTrangThai = "&nbsp;|&nbsp;Hóa đơn gốc (SS)",
+                                                    PhanLoaiHDSaiSot = 1,
+                                                    PhanLoaiHDSaiSotMacDinh = 1,
+                                                    LoaiApDungHDDT = 1,
+                                                    TenLoaiApDungHDDT = ((HinhThucHoaDonCanThayThe)1).GetDescription(),
+                                                    MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoadon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
+                                                    MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
+                                                    KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
+                                                    SoHoaDon = hoadon.SoHoaDon,
+                                                    NgayLapHoaDon = hoadon.NgayHoaDon,
+                                                    LoaiSaiSotDeTimKiem = 2, //hủy hóa đơn do sai sót dựa trên giao diện
+                                                    LyDo = GetGoiYLyDoSaiSot(hoadon, queryHoaDonDienTu, queryThongBaoSaiThongTin, ""),
+                                                    IdsChungTuLienQuan = GetIdChungTuLienQuan(hoadon.HoaDonDienTuId, queryHoaDonDienTu, false)
+                                                };
+                    query = queryHoaDonHuyChuaGui.ToList();
 
-                    if (@params.TrangThaiGuiHoaDon == (int)TrangThaiGuiHoaDon.DaGui)
-                    {
-                        var queryHoaDonHuy = from hoadon in queryHoaDonDienTu
-                                             join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
-                                             where
-                                             (hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
-                                             && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
-                                             && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
-                                             && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
-                                             && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
-                                             )
-                                     && listEmail.Contains(hoadon.HoaDonDienTuId)
-                                     && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon
-                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
-                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) &&
-                                             (hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2
-                                             || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3
-                                             || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5)
-                                             &&
-                                             ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
 
-                                                //nếu chọn HinhThuc2 hoặc HinhThuc5 thì hóa đơn thay thế phải được cấp mã rồi 
-                                                && (queryHoaDonDienTu.Where(x => x.ThayTheChoHoaDonId == hoadon.HoaDonDienTuId && x.SoHoaDon.HasValue && (hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5)
-                                                    && (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa || x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe)).OrderByDescending(y => y.CreatedDate).Take(1).FirstOrDefault() != null || (hoadon.HinhThucXoabo != (int)HinhThucXoabo.HinhThuc2 && hoadon.HinhThucXoabo != (int)HinhThucXoabo.HinhThuc5))
+                    var queryHoaDonHuy = from hoadon in queryHoaDonDienTu
+                                         join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                                         where
+                                         (hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
+                                         && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
+                                         && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
+                                         && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
+                                         && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
+                                         )
+                                 && listEmail.Contains(hoadon.HoaDonDienTuId)
+                                 && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon
+                                 && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
+                                 && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) &&
+                                         (hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2
+                                         || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3
+                                         || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5)
+                                         &&
+                                         ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
 
-                                             select new HoaDonSaiSotViewModel
-                                             {
-                                                 SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
-                                                 HoaDonDienTuId = hoadon.HoaDonDienTuId,
-                                                 ChungTuLienQuan = XacDinhSoChungTuLienQuan("huy_va_thaythe", XacDinhTrangThaiHoaDon(hoadon, bkhhd, queryHoaDonDienTu), hoadon, queryHoaDonDienTu, bkhhd),
-                                                 TrangThaiHoaDon = XacDinhTrangThaiHoaDon(hoadon, bkhhd, queryHoaDonDienTu),
-                                                 DienGiaiTrangThai = GetDienGiaiTrangThai(hoadon, bkhhd, queryHoaDonDienTu),
-                                                 PhanLoaiHDSaiSot = (byte)GetGoiY(hoadon.HinhThucXoabo, hoadon.ThayTheChoHoaDonId),
-                                                 PhanLoaiHDSaiSotMacDinh = (byte)GetGoiY(hoadon.HinhThucXoabo, hoadon.ThayTheChoHoaDonId),
-                                                 LoaiApDungHDDT = 1,
-                                                 TenLoaiApDungHDDT = ((HinhThucHoaDonCanThayThe)1).GetDescription(),
-                                                 MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoadon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
-                                                 MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
-                                                 KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
-                                                 SoHoaDon = hoadon.SoHoaDon,
-                                                 NgayLapHoaDon = hoadon.NgayHoaDon,
-                                                 LoaiSaiSotDeTimKiem = XacDinhLoaiSaiSotDuaTrenGiaoDien(hoadon.ThayTheChoHoaDonId, hoadon.DieuChinhChoHoaDonId, hoadon.HinhThucXoabo),
-                                                 LyDo = GetGoiYLyDoSaiSot(hoadon, queryHoaDonDienTu, queryThongBaoSaiThongTin, ""),
-                                                 IdsChungTuLienQuan = GetIdChungTuLienQuan(hoadon.HoaDonDienTuId, queryHoaDonDienTu, false),
-                                                 LoaiDieuChinh = hoadon.LoaiDieuChinh
-                                             };
-                        var lstHuy = queryHoaDonHuy.ToList();
+                                            //nếu chọn HinhThuc2 hoặc HinhThuc5 thì hóa đơn thay thế phải được cấp mã rồi 
+                                            && (queryHoaDonDienTu.Where(x => x.ThayTheChoHoaDonId == hoadon.HoaDonDienTuId && x.SoHoaDon.HasValue && (hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5)
+                                                && (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa || x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe)).OrderByDescending(y => y.CreatedDate).Take(1).FirstOrDefault() != null || (hoadon.HinhThucXoabo != (int)HinhThucXoabo.HinhThuc2 && hoadon.HinhThucXoabo != (int)HinhThucXoabo.HinhThuc5))
 
-                        var queryThamChieuHoaDonSaiThongTin = await (from hoadon in _db.NhatKyGuiEmails
-                                                                     where hoadon.LoaiEmail == LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon && !string.IsNullOrWhiteSpace(hoadon.So)
-                                                                     && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.RefId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
-                                                                     select hoadon.RefId).ToListAsync();
-                        var queryHoaDonSaiThongTin = from hoadon in queryHoaDonDienTu
-                                                     join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
-                                                     where
-                                                     (hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
-                                             && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
-                                             && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
-                                             && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
-                                             && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
-                                             ) && listEmail.Contains(hoadon.HoaDonDienTuId)
-                                     && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon
-                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
-                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) && queryThamChieuHoaDonSaiThongTin.Contains(hoadon.HoaDonDienTuId)
-                                     && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
-                                                     select new HoaDonSaiSotViewModel
-                                                     {
-                                                         SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
-                                                         HoaDonDienTuId = hoadon.HoaDonDienTuId,
-                                                         ChungTuLienQuan = hoadon.NgayGuiTBaoSaiSotKhongPhaiLapHD !=null ? string.Format("{0}{1};{2}", "TBSSTT-Email-", hoadon.NgayGuiTBaoSaiSotKhongPhaiLapHD.Value.ToString("dd/MM/yyyy HH:mm:ss"), (hoadon.EmailTBaoSaiSotKhongPhaiLapHDId ?? "")) : "",
-                                                         TrangThaiHoaDon = XacDinhTrangThaiHoaDon(hoadon, bkhhd, queryHoaDonDienTu),
-                                                         DienGiaiTrangThai = "",
-                                                         PhanLoaiHDSaiSot = 4,
-                                                         PhanLoaiHDSaiSotMacDinh = 4,
-                                                         LoaiApDungHDDT = 1,
-                                                         TenLoaiApDungHDDT = ((HinhThucHoaDonCanThayThe)1).GetDescription(),
-                                                         LaThongTinSaiSot = true,
-                                                         MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoadon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
-                                                         MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
-                                                         KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
-                                                         SoHoaDon = hoadon.SoHoaDon,
-                                                         NgayLapHoaDon = hoadon.NgayHoaDon,
-                                                         LoaiSaiSotDeTimKiem = 0, //thông báo sai sót thông tin dựa trên giao diện
-                                                         LyDo = GetGoiYLyDoSaiSot(hoadon, queryHoaDonDienTu, queryThongBaoSaiThongTin, "emailThongBaoSaiThongTin"),
-                                                         IdsChungTuLienQuan = GetIdChungTuLienQuan(hoadon.HoaDonDienTuId, queryHoaDonDienTu, true),
-                                                         LoaiDieuChinh = hoadon.LoaiDieuChinh
-                                                     };
+                                         select new HoaDonSaiSotViewModel
+                                         {
+                                             SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
+                                             HoaDonDienTuId = hoadon.HoaDonDienTuId,
+                                             ChungTuLienQuan = XacDinhSoChungTuLienQuan("huy_va_thaythe", XacDinhTrangThaiHoaDon(hoadon, bkhhd, queryHoaDonDienTu), hoadon, queryHoaDonDienTu, bkhhd),
+                                             TrangThaiHoaDon = XacDinhTrangThaiHoaDon(hoadon, bkhhd, queryHoaDonDienTu),
+                                             DienGiaiTrangThai = GetDienGiaiTrangThai(hoadon, bkhhd, queryHoaDonDienTu),
+                                             PhanLoaiHDSaiSot = (byte)GetGoiY(hoadon.HinhThucXoabo, hoadon.ThayTheChoHoaDonId),
+                                             PhanLoaiHDSaiSotMacDinh = (byte)GetGoiY(hoadon.HinhThucXoabo, hoadon.ThayTheChoHoaDonId),
+                                             LoaiApDungHDDT = 1,
+                                             TenLoaiApDungHDDT = ((HinhThucHoaDonCanThayThe)1).GetDescription(),
+                                             MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoadon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
+                                             MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
+                                             KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
+                                             SoHoaDon = hoadon.SoHoaDon,
+                                             NgayLapHoaDon = hoadon.NgayHoaDon,
+                                             LoaiSaiSotDeTimKiem = XacDinhLoaiSaiSotDuaTrenGiaoDien(hoadon.ThayTheChoHoaDonId, hoadon.DieuChinhChoHoaDonId, hoadon.HinhThucXoabo),
+                                             LyDo = GetGoiYLyDoSaiSot(hoadon, queryHoaDonDienTu, queryThongBaoSaiThongTin, ""),
+                                             IdsChungTuLienQuan = GetIdChungTuLienQuan(hoadon.HoaDonDienTuId, queryHoaDonDienTu, false),
+                                             LoaiDieuChinh = hoadon.LoaiDieuChinh
+                                         };
+                    var lstHuy = queryHoaDonHuy.ToList();
 
-                        var lstHoaDonSaiThongTin = queryHoaDonSaiThongTin.ToList();
-                        var queryThamChieuHoaDonBiDieuChinh = from hoadon in queryHoaDonDienTu
-                                                              join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
-                                                              where !string.IsNullOrWhiteSpace(hoadon.DieuChinhChoHoaDonId)
-                                                              && ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa && hoadon.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
-                                                              || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && hoadon.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe))
-                                                              select hoadon.DieuChinhChoHoaDonId;
+                    var queryThamChieuHoaDonSaiThongTin = await (from hoadon in _db.NhatKyGuiEmails
+                                                                 where hoadon.LoaiEmail == LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon && !string.IsNullOrWhiteSpace(hoadon.So)
+                                                                 && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.RefId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
+                                                                 select hoadon.RefId).ToListAsync();
+                    var queryHoaDonSaiThongTin = from hoadon in queryHoaDonDienTu
+                                                 join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                                                 where
+                                                 (hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
+                                         && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
+                                         && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
+                                         && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
+                                         && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
+                                         ) && listEmail.Contains(hoadon.HoaDonDienTuId)
+                                 && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon
+                                 && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
+                                 && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) && queryThamChieuHoaDonSaiThongTin.Contains(hoadon.HoaDonDienTuId)
+                                 && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
+                                                 select new HoaDonSaiSotViewModel
+                                                 {
+                                                     SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
+                                                     HoaDonDienTuId = hoadon.HoaDonDienTuId,
+                                                     ChungTuLienQuan = hoadon.NgayGuiTBaoSaiSotKhongPhaiLapHD != null ? string.Format("{0}{1};{2}", "TBSSTT-Email-", hoadon.NgayGuiTBaoSaiSotKhongPhaiLapHD.Value.ToString("dd/MM/yyyy HH:mm:ss"), (hoadon.EmailTBaoSaiSotKhongPhaiLapHDId ?? "")) : "",
+                                                     TrangThaiHoaDon = XacDinhTrangThaiHoaDon(hoadon, bkhhd, queryHoaDonDienTu),
+                                                     DienGiaiTrangThai = "",
+                                                     PhanLoaiHDSaiSot = 4,
+                                                     PhanLoaiHDSaiSotMacDinh = 4,
+                                                     LoaiApDungHDDT = 1,
+                                                     TenLoaiApDungHDDT = ((HinhThucHoaDonCanThayThe)1).GetDescription(),
+                                                     LaThongTinSaiSot = true,
+                                                     MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoadon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
+                                                     MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
+                                                     KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
+                                                     SoHoaDon = hoadon.SoHoaDon,
+                                                     NgayLapHoaDon = hoadon.NgayHoaDon,
+                                                     LoaiSaiSotDeTimKiem = 0, //thông báo sai sót thông tin dựa trên giao diện
+                                                     LyDo = GetGoiYLyDoSaiSot(hoadon, queryHoaDonDienTu, queryThongBaoSaiThongTin, "emailThongBaoSaiThongTin"),
+                                                     IdsChungTuLienQuan = GetIdChungTuLienQuan(hoadon.HoaDonDienTuId, queryHoaDonDienTu, true),
+                                                     LoaiDieuChinh = hoadon.LoaiDieuChinh
+                                                 };
 
-                        var queryHoaDonBiDieuChinh = from hoadon in queryHoaDonDienTu
-                                                     join dc in queryHoaDonDienTu on hoadon.HoaDonDienTuId equals dc.DieuChinhChoHoaDonId
-                                                     join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
-                                                     join bkhhd_dc in queryBoKyHieuHoaDon on dc.BoKyHieuHoaDonId equals bkhhd_dc.BoKyHieuHoaDonId
-                                                     where
-                                                     ((hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
-                                                         && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
-                                                         && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
-                                                         && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
-                                                         && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
-                                                      )
-                                                     || (dc.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
-                                                         && dc.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
-                                                         && dc.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
-                                                         && dc.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
-                                                         && dc.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
-                                                      )
-                                                     || (_db.HoaDonDienTus.Where(x => x.DieuChinhChoHoaDonId == hoadon.DieuChinhChoHoaDonId).Count() > 1
-                                                     && _db.ThongDiepChiTietGuiCQTs.Count(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId && x.PhanLoaiHDSaiSot == 2) <= _db.HoaDonDienTus.Where(x => x.DieuChinhChoHoaDonId == hoadon.HoaDonDienTuId).Count())
-                                                     )
-                                                     && dc.IsDaLapThongBao04 != true
-                                                     && listEmail.Contains(hoadon.HoaDonDienTuId)
-                                                     && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon
-                                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
-                                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) && queryThamChieuHoaDonBiDieuChinh.Contains(hoadon.HoaDonDienTuId)
-                                                     && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
+                    var lstHoaDonSaiThongTin = queryHoaDonSaiThongTin.ToList();
+                    var queryThamChieuHoaDonBiDieuChinh = from hoadon in queryHoaDonDienTu
+                                                          join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                                                          where !string.IsNullOrWhiteSpace(hoadon.DieuChinhChoHoaDonId)
+                                                          && ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa && hoadon.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                                                          || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && hoadon.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe))
+                                                          select hoadon.DieuChinhChoHoaDonId;
 
-                                                     //nếu là hóa đơn gốc bị điều chỉnh thì bắt buộc hóa đơn điều chỉnh phải được cấp mã
-                                                     && (queryHoaDonDienTu.Where(x => x.DieuChinhChoHoaDonId == hoadon.HoaDonDienTuId && x.SoHoaDon.HasValue && ((x.BoKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) || (x.BoKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe))).OrderByDescending(y => y.CreatedDate).Take(1).FirstOrDefault() != null)
-                                                     select new HoaDonSaiSotViewModel
-                                                     {
-                                                         SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
-                                                         HoaDonDienTuId = hoadon.HoaDonDienTuId,
-                                                         ChungTuLienQuan = XacDinhSoChungTuLienQuan("dieuchinh", null, hoadon, queryHoaDonDienTu, bkhhd, dc, bkhhd_dc),
-                                                         TrangThaiHoaDon = 1, //chỉ là hóa đơn gốc
-                                                         DienGiaiTrangThai = "&nbsp;|&nbsp;Bị điều chỉnh",
-                                                         PhanLoaiHDSaiSot = 2,
-                                                         PhanLoaiHDSaiSotMacDinh = 2,
-                                                         LoaiApDungHDDT = 1,
-                                                         TenLoaiApDungHDDT = ((HinhThucHoaDonCanThayThe)1).GetDescription(),
-                                                         MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoadon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
-                                                         MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
-                                                         KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
-                                                         SoHoaDon = hoadon.SoHoaDon,
-                                                         NgayLapHoaDon = hoadon.NgayHoaDon,
-                                                         LoaiSaiSotDeTimKiem = 4, //hóa đơn bị điều chỉnh dựa trên giao diện
-                                                         LyDo = GetGoiYLyDoSaiSot(hoadon, queryHoaDonDienTu, queryThongBaoSaiThongTin, "hoaDonBiDieuChinh", dc, bkhhd_dc),
-                                                         IdsChungTuLienQuan = GetIdChungTuLienQuan(hoadon.HoaDonDienTuId, queryHoaDonDienTu, false)
-                                                     };
+                    var queryHoaDonBiDieuChinh = from hoadon in queryHoaDonDienTu
+                                                 join dc in queryHoaDonDienTu on hoadon.HoaDonDienTuId equals dc.DieuChinhChoHoaDonId
+                                                 join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                                                 join bkhhd_dc in queryBoKyHieuHoaDon on dc.BoKyHieuHoaDonId equals bkhhd_dc.BoKyHieuHoaDonId
+                                                 where
+                                                 ((hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
+                                                     && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
+                                                     && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
+                                                     && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
+                                                     && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
+                                                  )
+                                                 || (dc.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
+                                                     && dc.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
+                                                     && dc.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
+                                                     && dc.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
+                                                     && dc.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
+                                                  )
+                                                 || (_db.HoaDonDienTus.Where(x => x.DieuChinhChoHoaDonId == hoadon.DieuChinhChoHoaDonId).Count() > 1
+                                                 && _db.ThongDiepChiTietGuiCQTs.Count(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId && x.PhanLoaiHDSaiSot == 2) <= _db.HoaDonDienTus.Where(x => x.DieuChinhChoHoaDonId == hoadon.HoaDonDienTuId).Count())
+                                                 )
+                                                 && dc.IsDaLapThongBao04 != true
+                                                 && listEmail.Contains(hoadon.HoaDonDienTuId)
+                                                 && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon
+                                                 && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
+                                                 && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) && queryThamChieuHoaDonBiDieuChinh.Contains(hoadon.HoaDonDienTuId)
+                                                 && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
 
-                        var bdc = queryHoaDonBiDieuChinh.ToList();
-                        queryHoaDonBiDieuChinh = queryHoaDonBiDieuChinh.Where(x => _db.ThongDiepChiTietGuiCQTs.Count(o => o.ChungTuLienQuan == x.ChungTuLienQuan) < 1 || (x.ChungTuLienQuan.Split(";").Length > 1 && hoaDonDienTus.FirstOrDefault(y => y.HoaDonDienTuId == x.ChungTuLienQuan.Split(";")[1]).IsDaLapThongBao04 == false));
+                                                 //nếu là hóa đơn gốc bị điều chỉnh thì bắt buộc hóa đơn điều chỉnh phải được cấp mã
+                                                 && (queryHoaDonDienTu.Where(x => x.DieuChinhChoHoaDonId == hoadon.HoaDonDienTuId && x.SoHoaDon.HasValue && ((x.BoKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) || (x.BoKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe))).OrderByDescending(y => y.CreatedDate).Take(1).FirstOrDefault() != null)
+                                                 select new HoaDonSaiSotViewModel
+                                                 {
+                                                     SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
+                                                     HoaDonDienTuId = hoadon.HoaDonDienTuId,
+                                                     ChungTuLienQuan = XacDinhSoChungTuLienQuan("dieuchinh", null, hoadon, queryHoaDonDienTu, bkhhd, dc, bkhhd_dc),
+                                                     TrangThaiHoaDon = 1, //chỉ là hóa đơn gốc
+                                                     DienGiaiTrangThai = "&nbsp;|&nbsp;Bị điều chỉnh",
+                                                     PhanLoaiHDSaiSot = 2,
+                                                     PhanLoaiHDSaiSotMacDinh = 2,
+                                                     LoaiApDungHDDT = 1,
+                                                     TenLoaiApDungHDDT = ((HinhThucHoaDonCanThayThe)1).GetDescription(),
+                                                     MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoadon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
+                                                     MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
+                                                     KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
+                                                     SoHoaDon = hoadon.SoHoaDon,
+                                                     NgayLapHoaDon = hoadon.NgayHoaDon,
+                                                     LoaiSaiSotDeTimKiem = 4, //hóa đơn bị điều chỉnh dựa trên giao diện
+                                                     LyDo = GetGoiYLyDoSaiSot(hoadon, queryHoaDonDienTu, queryThongBaoSaiThongTin, "hoaDonBiDieuChinh", dc, bkhhd_dc),
+                                                     IdsChungTuLienQuan = GetIdChungTuLienQuan(hoadon.HoaDonDienTuId, queryHoaDonDienTu, false)
+                                                 };
 
-                        query = (queryHoaDonHuy.Union(queryHoaDonSaiThongTin).Union(queryHoaDonBiDieuChinh)).ToList();
-                    }
+                    var bdc = queryHoaDonBiDieuChinh.ToList();
+                    queryHoaDonBiDieuChinh = queryHoaDonBiDieuChinh.Where(x => _db.ThongDiepChiTietGuiCQTs.Count(o => o.ChungTuLienQuan == x.ChungTuLienQuan) < 1 || (x.ChungTuLienQuan.Split(";").Length > 1 && hoaDonDienTus.FirstOrDefault(y => y.HoaDonDienTuId == x.ChungTuLienQuan.Split(";")[1]).IsDaLapThongBao04 == false));
 
-                    if (string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && @params.LoaiSaiSot != -1)
-                    {
-                        query = query.Where(x => x.LoaiSaiSotDeTimKiem == @params.LoaiSaiSot).ToList();
-                    }
+                    query = (queryHoaDonHuy.Union(queryHoaDonSaiThongTin).Union(queryHoaDonBiDieuChinh).Union(queryHoaDonHuyChuaGui)).ToList();
+                }
+
+                if (string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && @params.LoaiSaiSot != -1)
+                {
+                    query = query.Where(x => x.LoaiSaiSotDeTimKiem == @params.LoaiSaiSot).ToList();
                 }
 
                 foreach (var item in query)
@@ -2237,10 +2232,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          LoaiSaiSot = GetLoaiSaiSot(hoaDon.PhanLoaiHDSaiSot),
                                          LyDo = hoaDon.LyDo,
                                          LoaiHoaDon = (hoaDonHeThong != null) ? ((LoaiHoaDon)hoaDonHeThong.LoaiHoaDon).GetDescription() : GetLoaiHoaDon(hoaDonKhac.MauSoHoaDon),
-                                         TrangThaiHoaDon = new TrangThaiHoaDon_BangKeSaiSot_ViewModel { 
-                                             TrangThai = hoaDon.TrangThaiHoaDon, 
-                                             DienGiaiTrangThai = hoaDon.DienGiaiTrangThai, 
-                                             LoaiDieuChinh = hoaDonHeThong.LoaiDieuChinh 
+                                         TrangThaiHoaDon = new TrangThaiHoaDon_BangKeSaiSot_ViewModel
+                                         {
+                                             TrangThai = hoaDon.TrangThaiHoaDon,
+                                             DienGiaiTrangThai = hoaDon.DienGiaiTrangThai,
+                                             LoaiDieuChinh = hoaDonHeThong.LoaiDieuChinh
                                          },
                                          ChungTuLienQuan = hoaDon.ChungTuLienQuan,
 
@@ -2251,17 +2247,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          MauSoTBaoCuaCQT = (thongBao302 != null) ? "01/TB-RSĐT" : "",
                                          SoTBaoCuaCQT = (thongBao302 != null) ? thongBao302.SoThongBaoCuaCQT : thongBao302_HoaDonKhac.SoThongBaoCuaCQT,
                                          NgayTBaoCuaCQT = (thongBao302 != null) ? thongBao302.NgayThongBao : thongBao302_HoaDonKhac.NgayThongBao,
-                                         
+
                                          MaThongDiepGui = thongDiepChung.MaThongDiep,
-                                         MaThongDiepPhanHoi=thongDiepChung.MaThongDiepPhanHoi,
+                                         MaThongDiepPhanHoi = thongDiepChung.MaThongDiepPhanHoi,
                                          MauSoTBaoPhanHoiTuCQT = thongDiepChung.MaLoaiThongDiep == 301 ? "01/TB-SSĐT" : "",
                                          SoTBaoPhanHoiTuCQT = thongDiepChung.SoTBaoPhanHoiCuaCQT,
                                          NgayTBaoPhanHoiTuCQT = thongDiepChung.NgayTBaoPhanHoiCuaCQT,
-                                         
+
                                          TrangThaiGui = thongDiepChung.TrangThaiGui.HasValue ? thongDiepChung.TrangThaiGui : null,
 
                                          TenTrangThaiGui = thongDiepChung.TrangThaiGui.HasValue ? thongDiepChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe ? "Hóa đơn hợp lệ" : ((TrangThaiGuiThongDiep)thongDiepChung.TrangThaiGui).GetDescription() : null,
-                                         
+
                                          ThongDiepChungId = thongDiepChung.ThongDiepChungId,
                                          IdTDiepTBaoPhanHoiCuaCQT = thongDiepChung.IdTDiepTBaoPhanHoiCuaCQT,
 
@@ -2549,10 +2545,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var maThongDiepPhanHoi = item.MaThongDiepPhanHoi;
                 if (!string.IsNullOrEmpty(maThongDiepPhanHoi))
                 {
-                    var thongDiepPhanHoi = _db.ThongDiepChungs.Where(x => x.MaThongDiep == maThongDiepPhanHoi).OrderByDescending(x=>x.CreatedDate).FirstOrDefault();
-                    if (thongDiepPhanHoi !=null)
+                    var thongDiepPhanHoi = _db.ThongDiepChungs.Where(x => x.MaThongDiep == maThongDiepPhanHoi).OrderByDescending(x => x.CreatedDate).FirstOrDefault();
+                    if (thongDiepPhanHoi != null)
                     {
-                        if(thongDiepPhanHoi.MaLoaiThongDiep == 302)
+                        if (thongDiepPhanHoi.MaLoaiThongDiep == 302)
                         {
                             item.MauSoTBaoCuaCQT = thongDiepPhanHoi.MauSoTBaoPhanHoiCuaCQT;
                             item.SoTBaoCuaCQT = thongDiepPhanHoi.SoTBaoPhanHoiCuaCQT;
@@ -2564,7 +2560,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             item.SoTBaoPhanHoiTuCQT = thongDiepPhanHoi.SoTBaoPhanHoiCuaCQT;
                             item.NgayTBaoPhanHoiTuCQT = thongDiepPhanHoi.NgayTBaoPhanHoiCuaCQT;
                             item.IdTDiepTBaoPhanHoiCuaCQT = thongDiepPhanHoi.ThongDiepChungId;
-                        }                        
+                        }
                     }
                 }
             }

@@ -15270,7 +15270,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 //đọc ra trước các hóa đơn để lấy ra hóa đơn thay thế, hóa đơn điều chỉnh tại mỗi dòng hóa đơn đang duyệt
                 List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                             where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (loaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
+                                                             where hoaDon.NgayHoaDon.Value.Date >= fromDate
+                                     && hoaDon.NgayHoaDon.Value.Date <= toDate
+                                     && (loaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8) && hoaDon.IsDaLapThongBao04 != true)
+                                      && hoaDon.IsDaLapThongBao04 != true && (hoaDon.LanGui04 == 0 || hoaDon.LanGui04 == null) && ((hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD != null && hoaDon.ThayTheChoHoaDonId == null && hoaDon.DieuChinhChoHoaDonId == null)
+                       || (hoaDon.DieuChinhChoHoaDonId == null && hoaDon.ThayTheChoHoaDonId == null && hoaDon.IsDaLapThongBao04 != true && ((hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1
+                           || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4 || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc6 || (hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 && hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD != null))
+                           || (hoaDon.ThayTheChoHoaDonId != null && (hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD != null)))))
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -18248,7 +18254,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             foreach (var hdInput in list)
             {
                 hdInput.KetQua = await _db.HoaDonDienTus.AnyAsync(x => (x.LoaiApDungHoaDonDieuChinh == (int)hdInput.LoaiApDungHoaDon || hdInput.LoaiApDungHoaDon == 1) && x.BoKyHieuHoaDon.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper() && x.BoKyHieuHoaDon.KyHieuMauSoHoaDon.ToString().TrimToUpper() == hdInput.MauHoaDon.TrimToUpper() && x.MaCuaCQT != null && x.MaCuaCQT == hdInput.MaCQTCap.Trim() && x.NgayHoaDon.Value.Date == hdInput.NgayLapHoaDon && x.SoHoaDon.ToString() == hdInput.SoHoaDon.Trim());
-                
+
                 hdInput.KetQuaDaTonTaiSaiSot = await _db.ThongDiepChiTietGuiCQTs.AnyAsync(x => (x.LoaiApDungHoaDon == (int)hdInput.LoaiApDungHoaDon) && x.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper() && x.MauHoaDon.TrimToUpper() == hdInput.MauHoaDon.TrimToUpper() && x.MaCQTCap != null && x.MaCQTCap == hdInput.MaCQTCap.Trim() && x.NgayLapHoaDon.Value.Date == hdInput.NgayLapHoaDon && x.SoHoaDon.ToString() == hdInput.SoHoaDon.Trim());
 
                 //kiểm tra xem đã có hóa đơn thay thế cho hóa đơn đó chưa

@@ -1665,12 +1665,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     var dSLDKTNhan = tDiep301.DLieu.TBao.DLTBao.DSLDKTNhan;
                     if (dSLDKTNhan.Count > 0)
                     {
-                        moTaLoi = "Lỗi của thông điệp<br>";
+                        moTaLoi = "Lỗi của thông điệp\r\n";
                     }
                     for (int i = 0; i < dSLDKTNhan.Count; i++)
                     {
                         var lyDoItem = dSLDKTNhan[i];
-                        moTaLoi += $"- {i + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}<br>";
+                        moTaLoi += $"- {i + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\r\n";
                     }
 
                     //danh sách chi tiết lý do trong các hóa đơn
@@ -1678,7 +1678,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                     if (dSLDKTNhan.Count > 0 && listLyDoTrongHoaDon.Count() > 0)
                     {
-                        moTaLoi += "<br>Lỗi chi tiết trong danh sách hóa đơn không được tiếp nhận:<br>";
+                        moTaLoi += "\r\nLỗi chi tiết trong danh sách hóa đơn không được tiếp nhận:\r\n";
                     }
 
                     for (int i = 0; i < listLyDoTrongHoaDon.Count(); i++)
@@ -1687,8 +1687,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         for (int j = 0; j < hoaDonItem.DSLDKTNhan.Count; j++)
                         {
                             var lyDoItem = hoaDonItem.DSLDKTNhan[j];
-                            moTaLoi += "Ký hiệu mẫu số hóa đơn <b>" + (hoaDonItem.KHMSHDon ?? "") + "</b> Ký hiệu hóa đơn <b>" + (hoaDonItem.KHHDon ?? "") + "</b> Số <b>" + hoaDonItem.SHDon + "</b> Ngày hóa đơn <b>" + hoaDonItem.NLap.ConvertStringToDate()?.ToString("dd/MM/yyyy") + "</b><br>";
-                            moTaLoi += $"&bull; {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTa}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}<br>";
+                            moTaLoi += "Ký hiệu mẫu số hóa đơn <b>" + (hoaDonItem.KHMSHDon ?? "") + "</b> Ký hiệu hóa đơn <b>" + (hoaDonItem.KHHDon ?? "") + "</b> Số <b>" + hoaDonItem.SHDon + "</b> Ngày hóa đơn <b>" + hoaDonItem.NLap.ConvertStringToDate()?.ToString("dd/MM/yyyy") + "</b>\r\n";
+                            moTaLoi += $"&bull; {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTa}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\r\n";
                         }
                     }
 
@@ -1812,7 +1812,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         for (int i = 0; i < length; i++)
                         {
                             var item = lstLoi102[i];
-                            moTaLoi += $"- {i + 1}. Mã lỗi: {item.MLoi}; Mô tả: {item.MTa}\n";
+                            moTaLoi += $"&bull; {i + 1}. Mã lỗi: {item.MLoi}; Mô tả: {item.MTa}\r\n";
                         }
 
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
@@ -1842,7 +1842,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         for (int i = 0; i < length; i++)
                         {
                             var item = lstLoi103[i];
-                            moTaLoi += $"- {i + 1}. Mã lỗi: {item.MLoi}; Mô tả: {item.MTa}\n";
+                            moTaLoi += $"&bull; {i + 1}. Mã lỗi: {item.MLoi}; Mô tả: {item.MTa}\r\n";
                         }
 
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
@@ -1893,7 +1893,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             for (int j = 0; j < dSTTUNhiemItem.DSLDKCNhan.Count; j++)
                             {
                                 var dSLDKCNhanItem = dSTTUNhiemItem.DSLDKCNhan[i];
-                                moTaLoi += $"- {j + 1}. Mã lỗi: {dSLDKCNhanItem.MLoi}; Mô tả: {dSLDKCNhanItem.MTa}\n";
+                                moTaLoi += $"&bull; {j + 1}. Mã lỗi: {dSLDKCNhanItem.MLoi}; Mô tả: {dSLDKCNhanItem.MTa}\r\n";
                             }
 
                             for (int k = 0; k < dSTTUNhiemItem.DSHDUNhiem.Count; k++)
@@ -2075,7 +2075,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             for (int i = 0; i < lCMa.DSLDo.Count; i++)
                             {
                                 var dSLDoItem = lCMa.DSLDo[i];
-                                moTaLoi += $"- {i + 1}. Mã lỗi: {dSLDoItem.MLoi}; Mô tả: {dSLDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {dSLDoItem.HDXLy}; Ghi chú (nếu có): {dSLDoItem.GChu}\n";
+                                moTaLoi += $"&bull; {i + 1}. Mã lỗi: {dSLDoItem.MLoi}; Mô tả: {dSLDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {dSLDoItem.HDXLy}; Ghi chú (nếu có): {dSLDoItem.GChu}\r\n";
                             }
                         }
 
@@ -2091,7 +2091,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 for (int j = 0; j < dsLyDo[i].DSLDo.Count; j++)
                                 {
                                     var lyDoItem = dsLyDo[i].DSLDo[j];
-                                    moTaLoi += $"- {i + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\n";
+                                    moTaLoi += $"&bull; {i + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\r\n";
                                 }
                             }
                         }
@@ -2105,7 +2105,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             for (int j = 0; j < dsLyDo.Count; j++)
                             {
                                 var lyDoItem = dsLyDo[j];
-                                moTaLoi += $"- {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\n";
+                                moTaLoi += $"&bull; {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\r\n";
                             }
                         }
 
@@ -2122,7 +2122,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 for (int j = 0; j < dsLyDo.Count; j++)
                                 {
                                     var lyDoItem = dsLyDo[j];
-                                    moTaLoi += $"- {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\n";
+                                    moTaLoi += $"&bull; {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\r\n";
                                 }
                             }
                         }
@@ -2140,7 +2140,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 for (int j = 0; j < dsLyDo.Count; j++)
                                 {
                                     var lyDoItem = dsLyDo[j];
-                                    moTaLoi += $"- {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\n";
+                                    moTaLoi += $"&bull; {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\r\n";
                                 }
                             }
                         }
@@ -2213,12 +2213,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         var dSLDKTNhan = tDiep301.DLieu.TBao.DLTBao.DSLDKTNhan;
                         if (dSLDKTNhan.Count > 0)
                         {
-                            moTaLoi = "Lỗi của thông điệp<br>";
+                            moTaLoi = "Lỗi của thông điệp\r\n";
                         }
                         for (int i = 0; i < dSLDKTNhan.Count; i++)
                         {
                             var lyDoItem = dSLDKTNhan[i];
-                            moTaLoi += $"- {i + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}<br>";
+                            moTaLoi += $"&bull; {i + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\r\n";
                         }
 
                         //danh sách chi tiết lý do trong các hóa đơn
@@ -2226,7 +2226,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         if (dSLDKTNhan.Count > 0 && listLyDoTrongHoaDon.Count() > 0)
                         {
-                            moTaLoi += "<br>Lỗi chi tiết trong danh sách hóa đơn không được tiếp nhận:<br>";
+                            moTaLoi += "\r\nLỗi chi tiết trong danh sách hóa đơn không được tiếp nhận:\r\n";
                         }
 
                         for (int i = 0; i < listLyDoTrongHoaDon.Count(); i++)
@@ -2235,8 +2235,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             for (int j = 0; j < hoaDonItem.DSLDKTNhan.Count; j++)
                             {
                                 var lyDoItem = hoaDonItem.DSLDKTNhan[j];
-                                moTaLoi += "Ký hiệu mẫu số hóa đơn <b>" + (hoaDonItem.KHMSHDon ?? "") + "</b> Ký hiệu hóa đơn <b>" + (hoaDonItem.KHHDon ?? "") + "</b> Số <b>" + hoaDonItem.SHDon + "</b> Ngày hóa đơn <b>" + hoaDonItem.NLap.ConvertStringToDate()?.ToString("dd/MM/yyyy") + "</b><br>";
-                                moTaLoi += $"&bull; {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTa}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}<br>";
+                                moTaLoi += "Ký hiệu mẫu số hóa đơn <b>" + (hoaDonItem.KHMSHDon ?? "") + "</b> Ký hiệu hóa đơn <b>" + (hoaDonItem.KHHDon ?? "") + "</b> Số <b>" + hoaDonItem.SHDon + "</b> Ngày hóa đơn <b>" + hoaDonItem.NLap.ConvertStringToDate()?.ToString("dd/MM/yyyy") + "</b>\r\n";
+                                moTaLoi += $"&bull; {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTa}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\r\n";
                             }
                         }
 
@@ -2276,7 +2276,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 for (int j = 0; j < dSHDonItem.DSLDKTNhan.Count; j++)
                                 {
                                     var dSLDKTNhanItem = dSHDonItem.DSLDKTNhan[j];
-                                    moTaLoi += $"- {j + 1}. Mã lỗi: {dSLDKTNhanItem.MLoi}; Mô tả: {dSLDKTNhanItem.MTa}\n";
+                                    moTaLoi += $"&bull; {j + 1}. Mã lỗi: {dSLDKTNhanItem.MLoi}; Mô tả: {dSLDKTNhanItem.MTa}\r\n";
                                 }
 
                                 result.ThongDiepChiTiet2s.Add(new ThongDiepChiTiet2
@@ -2413,7 +2413,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             for (int j = 0; j < tDiep999.DLieu.TBao.DSLDo.Count; j++)
                             {
                                 var dSLDKTNhanItem = tDiep999.DLieu.TBao.DSLDo[j];
-                                moTaLoi += $"- {j + 1}. Mã lỗi: {dSLDKTNhanItem.MLoi}; Mô tả: {dSLDKTNhanItem.MTa}\n";
+                                moTaLoi += $"&bull; {j + 1}. Mã lỗi: {dSLDKTNhanItem.MLoi}; Mô tả: {dSLDKTNhanItem.MTa}\r\n";
                             }
 
                         }
@@ -2456,7 +2456,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             for (int i = 0; i < tDiepPHKT.DLieu.TBao.DSLDo.Count; i++)
                             {
                                 var dSLDoItem = tDiepPHKT.DLieu.TBao.DSLDo[i];
-                                moTaLoi += $"- {i + 1}. Mã lỗi: {dSLDoItem.MLoi}; Mô tả: {dSLDoItem.MTa}\n";
+                                moTaLoi += $"&bull; {i + 1}. Mã lỗi: {dSLDoItem.MLoi}; Mô tả: {dSLDoItem.MTa}\r\n";
                             }
 
                             result.ThongDiepChiTiet2s.Add(new ThongDiepChiTiet2
