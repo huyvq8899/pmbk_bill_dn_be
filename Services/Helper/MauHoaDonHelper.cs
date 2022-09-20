@@ -890,10 +890,24 @@ namespace Services.Helper
 
                         MauHoaDonTuyChinhChiTietViewModel child = item.Children[0];
 
+                        bool isChuyenDoi = loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi || loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_CoChietKhau || loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_NgoaiTe || loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_All;
+
                         switch (child.LoaiChiTiet)
                         {
                             case LoaiChiTietTuyChonNoiDung.TenMauHoaDon:
                                 child.GiaTri = loai.GetDescription();
+
+                                switch (mauHoaDon.LoaiHoaDon)
+                                {
+                                    case LoaiHoaDon.PXKKiemVanChuyenNoiBo:
+                                        child.GiaTri = isChuyenDoi ? "(Bản chuyển đổi của phiếu xuất kho kiêm vận chuyển nội bộ điện tử)" : "(Bản thể hiện của phiếu xuất kho kiêm vận chuyển nội bộ điện tử)";
+                                        break;
+                                    case LoaiHoaDon.PXKHangGuiBanDaiLy:
+                                        child.GiaTri = isChuyenDoi ? "(Bản chuyển đổi của phiếu xuất kho hàng gửi bán đại lý điện tử)" : "(Bản thể hiện của phiếu xuất kho hàng gửi bán đại lý điện tử)";
+                                        break;
+                                    default:
+                                        break;
+                                }
                                 break;
                             case LoaiChiTietTuyChonNoiDung.NgayThangNamTieuDe:
                                 child.GiaTri = mauHoaDon.LoaiNgonNgu == LoaiNgonNgu.TiengViet ? "Ngày <dd> tháng <mm> năm <yyyy>" : "Ngày (Date) <dd> tháng (month) <mm> năm (year) <yyyy>";
