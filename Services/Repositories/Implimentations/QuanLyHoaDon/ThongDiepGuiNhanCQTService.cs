@@ -2545,7 +2545,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var maThongDiepPhanHoi = item.MaThongDiepPhanHoi;
                 if (!string.IsNullOrEmpty(maThongDiepPhanHoi))
                 {
-                    var thongDiepPhanHoi = _db.ThongDiepChungs.Where(x => x.MaThongDiep == maThongDiepPhanHoi).OrderByDescending(x => x.CreatedDate).FirstOrDefault();
+                    var thongDiepPhanHoi = _db.ThongDiepChungs.Where(x => x.MaThongDiep == maThongDiepPhanHoi && x.MauSoTBaoPhanHoiCuaCQT != null).OrderByDescending(x => x.CreatedDate).FirstOrDefault();
                     if (thongDiepPhanHoi != null)
                     {
                         if (thongDiepPhanHoi.MaLoaiThongDiep == 302)
@@ -2637,7 +2637,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         worksheet.Cells[idx, 3].Value = item.SoHoaDon;
                         worksheet.Cells[idx, 4].Value = item.NgayLapHoaDon?.ToString("dd/MM/yyyy");
                         worksheet.Cells[idx, 5].Value = item.MaCQTCap;
-                        worksheet.Cells[idx, 6].Value = item.TongTienThanhToan?.ToString();
+                        worksheet.Cells[idx, 6].Value = item.TongTienThanhToan;
                         worksheet.Cells[idx, 7].Value = item.MaLoaiTien;
                         worksheet.Cells[idx, 8].Value = (item.LoaiApDungHoaDon == 0) ? "" : item.LoaiApDungHoaDon.ToString();
                         worksheet.Cells[idx, 9].Value = item.LoaiHoaDon;
@@ -2732,7 +2732,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         worksheet.Cells[idx, 13].Value = item.SoHoaDon;
                         worksheet.Cells[idx, 14].Value = item.NgayLapHoaDon?.ToString("dd/MM/yyyy");
                         worksheet.Cells[idx, 15].Value = item.MaCQTCap;
-                        worksheet.Cells[idx, 16].Value = item.TongTienThanhToan?.ToString();
+                        worksheet.Cells[idx, 16].Value = item.TongTienThanhToan;
                         worksheet.Cells[idx, 17].Value = item.MaLoaiTien;
                         worksheet.Cells[idx, 18].Value = (item.LoaiApDungHoaDon == 0) ? "" : item.LoaiApDungHoaDon.ToString();
                         worksheet.Cells[idx, 19].Value = item.LoaiHoaDon;

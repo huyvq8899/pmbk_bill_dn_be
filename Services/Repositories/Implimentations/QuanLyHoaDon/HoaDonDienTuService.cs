@@ -9601,6 +9601,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending
                             select new HoaDonDienTuViewModel
                             {
+                                ThongDiepGuiCQTId = hddt.ThongDiepGuiCQTId,
                                 HoaDonDienTuId = hddt.HoaDonDienTuId,
                                 TrangThai = hddt.TrangThai,
                                 BackUpTrangThai = hddt.BackUpTrangThai,
@@ -9735,6 +9736,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel
                         {
+                                ThongDiepGuiCQTId = hddt.ThongDiepGuiCQTId,
                             HoaDonDienTuId = hddt.HoaDonDienTuId,
                             TrangThai = hddt.TrangThai,
                             KhachHang = kh == null ? null : new DoiTuongViewModel
