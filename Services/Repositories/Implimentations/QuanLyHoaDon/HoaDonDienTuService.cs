@@ -13962,7 +13962,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var thongDiep = thongDiepChungs.Where(x => x.IdThamChieu == thongDiepChiTietMoiNhat.ThongDiepGuiCQTId).FirstOrDefault();
 
                         //đã gửi thì có định dạng là Lần gửi | trạng thái gửi | trong hạn/quá hạn
-                        TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)thongDiep.TrangThaiGui.GetValueOrDefault();
+                        TrangThaiGuiThongDiep trangThaiGuiThongDiep = thongDiep != null ? (TrangThaiGuiThongDiep)thongDiep.TrangThaiGui.GetValueOrDefault() : TrangThaiGuiThongDiep.ChuaGui;
 
                         var dienGiaiTrangThaiGui = "";
                         if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe || trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe)
@@ -13990,12 +13990,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                         return new CotThongBaoSaiSotViewModel
                         {
-                            TrangThaiLapVaGuiThongBao = thongDiep.TrangThaiGui.GetValueOrDefault(),
+                            TrangThaiLapVaGuiThongBao = thongDiep != null ? thongDiep.TrangThaiGui.GetValueOrDefault() : (int?)TrangThaiGuiThongDiep.ChuaGui,
                             ThongDiepGuiCQTId = thongDiepChiTietMoiNhat.ThongDiepGuiCQTId,
                             TenTrangThai = dienGiaiTrangThaiGui,
                             DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
                             LanGui = "Lần gửi " + lanGui.ToString(),
-                            IsTrongHan = (hienThiTinhTrang) ? ((bool?)((thongDiep.TrangThaiGui.GetValueOrDefault() > -1))) : null
+                            IsTrongHan = (hienThiTinhTrang) ? ((bool?)((thongDiep != null ? thongDiep.TrangThaiGui.GetValueOrDefault() > -1 : false))) : null
                             //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                         };
                     }
