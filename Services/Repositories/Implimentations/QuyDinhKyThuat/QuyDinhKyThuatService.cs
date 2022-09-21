@@ -3139,82 +3139,83 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         bkhhd.TrangThaiSuDung = TrangThaiSuDung.NgungSuDung;
                     }
                 }
-                else
+
+                // update tờ khai mới nhất cho bộ ký hiệu
+                #region update tờ khai mới nhất cho bộ ký hiệu đang dùng
+                var hinhThucHoaDon = tDiep100.DLTKhai.NDTKhai.HTHDon.CMa == 1 ? HinhThucHoaDon.CoMa : HinhThucHoaDon.KhongCoMa;
+                var listLoaiHoaDon = new List<LoaiHoaDon>();
+
+                if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 1)
                 {
-                    var hinhThucHoaDon = tDiep100.DLTKhai.NDTKhai.HTHDon.CMa == 1 ? HinhThucHoaDon.CoMa : HinhThucHoaDon.KhongCoMa;
-
-                    var listLoaiHoaDon = new List<LoaiHoaDon>();
-                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 1)
-                    {
-                        listLoaiHoaDon.Add(LoaiHoaDon.HoaDonGTGT);
-                    }
-
-                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1)
-                    {
-                        listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanHang);
-                    }
-
-                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 1)
-                    {
-                        listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanTaiSanCong);
-                    }
-
-                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 1)
-                    {
-                        listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanHangDuTruQuocGia);
-                    }
-
-                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDKhac == 1)
-                    {
-                        listLoaiHoaDon.Add(LoaiHoaDon.CacLoaiHoaDonKhac);
-                    }
-
-                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.CTu == 1)
-                    {
-                        listLoaiHoaDon.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
-                    }
-
-                    var isChuyenDayDuNoiDungTungHoaDon = tDiep100.DLTKhai.NDTKhai.PThuc.CDDu == 1;
-                    var isChuyenBangTonghop = tDiep100.DLTKhai.NDTKhai.PThuc.CBTHop == 1;
-
-                    // add to nhật ký xác thực
-                    var boKyHieuHoaDaXacThucs = await _dataContext.BoKyHieuHoaDons
-                        .Include(x => x.MauHoaDon)
-                        .Where(x => (x.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc || x.TrangThaiSuDung == TrangThaiSuDung.DangSuDung) && x.HinhThucHoaDon == hinhThucHoaDon && listLoaiHoaDon.Contains(x.LoaiHoaDon))
-                        .ToListAsync();
-
-                    foreach (var bkhhd in boKyHieuHoaDaXacThucs)
-                    {
-                        bkhhd.ThongDiepId = thongDiepGui.ThongDiepChungId;
-                        bkhhd.ThongDiepMoiNhatId = thongDiepGui.ThongDiepChungId;
-
-                        if (tDiep100.DLTKhai.NDTKhai.HTHDon.KCMa == 1)
-                        {
-                            // Nếu tờ khai mới nhất không cùng phương thức với bộ ký hiệu thì update phương thức tờ khai cho bộ ký hiệu
-                            if (!((bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CDDu && isChuyenDayDuNoiDungTungHoaDon) || (bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CBTHop && isChuyenBangTonghop)))
-                            {
-                                bkhhd.PhuongThucChuyenDL = tDiep100.DLTKhai.NDTKhai.PThuc.CDDu == 1 ? PhuongThucChuyenDL.CDDu : PhuongThucChuyenDL.CBTHop;
-                            }
-                        }
-                        else
-                        {
-                            bkhhd.PhuongThucChuyenDL = PhuongThucChuyenDL.CDDu;
-                        }
-
-                        listAddedNhatKyXacThuc.Add(new NhatKyXacThucBoKyHieu
-                        {
-                            TrangThaiSuDung = TrangThaiSuDung.DaXacThuc,
-                            BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
-                            MauHoaDonId = bkhhd.MauHoaDonId,
-                            ThongDiepId = thongDiepGui.ThongDiepChungId,
-                            ThoiGianXacThuc = DateTime.Now,
-                            ThoiDiemChapNhan = thongDiepGui.NgayThongBao,
-                            MaThongDiepGui = thongDiepGui.MaThongDiep,
-                            TenMauHoaDon = bkhhd.MauHoaDon.Ten,
-                            PhuongThucChuyenDL = bkhhd.PhuongThucChuyenDL
-                        });
-                    }
+                    listLoaiHoaDon.Add(LoaiHoaDon.HoaDonGTGT);
                 }
+
+                if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1)
+                {
+                    listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanHang);
+                }
+
+                if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 1)
+                {
+                    listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanTaiSanCong);
+                }
+
+                if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 1)
+                {
+                    listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanHangDuTruQuocGia);
+                }
+
+                if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDKhac == 1)
+                {
+                    listLoaiHoaDon.Add(LoaiHoaDon.CacLoaiHoaDonKhac);
+                }
+
+                if (tDiep100.DLTKhai.NDTKhai.LHDSDung.CTu == 1)
+                {
+                    listLoaiHoaDon.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
+                }
+
+                var isChuyenDayDuNoiDungTungHoaDon = tDiep100.DLTKhai.NDTKhai.PThuc.CDDu == 1;
+                var isChuyenBangTonghop = tDiep100.DLTKhai.NDTKhai.PThuc.CBTHop == 1;
+
+                // add to nhật ký xác thực
+                var boKyHieuHoaDaXacThucs = await _dataContext.BoKyHieuHoaDons
+                    .Include(x => x.MauHoaDon)
+                    .Where(x => (x.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc || x.TrangThaiSuDung == TrangThaiSuDung.DangSuDung) && x.HinhThucHoaDon == hinhThucHoaDon && listLoaiHoaDon.Contains(x.LoaiHoaDon))
+                    .ToListAsync();
+
+                foreach (var bkhhd in boKyHieuHoaDaXacThucs)
+                {
+                    bkhhd.ThongDiepId = thongDiepGui.ThongDiepChungId;
+                    bkhhd.ThongDiepMoiNhatId = thongDiepGui.ThongDiepChungId;
+
+                    if (tDiep100.DLTKhai.NDTKhai.HTHDon.KCMa == 1)
+                    {
+                        // Nếu tờ khai mới nhất không cùng phương thức với bộ ký hiệu thì update phương thức tờ khai cho bộ ký hiệu
+                        if (!((bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CDDu && isChuyenDayDuNoiDungTungHoaDon) || (bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CBTHop && isChuyenBangTonghop)))
+                        {
+                            bkhhd.PhuongThucChuyenDL = tDiep100.DLTKhai.NDTKhai.PThuc.CDDu == 1 ? PhuongThucChuyenDL.CDDu : PhuongThucChuyenDL.CBTHop;
+                        }
+                    }
+                    else
+                    {
+                        bkhhd.PhuongThucChuyenDL = PhuongThucChuyenDL.CDDu;
+                    }
+
+                    listAddedNhatKyXacThuc.Add(new NhatKyXacThucBoKyHieu
+                    {
+                        TrangThaiSuDung = TrangThaiSuDung.DaXacThuc,
+                        BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                        MauHoaDonId = bkhhd.MauHoaDonId,
+                        ThongDiepId = thongDiepGui.ThongDiepChungId,
+                        ThoiGianXacThuc = DateTime.Now,
+                        ThoiDiemChapNhan = thongDiepGui.NgayThongBao,
+                        MaThongDiepGui = thongDiepGui.MaThongDiep,
+                        TenMauHoaDon = bkhhd.MauHoaDon.Ten,
+                        PhuongThucChuyenDL = bkhhd.PhuongThucChuyenDL
+                    });
+                }
+                #endregion
 
                 // add to nhật ký xác thực
                 await _dataContext.NhatKyXacThucBoKyHieus.AddRangeAsync(listAddedNhatKyXacThuc);

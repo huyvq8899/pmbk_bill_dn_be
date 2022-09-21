@@ -4662,6 +4662,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiNhanHang.GenerateKeyTag(), hd.HoTenNguoiNhanHang ?? string.Empty, true, true);
 
             doc.Replace("<convertor>", @params.NguoiChuyenDoi ?? string.Empty, true, true);
+            doc.Replace("<conversionDateTitle>", "Ngày chuyển đổi: ", true, true);
             doc.Replace("<conversionDateValue>", @params.NgayChuyenDoi.Value.ToString("dd/MM/yyyy") ?? string.Empty, true, true);
 
             ImageHelper.CreateSignatureBox(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
@@ -12436,6 +12437,36 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         }
                                         item.HoaDonChiTiet.TienThueGTGTQuyDoi = outputTienThueGTGTQuyDoi.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
                                         break;
+                                    case nameof(item.TruongThongTinBoSung1):
+                                        item.TruongThongTinBoSung1 = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        break;
+                                    case nameof(item.TruongThongTinBoSung2):
+                                        item.TruongThongTinBoSung2 = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        break;
+                                    case nameof(item.TruongThongTinBoSung3):
+                                        item.TruongThongTinBoSung3 = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        break;
+                                    case nameof(item.TruongThongTinBoSung4):
+                                        item.TruongThongTinBoSung4 = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        break;
+                                    case nameof(item.TruongThongTinBoSung5):
+                                        item.TruongThongTinBoSung5 = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        break;
+                                    case nameof(item.TruongThongTinBoSung6):
+                                        item.TruongThongTinBoSung6 = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        break;
+                                    case nameof(item.TruongThongTinBoSung7):
+                                        item.TruongThongTinBoSung7 = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        break;
+                                    case nameof(item.TruongThongTinBoSung8):
+                                        item.TruongThongTinBoSung8 = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        break;
+                                    case nameof(item.TruongThongTinBoSung9):
+                                        item.TruongThongTinBoSung9 = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        break;
+                                    case nameof(item.TruongThongTinBoSung10):
+                                        item.TruongThongTinBoSung10 = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        break;
                                     case nameof(item.HoaDonChiTiet.IsMatHangDuocGiam):
                                         string isMatHangDuocGiam = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                         if (string.IsNullOrEmpty(isMatHangDuocGiam))
@@ -12667,6 +12698,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     HopDongVanChuyenSo = x.First().HopDongVanChuyenSo,
                     TenNguoiVanChuyen = x.First().TenNguoiVanChuyen,
                     PhuongThucVanChuyen = x.First().PhuongThucVanChuyen,
+                    // truong thong tin bo sung
+                    TruongThongTinBoSung1 = x.First().TruongThongTinBoSung1,
+                    TruongThongTinBoSung2 = x.First().TruongThongTinBoSung2,
+                    TruongThongTinBoSung3 = x.First().TruongThongTinBoSung3,
+                    TruongThongTinBoSung4 = x.First().TruongThongTinBoSung4,
+                    TruongThongTinBoSung5 = x.First().TruongThongTinBoSung5,
+                    TruongThongTinBoSung6 = x.First().TruongThongTinBoSung6,
+                    TruongThongTinBoSung7 = x.First().TruongThongTinBoSung7,
+                    TruongThongTinBoSung8 = x.First().TruongThongTinBoSung8,
+                    TruongThongTinBoSung9 = x.First().TruongThongTinBoSung9,
+                    TruongThongTinBoSung10 = x.First().TruongThongTinBoSung10,
                     HoaDonChiTiets = x.Select(y => new HoaDonDienTuChiTietViewModel
                     {
                         HangHoaDichVuId = y.HoaDonChiTiet.HangHoaDichVuId,
