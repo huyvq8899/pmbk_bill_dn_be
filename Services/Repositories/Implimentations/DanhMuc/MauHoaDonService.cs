@@ -1560,11 +1560,18 @@ namespace Services.Repositories.Implimentations.DanhMuc
             // get or add doc folder
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
-            var oldFiles = await _db.MauHoaDonFiles.Where(x => x.Type == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi ||
-                                                                x.Type == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_CoChietKhau ||
-                                                                x.Type == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_NgoaiTe ||
-                                                                x.Type == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_All)
-                                                    .ToListAsync();
+
+            //var oldFiles = await _db.MauHoaDonFiles.Where(x => x.Type == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi ||
+            //                                                    x.Type == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_CoChietKhau ||
+            //                                                    x.Type == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_NgoaiTe ||
+            //                                                    x.Type == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_All)
+            //                                        .ToListAsync();
+
+            var oldFiles = await (from mf in _db.MauHoaDonFiles
+                                  join mhd in _db.MauHoaDons on mf.MauHoaDonId equals mhd.MauHoaDonId
+                                  where mhd.LoaiHoaDon == LoaiHoaDon.PXKKiemVanChuyenNoiBo || mhd.LoaiHoaDon == LoaiHoaDon.PXKHangGuiBanDaiLy
+                                  select mf).ToListAsync();
+
             foreach (var item in oldFiles)
             {
                 var oldFilePath = Path.Combine(docFolderPath, item.FileName);
