@@ -344,7 +344,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     queryHoaDonDienTu = await (from hoadon in _db.HoaDonDienTus.Include(x => x.BoKyHieuHoaDon)
                                                where hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId
                                                || hoadon.ThayTheChoHoaDonId == @params.LapTuHoaDonDienTuId
-                                               || hoadon.DieuChinhChoHoaDonId == @params.LapTuHoaDonDienTuId
+                                               //|| hoadon.DieuChinhChoHoaDonId == @params.LapTuHoaDonDienTuId
                                                select hoadon).ToListAsync();
                     if (queryHoaDonDienTu.Count > 0 && @params.IsTBaoHuyGiaiTrinhKhacCuaNNT != true)
                     {
