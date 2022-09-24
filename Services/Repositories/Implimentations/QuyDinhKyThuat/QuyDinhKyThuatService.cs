@@ -3036,6 +3036,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                         break;
                                     case LoaiThongTinChiTiet.CacChungTuDuocInPhatHanhSuDungVaQuanLyNhuHoaDon:
                                         listLoaiHoaDonNgungSuDung.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
+                                        listLoaiHoaDonNgungSuDung.Add(LoaiHoaDon.PXKKiemVanChuyenNoiBo);
+                                        listLoaiHoaDonNgungSuDung.Add(LoaiHoaDon.PXKHangGuiBanDaiLy);
                                         break;
                                     default:
                                         break;
@@ -3171,6 +3173,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 if (tDiep100.DLTKhai.NDTKhai.LHDSDung.CTu == 1)
                 {
                     listLoaiHoaDon.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
+                    listLoaiHoaDon.Add(LoaiHoaDon.PXKKiemVanChuyenNoiBo);
+                    listLoaiHoaDon.Add(LoaiHoaDon.PXKHangGuiBanDaiLy);
                 }
 
                 var isChuyenDayDuNoiDungTungHoaDon = tDiep100.DLTKhai.NDTKhai.PThuc.CDDu == 1;
