@@ -28,7 +28,21 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string IdsChungTuLienQuan { get; set; } //chuỗi gồm 1 hoặc nhiều id chứng từ liên quan
         public string LyDoThayThe { get; set; }
     }
-
+    public class ListCheckHoaDonSaiSotViewModel
+    {
+        public bool? KetQua { get; set; }
+        public bool? KetQuaDieuChinhKhac { get; set; }
+        public bool? KetQuaThayTheKhac { get; set; }
+        public bool? KetQuaHoaDonNgoai { get; set; }
+        public bool? KetQuaDaTonTaiSaiSot { get; set; }
+        public string MaCQTCap { get; set; }
+        public string MauHoaDon { get; set; }
+        public string KyHieuHoaDon { get; set; }
+        public string SoHoaDon { get; set; }
+        public DateTime? NgayLapHoaDon { get; set; }
+        public int? LoaiApDungHoaDon { get; set; }
+        
+    }
     public class ThongDiepGuiCQTViewModel
     {
         public string Id { get; set; }
@@ -146,10 +160,13 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public byte? LoaiThongBaoSaiSot { get; set; }
         public string TenLoaiThongBaoSaiSot { get; set; }
 
+        public string MauSoTBaoCuaCQT { get; set; }
         public string SoTBaoCuaCQT { get; set; }
         public DateTime? NgayTBaoCuaCQT { get; set; }
 
         public string MaThongDiepGui { get; set; }
+        public string MaThongDiepPhanHoi { get; set; }
+        public string MauSoTBaoPhanHoiTuCQT { get; set; }
         public string SoTBaoPhanHoiTuCQT { get; set; }
         public DateTime? NgayTBaoPhanHoiTuCQT { get; set; }
         public int? TrangThaiGui { get; set; }

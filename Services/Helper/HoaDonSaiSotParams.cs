@@ -96,6 +96,10 @@ namespace Services.Helper
         public bool KhongHienThiThongTinGiongNhau { get; set; }
         public ThongKeHoaDonSaiSotSearch TimKiemTheo { get; set; }
         public string TimKiemBatKy { get; set; }
+        public List<FilterColumn> FilterColumns { get; set; }
+        public string SortValue { get; set; }
+        public string SortKey { get; set; }
+        public BangKeHoaDonSaiSot_ViewModel Filter { get; set; }
     }
 
     public class ThongKeHoaDonSaiSotSearch
