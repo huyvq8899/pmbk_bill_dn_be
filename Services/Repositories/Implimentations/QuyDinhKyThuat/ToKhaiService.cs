@@ -80,6 +80,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 {
                     File.WriteAllBytes(fullXmlName, bin);
                 }
+                else
+                {
+                    var files = tKhai.FileXMLChuaKy.Split("\\");
+                    _xmlInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, files[files.Length - 1]);
+
+                }
             }
             //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
             byte[] byteXML = File.ReadAllBytes(fullXmlName);
