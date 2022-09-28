@@ -72,6 +72,15 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             //string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}";
             //var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             var fullXmlName = Path.Combine(_hostingEnvironment.WebRootPath, tKhai.FileXMLChuaKy);
+
+            if (!File.Exists(fullXmlName))
+            {
+                var bin = await _dataContext.FileDatas.Where(x => x.RefId == tKhai.Id && x.Type == 1 && x.IsSigned == false).Select(x => x.Binary).FirstOrDefaultAsync();
+                if(bin != null)
+                {
+                    File.WriteAllBytes(fullXmlName, bin);
+                }
+            }
             //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
             byte[] byteXML = File.ReadAllBytes(fullXmlName);
             string strXML = File.ReadAllText(fullXmlName);
