@@ -14004,7 +14004,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var thongDiepChiTietMoiNhat = thongDiepChiTiets.Where(x => x.HoaDonDienTuId == hoaDon.HoaDonDienTuId).OrderBy(x => x.CreatedDate).Take(1).FirstOrDefault();
                         var thongDiep = thongDiepChungs.Where(x => x.IdThamChieu == thongDiepChiTietMoiNhat.ThongDiepGuiCQTId).FirstOrDefault();
 
-                        if (thongDiepChiTietMoiNhat.PhanLoaiHDSaiSot != 3)
+                        if (thongDiep != null && thongDiepChiTietMoiNhat.PhanLoaiHDSaiSot != 3)
                         {
                             //đã gửi thì có định dạng là Lần gửi | trạng thái gửi | trong hạn/quá hạn
                             TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)thongDiep.TrangThaiGui.GetValueOrDefault();
