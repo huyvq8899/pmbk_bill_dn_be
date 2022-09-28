@@ -83,8 +83,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 else
                 {
                     var files = tKhai.FileXMLChuaKy.Split("\\");
-                    _xmlInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, files[files.Length - 1]);
-
+                    if (tKhai.ToKhaiKhongUyNhiem != null)
+                    {
+                        _xmlInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, files[files.Length - 1]);
+                    }
+                    else
+                    {
+                        _xmlInvoiceService.CreateFileXML(tKhai.ToKhaiUyNhiem, ManageFolderPath.XML_UNSIGN, files[files.Length - 1]);
+                    }
                 }
             }
             //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
