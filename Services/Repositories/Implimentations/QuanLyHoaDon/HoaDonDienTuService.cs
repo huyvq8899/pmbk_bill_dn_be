@@ -16492,7 +16492,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             CreatedDate = hoaDon.CreatedDate,
                                             LoaiHoaDon = hoaDon.LoaiHoaDon,
                                             ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
-                                            HinhThucXoabo = hoaDon.HinhThucXoabo
+                                            HinhThucXoabo = hoaDon.HinhThucXoabo,
+                                            TruongThongTinBoSung1 = hoaDon.TruongThongTinBoSung1
                                         }).ToListAsync();
 
             var listAllBoKyHieuHoaDons = await (from boKyHieu in _db.BoKyHieuHoaDons
@@ -16554,6 +16555,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    TenTrangThaiHoaDon = ((TrangThaiHoaDon)hoaDon.TrangThai).GetDescription(),
                                                    HinhThucThanhToan = hoaDon.HinhThucThanhToanId,
                                                    CreatedDate = hoaDon.CreatedDate,
+                                                   TruongThongTinBoSung1 = hoaDon.TruongThongTinBoSung1,
 
                                                    IsHoaDonBiDieuChinh = NhanBietHoaDonTheoPhanLoai(new ThamSoNhanBietHoaDon { HoaDonDienTu = hoaDon, ListAllHoaDons = listAllHoaDons, ListAllBoKyHieuHoaDons = listAllBoKyHieuHoaDons }, "IsHoaDonBiDieuChinh"),
 

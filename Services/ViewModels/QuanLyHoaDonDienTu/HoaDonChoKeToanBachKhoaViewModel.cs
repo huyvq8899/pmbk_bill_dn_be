@@ -51,6 +51,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         public bool? IsHoaDonBiXoaBo { get; set; }
 
+        public string TruongThongTinBoSung1 { get; set; }
+
         // Nếu là hóa đơn thay thế thì sẽ có giá trị HoaDonBiThayThe, 
         // vì khi đó trường ThayTheChoHoaDonId khác rỗng
         public HoaDonChoKeToanBachKhoaViewModel HoaDonBiThayThe { get; set; }
