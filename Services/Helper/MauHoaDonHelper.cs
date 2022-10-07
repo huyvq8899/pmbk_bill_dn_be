@@ -209,9 +209,13 @@ namespace Services.Helper
                     TableCell lastTableCell = tbl_nguoi_mua.Rows[0].Cells[lastCell];
                     lastTableCell.CellFormat.VerticalAlignment = VerticalAlignment.Middle;
                     Paragraph par = lastTableCell.Paragraphs.Count > 0 ? lastTableCell.Paragraphs[0] : lastTableCell.AddParagraph();
-                    DocPicture picQRCode = par.AppendPicture(Image.FromFile(qrcode));
-                    picQRCode.Width = 46;
-                    picQRCode.Height = 46;
+                    object _object = new object();
+                    lock (_object)
+                    {
+                        DocPicture picQRCode = par.AppendPicture(Image.FromFile(qrcode));
+                        picQRCode.Width = 46;
+                        picQRCode.Height = 46;
+                    }
                     par.Format.HorizontalAlignment = HorizontalAlignment.Center;
                 }
                 section.PageSetup.DifferentFirstPageHeaderFooter = true;
