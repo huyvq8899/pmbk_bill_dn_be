@@ -18299,82 +18299,75 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<List<ListCheckHoaDonSaiSotViewModel>> CheckExistInvoidAsync(List<ListCheckHoaDonSaiSotViewModel> list)
         {
-            try
+            foreach (var hdInput in list)
             {
-                foreach (var hdInput in list)
+
+
+                if ((int)hdInput.LoaiApDungHoaDon == 1 || (int)hdInput.LoaiApDungHoaDon == 2)
                 {
-
-
-                    if ((int)hdInput.LoaiApDungHoaDon == 1 || (int)hdInput.LoaiApDungHoaDon == 2)
-                    {
-                        hdInput.KetQua = await _db.HoaDonDienTus.AnyAsync(x => (x.LoaiApDungHoaDonDieuChinh == (int)hdInput.LoaiApDungHoaDon || hdInput.LoaiApDungHoaDon == 1)
-                    && x.BoKyHieuHoaDon.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper() &&
-                    x.BoKyHieuHoaDon.KyHieuMauSoHoaDon.ToString().TrimToUpper() == hdInput.MauHoaDon.TrimToUpper() &&
-                    x.MaCuaCQT != null && x.MaCuaCQT == hdInput.MaCQTCap.Trim() &&
-                    x.NgayHoaDon.Value.Date == hdInput.NgayLapHoaDon && x.SoHoaDon.ToString() == hdInput.SoHoaDon.Trim());
-                        hdInput.KetQuaDaTonTaiSaiSot = await _db.ThongDiepChiTietGuiCQTs.AnyAsync(x => (x.LoaiApDungHoaDon == (int)hdInput.LoaiApDungHoaDon) && x.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper() && x.MauHoaDon.TrimToUpper() == hdInput.MauHoaDon.TrimToUpper() && x.MaCQTCap != null && x.MaCQTCap == hdInput.MaCQTCap.Trim() && x.NgayLapHoaDon.Value.Date == hdInput.NgayLapHoaDon && x.SoHoaDon.ToString() == hdInput.SoHoaDon.Trim());
-                    }
-                    else
-                    {
-                        hdInput.KetQua = await _db.HoaDonDienTus.AnyAsync(x => (x.LoaiApDungHoaDonDieuChinh == (int)hdInput.LoaiApDungHoaDon || hdInput.LoaiApDungHoaDon == 1)
-                    && x.BoKyHieuHoaDon.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper() &&
-                    x.BoKyHieuHoaDon.KyHieuMauSoHoaDon.ToString().TrimToUpper() == hdInput.MauHoaDon.TrimToUpper() &&
-                    x.NgayHoaDon.Value.Date == hdInput.NgayLapHoaDon && x.SoHoaDon.ToString() == hdInput.SoHoaDon.Trim());
-                        hdInput.KetQuaDaTonTaiSaiSot = await _db.ThongDiepChiTietGuiCQTs.AnyAsync(x => (x.LoaiApDungHoaDon == (int)hdInput.LoaiApDungHoaDon) && x.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper() && x.MauHoaDon.TrimToUpper() == hdInput.MauHoaDon.TrimToUpper() && x.MaCQTCap != null && x.NgayLapHoaDon.Value.Date == hdInput.NgayLapHoaDon && x.SoHoaDon.ToString() == hdInput.SoHoaDon.Trim());
-                    }
-
-
-                    //kiểm tra xem đã có hóa đơn thay thế cho hóa đơn đó chưa
-                    var queryHoaDonThayTheNgoai = await (from thongTinHD in _db.ThongTinHoaDons
-                                                         join hoaDon in _db.HoaDonDienTus.Where(x => string.IsNullOrWhiteSpace(x.ThayTheChoHoaDonId) == false) on thongTinHD.Id equals hoaDon.ThayTheChoHoaDonId
-                                                         where
-                                                           thongTinHD.MauSoHoaDon.TrimToUpper() == hdInput.MauHoaDon.TrimToUpper()
-                                                           && thongTinHD.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper()
-                                                           && thongTinHD.SoHoaDon.TrimToUpper() == hdInput.SoHoaDon.TrimToUpper()
-                                                             && thongTinHD.NgayHoaDon.Value.Date == hdInput.NgayLapHoaDon
-                                                         select new ThongTinHoaDonViewModel
-                                                         {
-                                                             Id = thongTinHD.Id
-                                                         }).FirstOrDefaultAsync();
-
-                    hdInput.KetQuaThayTheKhac = queryHoaDonThayTheNgoai != null;
-
-                    //kiểm tra xem đã có hóa đơn điều chỉnh cho hóa đơn đó chưa
-                    var queryHoaDonDieuChinhNgoai = await (from thongTinHD in _db.ThongTinHoaDons
-                                                           join hoaDon in _db.HoaDonDienTus.Where(x => string.IsNullOrWhiteSpace(x.DieuChinhChoHoaDonId) == false) on thongTinHD.Id equals hoaDon.DieuChinhChoHoaDonId
-                                                           where
-                                                             thongTinHD.MauSoHoaDon.TrimToUpper() == hdInput.MauHoaDon.TrimToUpper()
-                                                             && thongTinHD.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper()
-                                                             && thongTinHD.SoHoaDon.TrimToUpper() == hdInput.SoHoaDon.TrimToUpper()
-                                                             && thongTinHD.NgayHoaDon.Value.Date == hdInput.NgayLapHoaDon
-                                                           select new ThongTinHoaDonViewModel
-                                                           {
-                                                               Id = thongTinHD.Id
-                                                           }).FirstOrDefaultAsync();
-                    hdInput.KetQuaDieuChinhKhac = queryHoaDonDieuChinhNgoai != null;
-                    //if (hdInput.KetQuaThayTheKhac == false && hdInput.KetQuaDieuChinhKhac == false)
-                    //{
-                    //    var queryHoaDonNgoai = await (from thongTinHD in _db.ThongTinHoaDons
-                    //                                  where
-                    //                                    thongTinHD.MauSoHoaDon.TrimToUpper() == hdInput.MauHoaDon.TrimToUpper()
-                    //                                    && thongTinHD.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper()
-                    //                                    && thongTinHD.SoHoaDon.TrimToUpper() == hdInput.SoHoaDon.TrimToUpper()
-                    //                                  select new ThongTinHoaDonViewModel
-                    //                                  {
-                    //                                      Id = thongTinHD.Id
-                    //                                  }).FirstOrDefaultAsync();
-
-                    //    hdInput.KetQuaHoaDonNgoai = queryHoaDonNgoai != null;
-                    //}
-
+                    hdInput.KetQua = await _db.HoaDonDienTus.AnyAsync(x => (x.LoaiApDungHoaDonDieuChinh == (int)hdInput.LoaiApDungHoaDon || hdInput.LoaiApDungHoaDon == 1)
+                && x.BoKyHieuHoaDon.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper() &&
+                x.BoKyHieuHoaDon.KyHieuMauSoHoaDon.ToString().TrimToUpper() == hdInput.MauHoaDon.TrimToUpper() &&
+                x.MaCuaCQT != null && x.MaCuaCQT == hdInput.MaCQTCap.Trim() &&
+                x.NgayHoaDon.Value.Date == hdInput.NgayLapHoaDon && x.SoHoaDon.ToString() == hdInput.SoHoaDon.Trim());
+                    hdInput.KetQuaDaTonTaiSaiSot = await _db.ThongDiepChiTietGuiCQTs.AnyAsync(x => (x.LoaiApDungHoaDon == (int)hdInput.LoaiApDungHoaDon) && x.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper() && x.MauHoaDon.TrimToUpper() == hdInput.MauHoaDon.TrimToUpper() && x.MaCQTCap != null && x.MaCQTCap == hdInput.MaCQTCap.Trim() && x.NgayLapHoaDon.Value.Date == hdInput.NgayLapHoaDon && x.SoHoaDon.ToString() == hdInput.SoHoaDon.Trim());
+                }
+                else
+                {
+                    hdInput.KetQua = await _db.HoaDonDienTus.AnyAsync(x => (x.LoaiApDungHoaDonDieuChinh == (int)hdInput.LoaiApDungHoaDon || hdInput.LoaiApDungHoaDon == 1)
+                && x.BoKyHieuHoaDon.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper() &&
+                x.BoKyHieuHoaDon.KyHieuMauSoHoaDon.ToString().TrimToUpper() == hdInput.MauHoaDon.TrimToUpper() &&
+                x.NgayHoaDon.Value.Date == hdInput.NgayLapHoaDon && x.SoHoaDon.ToString() == hdInput.SoHoaDon.Trim());
+                    hdInput.KetQuaDaTonTaiSaiSot = await _db.ThongDiepChiTietGuiCQTs.AnyAsync(x => (x.LoaiApDungHoaDon == (int)hdInput.LoaiApDungHoaDon) && x.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper() && x.MauHoaDon.TrimToUpper() == hdInput.MauHoaDon.TrimToUpper() && x.MaCQTCap != null && x.NgayLapHoaDon.Value.Date == hdInput.NgayLapHoaDon && x.SoHoaDon.ToString() == hdInput.SoHoaDon.Trim());
                 }
 
-                return list;
+
+                //kiểm tra xem đã có hóa đơn thay thế cho hóa đơn đó chưa
+                var queryHoaDonThayTheNgoai = await (from thongTinHD in _db.ThongTinHoaDons
+                                                     join hoaDon in _db.HoaDonDienTus.Where(x => string.IsNullOrWhiteSpace(x.ThayTheChoHoaDonId) == false) on thongTinHD.Id equals hoaDon.ThayTheChoHoaDonId
+                                                     where
+                                                       thongTinHD.MauSoHoaDon.TrimToUpper() == hdInput.MauHoaDon.TrimToUpper()
+                                                       && thongTinHD.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper()
+                                                       && thongTinHD.SoHoaDon.TrimToUpper() == hdInput.SoHoaDon.TrimToUpper()
+                                                         && thongTinHD.NgayHoaDon.Value.Date == hdInput.NgayLapHoaDon
+                                                     select new ThongTinHoaDonViewModel
+                                                     {
+                                                         Id = thongTinHD.Id
+                                                     }).FirstOrDefaultAsync();
+
+                hdInput.KetQuaThayTheKhac = queryHoaDonThayTheNgoai != null;
+
+                //kiểm tra xem đã có hóa đơn điều chỉnh cho hóa đơn đó chưa
+                var queryHoaDonDieuChinhNgoai = await (from thongTinHD in _db.ThongTinHoaDons
+                                                       join hoaDon in _db.HoaDonDienTus.Where(x => string.IsNullOrWhiteSpace(x.DieuChinhChoHoaDonId) == false) on thongTinHD.Id equals hoaDon.DieuChinhChoHoaDonId
+                                                       where
+                                                         thongTinHD.MauSoHoaDon.TrimToUpper() == hdInput.MauHoaDon.TrimToUpper()
+                                                         && thongTinHD.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper()
+                                                         && thongTinHD.SoHoaDon.TrimToUpper() == hdInput.SoHoaDon.TrimToUpper()
+                                                         && thongTinHD.NgayHoaDon.Value.Date == hdInput.NgayLapHoaDon
+                                                       select new ThongTinHoaDonViewModel
+                                                       {
+                                                           Id = thongTinHD.Id
+                                                       }).FirstOrDefaultAsync();
+                hdInput.KetQuaDieuChinhKhac = queryHoaDonDieuChinhNgoai != null;
+                //if (hdInput.KetQuaThayTheKhac == false && hdInput.KetQuaDieuChinhKhac == false)
+                //{
+                //    var queryHoaDonNgoai = await (from thongTinHD in _db.ThongTinHoaDons
+                //                                  where
+                //                                    thongTinHD.MauSoHoaDon.TrimToUpper() == hdInput.MauHoaDon.TrimToUpper()
+                //                                    && thongTinHD.KyHieuHoaDon.TrimToUpper() == hdInput.KyHieuHoaDon.TrimToUpper()
+                //                                    && thongTinHD.SoHoaDon.TrimToUpper() == hdInput.SoHoaDon.TrimToUpper()
+                //                                  select new ThongTinHoaDonViewModel
+                //                                  {
+                //                                      Id = thongTinHD.Id
+                //                                  }).FirstOrDefaultAsync();
+
+                //    hdInput.KetQuaHoaDonNgoai = queryHoaDonNgoai != null;
+                //}
+
             }
-            catch (Exception ex)
-            {
-                throw;
-            }
+
+            return list;
 
         }
     }
