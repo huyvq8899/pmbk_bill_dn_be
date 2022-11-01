@@ -1240,6 +1240,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             _db.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
                             await _db.SaveChangesAsync();
                         }
+
+                        //Pdf, word
+                        await CreateWordAndPdfFile(tenFile, _mp.Map<ThongDiepGuiCQTViewModel>(entityToUpdate), false);
                     }
                 }
 
@@ -1441,6 +1444,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             try
             {
+                if(model.ThongDiepChiTietGuiCQTs == null || model.ThongDiepChiTietGuiCQTs.Count == 0)
+                {
+                    var param = new DataByIdParams
+                    {
+                        ThongDiepGuiCQTId = model.Id,
+                        IsTraVeThongDiepChung = false
+                    };
+                    model = await GetThongDiepGuiCQTByIdAsync(param);
+                }
                 Document doc = new Document();
                 string docFolder = Path.Combine(_hostingEnvironment.WebRootPath, "docs/QuanLy/thong-bao-hoa-don-dien-tu-co-sai-sot.docx");
                 doc.LoadFromFile(docFolder);
@@ -1451,7 +1463,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace("<DiaDanh>", model.DiaDanh ?? "", true, true);
                 var ngayThangNam = model.NgayLap;
                 doc.Replace("<NgayThangNam>", string.Format("ngày {0} tháng {1} năm {2}", ngayThangNam.Day, ngayThangNam.Month, ngayThangNam.Year), true, true);
-                doc.Replace("<DaiDienNguoiNopThue>", model.DaiDienNguoiNopThue, true, true);
+                if(model.DaKyGuiCQT == false)
+                    doc.Replace("<DaiDienNguoiNopThue>", model.DaiDienNguoiNopThue, true, true);
+                else
+                {
+                    ImageHelper.CreateSignatureBox(doc, model.DaiDienNguoiNopThue, model.NgayGui, "<DaiDienNguoiNopThue>");
+                }
 
                 //thao tác với bảng dữ liệu đầu tiên
                 var bangDuLieu = doc.Sections[0].Tables[0];
@@ -1542,11 +1559,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     doc.Close();
 
-                    await ThemAttachVaoBangFileData(model.Id, duongDanFileWord);
-                    await ThemAttachVaoBangFileData(model.Id, duongDanFilePdf);
+                    await ThemAttachVaoBangFileData(model.Id, duongDanFileWord, model.DaKyGuiCQT ?? false);
+                    await ThemAttachVaoBangFileData(model.Id, duongDanFilePdf, model.DaKyGuiCQT ?? false);
 
                     await ThemAttachVaoBangTaiLieuDinhKem(model.Id, duongDanFileWord);
                     await ThemAttachVaoBangTaiLieuDinhKem(model.Id, duongDanFilePdf);
+
+                    var entity = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == model.Id);
 
                     return fileName + ".docx" + ";" + fileName + ".pdf";
                 }
@@ -2887,12 +2906,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             await _db.SaveChangesAsync();
         }
 
-        private async Task ThemAttachVaoBangFileData(string refId, string path)
+        private async Task ThemAttachVaoBangFileData(string refId, string path, bool isSigned = false)
         {
             FileData fileData = new FileData
             {
                 FileDataId = Guid.NewGuid().ToString(),
                 RefId = refId,
+                IsSigned = isSigned,
                 Type = 4,
                 DateTime = DateTime.Now,
                 Binary = File.ReadAllBytes(path),
@@ -3827,13 +3847,84 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 Directory.CreateDirectory(fullFolder);
             }
 
-            var fileDatas = await _db.FileDatas.Where(x => x.RefId == ThongDiepGuiCQTId && x.Binary != null && !string.IsNullOrEmpty(x.FileName)).AsNoTracking().ToListAsync();
-            foreach (var item in fileDatas)
+            var entityModel = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == ThongDiepGuiCQTId);
+            if(entityModel.DaKyGuiCQT == false)
             {
-                string filePath = Path.Combine(fullFolder, item.FileName);
-                if (!File.Exists(filePath))
+                var fileDinhKems = entityModel.FileDinhKem.Split(";");
+                var fileDatas = await _db.FileDatas.Where(x => x.RefId == ThongDiepGuiCQTId && x.IsSigned == false && x.Binary != null && !string.IsNullOrEmpty(x.FileName)).AsNoTracking().ToListAsync();
+                foreach (var item in fileDatas)
                 {
-                    File.WriteAllBytes(filePath, item.Binary);
+                    string filePath = Path.Combine(fullFolder, item.FileName);
+                    if (!File.Exists(filePath))
+                    {
+                        File.WriteAllBytes(filePath, item.Binary);
+                    }
+
+                    var file_ext = Path.GetExtension(item.FileName);
+                    var fileDinhKem = fileDinhKems.FirstOrDefault(x => Path.GetExtension(x) == file_ext);
+                    if (!string.IsNullOrEmpty(fileDinhKem))
+                    {
+                        filePath = Path.Combine(fullFolder, fileDinhKem);
+                        if (!File.Exists(filePath))
+                        {
+                            File.WriteAllBytes(filePath, item.Binary);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var fileDinhKems = entityModel.FileDinhKem.Split(";");
+                var fileDatas = await _db.FileDatas.Where(x => x.RefId == ThongDiepGuiCQTId && x.IsSigned == true && x.Binary != null && !string.IsNullOrEmpty(x.FileName)).ToListAsync();
+                if (fileDatas.Any())
+                {
+                    foreach (var item in fileDatas)
+                    {
+                        string filePath = Path.Combine(fullFolder, item.FileName);
+                        if (!File.Exists(filePath))
+                        {
+                            File.WriteAllBytes(filePath, item.Binary);
+                        }
+
+                        var file_ext = Path.GetExtension(item.FileName);
+                        var fileDinhKem = fileDinhKems.FirstOrDefault(x => Path.GetExtension(x) == file_ext);
+                        if (!string.IsNullOrEmpty(fileDinhKem))
+                        {
+                            filePath = Path.Combine(fullFolder, fileDinhKem);
+                            if (!File.Exists(filePath))
+                            {
+                                File.WriteAllBytes(filePath, item.Binary);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var tenFile = "TD-" + Guid.NewGuid().ToString();
+                    await CreateWordAndPdfFile(tenFile, _mp.Map<ThongDiepGuiCQTViewModel>(entityModel), false);
+                    var fileDataSigneds = await _db.FileDatas.Where(x => x.RefId == ThongDiepGuiCQTId && x.IsSigned == true && x.Binary != null && !string.IsNullOrEmpty(x.FileName)).AsNoTracking().ToListAsync();
+                    if (fileDataSigneds.Any())
+                    {
+                        foreach (var item in fileDataSigneds)
+                        {
+                            string filePath = Path.Combine(fullFolder, item.FileName);
+                            if (!File.Exists(filePath))
+                            {
+                                File.WriteAllBytes(filePath, item.Binary);
+                            }
+
+                            var file_ext = Path.GetExtension(item.FileName);
+                            var fileDinhKem = fileDinhKems.FirstOrDefault(x => Path.GetExtension(x) == file_ext);
+                            if (!string.IsNullOrEmpty(fileDinhKem))
+                            {
+                                filePath = Path.Combine(fullFolder, fileDinhKem);
+                                if (!File.Exists(filePath))
+                                {
+                                    File.WriteAllBytes(filePath, item.Binary);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
