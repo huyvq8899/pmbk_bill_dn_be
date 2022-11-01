@@ -3918,10 +3918,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             if (!string.IsNullOrEmpty(fileDinhKem))
                             {
                                 filePath = Path.Combine(fullFolder, fileDinhKem);
-                                if (!File.Exists(filePath))
+                                if (File.Exists(filePath))
                                 {
-                                    File.WriteAllBytes(filePath, item.Binary);
+                                    File.Delete(filePath);
                                 }
+                                File.WriteAllBytes(filePath, item.Binary);
                             }
                         }
                     }
