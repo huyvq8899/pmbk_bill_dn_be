@@ -1464,10 +1464,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var ngayThangNam = model.NgayLap;
                 doc.Replace("<NgayThangNam>", string.Format("ngày {0} tháng {1} năm {2}", ngayThangNam.Day, ngayThangNam.Month, ngayThangNam.Year), true, true);
                 if(model.DaKyGuiCQT == false)
-                    doc.Replace("<DaiDienNguoiNopThue>", model.DaiDienNguoiNopThue, true, true);
+                    doc.Replace("<DaiDienNguoiNopThue>", model.NguoiNopThue, true, true);
                 else
                 {
-                    ImageHelper.CreateSignatureBox(doc, model.DaiDienNguoiNopThue, model.NgayGui, "<DaiDienNguoiNopThue>");
+                    ImageHelper.CreateSignatureBox(doc, model.NguoiNopThue, model.NgayGui, "<DaiDienNguoiNopThue>");
                 }
 
                 //thao tác với bảng dữ liệu đầu tiên
