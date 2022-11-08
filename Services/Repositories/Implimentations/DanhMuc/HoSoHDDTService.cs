@@ -38,6 +38,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<HoSoHDDTViewModel> GetDetailAsync()
         {
             var entity = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
+            string stringMSTNhaPhatHanh = _db.ThongTinPhatHanhs.FirstOrDefault(x => x.IsActive).MaSoThue;
             if (entity == null)
             {
                 var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
@@ -56,7 +57,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 var diaDanh = await _db.CoQuanThueCapCuc_DiaDanhs.FirstOrDefaultAsync(x => x.MaCQT == entity.CoQuanThueCapCuc);
                 result.MaDiaDanhCQTCapCuc = diaDanh?.MaDiaDanh;
             }
-
+            if (!string.IsNullOrEmpty(stringMSTNhaPhatHanh))
+            {
+                result.PhatHanhBoi = stringMSTNhaPhatHanh;
+            }
             return result;
         }
 
