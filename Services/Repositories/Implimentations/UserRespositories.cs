@@ -882,5 +882,20 @@ namespace Services.Repositories.Implimentations
         {
             return mp.Map<UserViewModel>(await db.Users.OrderByDescending(x => x.ModifyDate).ThenByDescending(x => x.CreatedDate).DefaultIfEmpty(null).FirstOrDefaultAsync());
         }
+
+        public async Task<List<UserViewModel>> GetAllForPermissionAsync()
+        {
+            var query = from u in db.Users
+                        orderby u.UserName
+                        select new UserViewModel
+                        {
+                            UserId = u.UserId,
+                            UserName = u.UserName,
+                            FullName = u.FullName,
+                        };
+
+            var result = await query.ToListAsync();
+            return result;
+        }
     }
 }

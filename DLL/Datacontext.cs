@@ -4,6 +4,7 @@ using DLL.Configurations.DanhMuc;
 using DLL.Configurations.QuanLy;
 using DLL.Configurations.QuanLyHoaDonDienTu;
 using DLL.Configurations.QuyDinhKyThuat;
+using DLL.Configurations.Ticket;
 using DLL.Configurations.TienIch;
 using DLL.Constants;
 using DLL.Entity;
@@ -13,6 +14,7 @@ using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLy;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.QuyDinhKyThuat;
+using DLL.Entity.Ticket;
 using DLL.Entity.TienIch;
 using DLL.Extentions;
 using Microsoft.AspNetCore.Http;
@@ -125,6 +127,13 @@ namespace DLL
         public DbSet<MauHoaDonXacThuc> MauHoaDonXacThucs { get; set; }
         public DbSet<QuanLyThongTinHoaDon> QuanLyThongTinHoaDons { get; set; }
         #endregion
+
+        #region Ticket
+        public DbSet<TuyenDuong> TuyenDuongs { get; set; }
+        public DbSet<Xe> Xes { get; set; }
+        public DbSet<User_Xe> User_Xes { get; set; }
+        #endregion
+
         public DbSet<AlertStartup> AlertStartups { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -194,6 +203,12 @@ namespace DLL
             modelBuilder.AddConfiguration(new NhatKyXacThucBoKyHieuConfiguration());
             modelBuilder.AddConfiguration(new MauHoaDonXacThucConfiguration());
             modelBuilder.AddConfiguration(new QuanLyThongTinHoaDonConfiguration());
+            #endregion
+
+            #region Ticket
+            modelBuilder.AddConfiguration(new TuyenDuongConfiguration());
+            modelBuilder.AddConfiguration(new XeConfiguration());
+            modelBuilder.AddConfiguration(new User_XeConfiguration());
             #endregion
         }
 

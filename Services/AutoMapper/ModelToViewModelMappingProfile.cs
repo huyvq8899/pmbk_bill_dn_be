@@ -16,6 +16,8 @@ using DLL.Entity.QuyDinhKyThuat;
 using Services.ViewModels.QuyDinhKyThuat;
 using DLL.Entity.QuanLy;
 using Services.ViewModels.QuanLy;
+using DLL.Entity.Ticket;
+using Services.ViewModels.Ticket;
 
 namespace Services.AutoMapper
 {
@@ -102,6 +104,11 @@ namespace Services.AutoMapper
             CreateMap<BoKyHieuHoaDon, BoKyHieuHoaDonViewModel>();
             CreateMap<NhatKyXacThucBoKyHieu, NhatKyXacThucBoKyHieuViewModel>();
             CreateMap<QuanLyThongTinHoaDon, QuanLyThongTinHoaDonViewModel>();
+            #endregion
+
+            #region Ticket
+            CreateMap<TuyenDuong, TuyenDuongViewModel>();
+            CreateMap<Xe, XeViewModel>();
             #endregion
         }
     }

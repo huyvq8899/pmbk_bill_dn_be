@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DLL.Entity.Ticket;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -38,10 +39,11 @@ namespace DLL.Entity
         public bool? IsNodeAdmin { get; set; }
         public IList<Function_User> Function_Users { get; set; }
         public IList<User_Role> User_Roles { get; set; }
+        public List<User_Xe> User_Xes { get; set; }
 
         // Chat
         public bool? IsOnline { get; set; }
         public int? LoginCount { get; set; }
-      
+
     }
 }

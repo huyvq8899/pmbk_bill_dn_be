@@ -219,6 +219,13 @@ namespace API.Controllers
             var result = await _IUserRespositories.GetThongTinGanNhat();
             return Ok(result);
         }
+
+        [HttpGet("GetAllForPermission")]
+        public async Task<IActionResult> GetAllForPermission()
+        {
+            var result = await _IUserRespositories.GetAllForPermissionAsync();
+            return Ok(result);
+        }
     }
 
     public class InputUser

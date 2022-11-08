@@ -59,4 +59,8 @@
   <ItemGroup>
     <Folder Include="ViewModels\XML\QuyDinhKyThuatHDDT\PhanII\II\1\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\API\wwwroot\Tools\plugins\**" CopyToOutputDirectory="PreserveNewest" LinkBase="plugins\" />
+  </ItemGroup>
 </Project>

@@ -39,5 +39,6 @@ namespace Services.Repositories.Interfaces
         Task<int> CheckTrungTenDangNhap(UserViewModel user);
         Task<UserViewModel> GetThongTinGanNhat();
         Task<List<string>> GetAllThaoTacOfUserFunction(string FunctionId, string UserId);
+        Task<List<UserViewModel>> GetAllForPermissionAsync();
     }
 }

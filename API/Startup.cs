@@ -26,6 +26,7 @@ using Services.Repositories.Implimentations.DanhMuc;
 using Services.Repositories.Implimentations.QuanLy;
 using Services.Repositories.Implimentations.QuanLyHoaDon;
 using Services.Repositories.Implimentations.QuyDinhKyThuat;
+using Services.Repositories.Implimentations.Ticket;
 using Services.Repositories.Implimentations.TienIch;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.BaoCao;
@@ -34,6 +35,7 @@ using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLy;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
+using Services.Repositories.Interfaces.Ticket;
 using Services.Repositories.Interfaces.TienIch;
 using System.Collections.Generic;
 using System.IO;
@@ -183,6 +185,12 @@ namespace API
             #region Quản lý
             services.AddScoped<IBoKyHieuHoaDonService, BoKyHieuHoaDonService>();
             services.AddScoped<IQuanLyThongTinHoaDonService, QuanLyThongTinHoaDonService>();
+            #endregion
+
+            #region Ticket
+            services.AddScoped<ITuyenDuongService, TuyenDuongService>();
+            services.AddScoped<IXeService, XeService>();
+            services.AddScoped<IUser_XeService, User_XeService>();
             #endregion
 
             // bỏ dấu #
