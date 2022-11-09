@@ -4315,7 +4315,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                 // Chiết khấu thương mại
                                 // Ghi chú/diễn giải
-                                if (models[i].TinhChat == 4 || isDieuChinhThongTin)
+                                if (models[i].TinhChat == 4)
                                 {
                                     continue;
                                 }
@@ -5039,7 +5039,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                         // Chiết khấu thương mại
                         // Ghi chú/diễn giải
-                        if (models[i].TinhChat == 4 || isDieuChinhThongTin)
+                        if (models[i].TinhChat == 4)
                         {
                             continue;
                         }
