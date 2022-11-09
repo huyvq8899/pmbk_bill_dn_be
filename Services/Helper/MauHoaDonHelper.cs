@@ -3053,6 +3053,12 @@ namespace Services.Helper
             return $"<{result}>";
         }
 
+        public static string GenerateTicketTag(this LoaiChiTietTuyChonNoiDung type)
+        {
+            string result = Enum.GetName(typeof(LoaiChiTietTuyChonNoiDung), type);
+            return $"[({result})]";
+        }
+
         public static string GenerateKeyTagTongHopThueGTGT(this LoaiChiTietTuyChonNoiDung type, LoaiTongHopThueGTGT loaiTongHopThue)
         {
             string result = Enum.GetName(typeof(LoaiChiTietTuyChonNoiDung), type);

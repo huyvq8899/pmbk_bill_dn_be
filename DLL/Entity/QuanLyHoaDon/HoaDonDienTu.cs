@@ -1,9 +1,9 @@
 ﻿using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLy;
+using DLL.Entity.Ticket;
 using DLL.Enums;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 
 namespace DLL.Entity.QuanLyHoaDon
 {
@@ -93,6 +93,22 @@ namespace DLL.Entity.QuanLyHoaDon
         public string HopDongVanChuyenSo { get; set; }
         public string TenNguoiVanChuyen { get; set; }
         public string PhuongThucVanChuyen { get; set; }
+        // Vé điện tử
+        public decimal? SoLuong { get; set; }
+        public Guid? TuyenDuongId { get; set; }
+        public DateTime? ThoiGianKhoiHanh { get; set; }
+        public string XeId { get; set; }
+        public string SoXe { get; set; }
+        public string SoGhe { get; set; }
+        public string SoTuyen { get; set; }
+        public int? SoChang { get; set; }
+        public int? SoChuyen { get; set; }
+        public string TenTuyenDuong { get; set; }
+        public string BenDi { get; set; }
+        public string BenDen { get; set; }
+        public bool? IsVeTam { get; set; }
+        public bool? NgungXuatVe { get; set; }
+        public string ThueGTGT { get; set; }
         ///////////////////////////////////
         public decimal? TongTienHang { get; set; }
         public decimal? TongTienChietKhau { get; set; }
@@ -132,6 +148,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public bool? IsBuyerSigned { get; set; }
         public DateTime? NgayGuiTBaoSaiSotKhongPhaiLapHD { get; set; }
 
+        public Xe Xe { get; set; }
         public List<NhatKyThaoTacHoaDon> NhatKyThaoTacHoaDons { get; set; }
 
         public string IdHoaDonSaiSotBiThayThe { get; set; }

@@ -141,6 +141,27 @@
         TieuDeKyThuKhoNhap,
         KyGhiRoHoTenThuKhoNhap,
         TieuDeKyThuTruongDonVi,
-        KyGhiRoHoTenThuTruongDonVi
+        KyGhiRoHoTenThuTruongDonVi,
+        ////////////////////////////////
+        TenDichVu,
+        TuyenDuong,
+        BenDi,
+        BenDen,
+        SoGhe,
+        SoXe,
+        ThoiGianKhoiHanh,
+        MaNguoiMua,
+        NguoiThuTien,
+        DaBaoGom,
+        ChuKySoNguoiBan,
+        ChuKySoCoQuanThue,
+        QRCode,
+        NoiDungMaTraCuu,
+        ThoiGianXuatVe,
+        CongTyChinhChu,
+        GiuVeDeKiemTra,
+        SoTuyen,
+        TenNguoiChuyenDoi,
+        NgayChuyenDoi
     }
 }

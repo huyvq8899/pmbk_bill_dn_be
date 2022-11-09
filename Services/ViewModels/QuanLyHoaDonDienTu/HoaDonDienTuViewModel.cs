@@ -10,11 +10,10 @@ using Spire.Doc.Fields;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Numerics;
 
 namespace Services.ViewModels.QuanLyHoaDonDienTu
 {
-    public class HoaDonDienTuViewModel : ThongTinChungViewModel
+    public class HoaDonDienTuViewModel : ThongTinChungViewModel, ICloneable
     {
         [IgnoreLogging]
         public string HoaDonDienTuId { get; set; }
@@ -349,6 +348,48 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenNguoiVanChuyen { get; set; }
         [Display(Name = "Phương thức vận chuyển")]
         public string PhuongThucVanChuyen { get; set; }
+        // Vé điện tử
+        [Display(Name = "Số lượng")]
+        public decimal? SoLuong { get; set; }
+        [IgnoreLogging]
+        public Guid? TuyenDuongId { get; set; }
+        [Display(Name = "Số lượng")]
+        public DateTime? ThoiGianKhoiHanh { get; set; }
+        [IgnoreLogging]
+        public string XeId { get; set; }
+        [Display(Name = "Số xe")]
+        public string SoXe { get; set; }
+        [Display(Name = "Số ghế")]
+        public string SoGhe { get; set; }
+        [Display(Name = "Số tuyến")]
+        public string SoTuyen { get; set; }
+        [Display(Name = "Số chặng")]
+        public int? SoChang { get; set; }
+        [Display(Name = "Số chuyến")]
+        public int? SoChuyen { get; set; }
+        [Display(Name = "Tên tuyến đường")]
+        public string TenTuyenDuong { get; set; }
+        [Display(Name = "Bến đi")]
+        public string BenDi { get; set; }
+        [Display(Name = "Bến đến")]
+        public string BenDen { get; set; }
+        [IgnoreLogging]
+        public bool? IsVeTam { get; set; }
+        [IgnoreLogging]
+        public bool? NgungXuatVe { get; set; }
+        [Display(Name = "Thuế GTGT")]
+        public string ThueGTGT { get; set; }
+        [IgnoreLogging]
+        public LoaiMauHoaDon LoaiMau { get; set; }
+        [IgnoreLogging]
+        public string TenLoaiMau { get; set; }
+        [IgnoreLogging]
+        public string TenMau { get; set; }
+        [IgnoreLogging]
+        public string NgayKhoiHanh { get; set; }
+        [IgnoreLogging]
+        public string GioKhoiHanh { get; set; }
+        public string HoaDonDienTuCanXuatId { get; set; }
         ////////////////////////////////////////////////
         [Currency]
         [Display(Name = "Tổng tiền hàng")]
@@ -505,6 +546,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }
+
+        public List<HoaDonDienTuViewModel> MauHoaDons { get; set; }
 
         [Display(Name = "Trường thông tin bổ sung 1")]
         public string TruongThongTinBoSung1 { get; set; }
@@ -700,6 +743,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public int? Count { get; set; }
+
+        public object Clone()
+        {
+            var obj = (HoaDonDienTuViewModel)MemberwiseClone();
+            return obj;
+        }
     }
 
     public class CotThongBaoSaiSotViewModel

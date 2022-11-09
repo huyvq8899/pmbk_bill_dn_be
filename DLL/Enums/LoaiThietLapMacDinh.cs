@@ -25,6 +25,26 @@ namespace DLL.Enums
         [Description("Hình nền tải lên")]
         HinhNenTaiLen,
         [Description("Khung viền mặc định")]
-        KhungVienMacDinh
+        KhungVienMacDinh,
+        [Description("Tên dịch vụ")]
+        TenDichVu,
+        [Description("Chiều cao giữa các dòng")]
+        ChieuCaoGiuaCacDong,
+        [Description("Hình thức hiển thị số vé")]
+        HinhThucHienThiSoVe,
+        [Description("Tổng tiền")]
+        TongTien,
+        [Description("Thuế GTGT")]
+        ThueGTGT,
+        [Description("Vị trí hiển thị tổng tiền")]
+        ViTriHienThiTongTien,
+        [Description("Hiển thị đơn vị tiền tệ sau số tiền")]
+        HienThiDonViTienTeSauSoTien,
+        [Description("Đơn vị tiền tệ")]
+        DonViTienTe,
+        [Description("Hiển thị QR Code tại vị trí")]
+        HienThiQRCodeTaiViTri,
+        [Description("Vị trí QR Code")]
+        ViTriQRCode
     }
 }

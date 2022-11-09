@@ -25,5 +25,9 @@ namespace DLL.Enums
         PXKKiemVanChuyenNoiBo = 7,
         [Description("PXK hàng gửi bán đại lý")]
         PXKHangGuiBanDaiLy = 8,
+        [Description("Tem, vé, thẻ là hóa đơn GTGT")]
+        TemVeTheLaHoaDonGTGT = 9, // thuộc 5
+        [Description("Tem, vé, thẻ là hóa đơn bán hàng")]
+        TemVeTheLaHoaDonBanHang = 10, // thuộc 5
     }
 }

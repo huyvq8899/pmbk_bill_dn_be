@@ -132,5 +132,73 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<FileReturn> TaiTepGuiHoaDonLoiAsync(List<HoaDonDienTuViewModel> list);
         Task<List<KetQuaThucHienPhatHanhDongLoat>> GetKetQuaThucHienPhatHanhDongLoatAsync(List<string> ids);
         Task<List<ListCheckHoaDonSaiSotViewModel>> CheckExistInvoidAsync(List<ListCheckHoaDonSaiSotViewModel> list);
+        // Vé điện tử
+        Task<List<HoaDonDienTuViewModel>> GetListMauVeCanXuatAsync(PagingParams param);
+        Task<List<HoaDonDienTuViewModel>> GetListVeTrongNgayAsync(int loaiNghiepVu);
+        Task<List<HoaDonDienTuViewModel>> GetListByTuyenDuongAsync(string tuyenDuongId);
+        Task<bool> InsertVeAsync(HoaDonDienTuViewModel model);
+        Task<bool> XuatMultiVeAsync(List<ParamPhatHanhHD> list);
+        Task<FileReturn> PreviewPDFXuatVeAsync(HoaDonDienTuViewModel model);
+        Task<bool> SaveAllVeNhapAsync(List<HoaDonDienTuViewModel> list);
+        Task<bool> DeleteAllByLoaiAsync(int loaiNghiepVu);
+        Task<HoaDonDienTuViewModel> GetVeByIdAsync(string Id);
+        Task<List<string>> PreviewMultiTicketByIdsAsync(List<string> Ids);
+        Task<bool> UpdateVeAsync(HoaDonDienTuViewModel model);
+        Task<List<HoaDonDienTuViewModel>> GetListDeXuatVeDongLoatAsync(List<HoaDonDienTuViewModel> list);
+        Task<int> GetSoChuyenByTuyenDuongAsync(string tuyenDuongId);
+        Task<bool> InsertVeTrongNgayFromMobileAsync(HoaDonDienTuViewModel model);
+        Task<FileReturn> PreviewHTMLTicketAsync(HoaDonDienTuViewModel model);
+        FileReturn PrintToPDF(List<string> base64s);
+        Task<(string Message, int Type)> WaitForTCTResonseAsync(List<string> ids);
+        Task<HoaDonDienTuViewModel> GetThongTinByMaTraCuuAsync(string maTraCuu);
+
+        /// <summary>
+        /// Get List tuyến đường có vé trong ngày
+        /// </summary>
+        /// <param name="SoChuyen"></param>
+        /// <returns></returns>
+        Task<List<MobileResult>> GetVeToMobileAsync(int SoChuyen);
+
+        /// <summary>
+        /// Lấy các vé theo tuyến đường trong ngày
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        Task<List<HoaDonDienTuViewModel>> GetListVeBySoChuyenToMobileAsync(MobileParamsExport @params);
+
+        /// <summary>
+        /// Get các bến mà xe đi qua trong tuyến
+        /// </summary>
+        /// <param name="SoChuyen"></param>
+        /// <returns></returns>
+        Task<List<string>> GetBenToMobileAsync(int SoChuyen);
+
+        /// <summary>
+        /// Xuất báo cáo theo vé đã xuất theo tuyến đường
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        Task<List<BaoCaoMobileResult>> ExportBaoCaoMobileAsync(QuanLyVeParams @params);
+
+        /// <summary>
+        /// Xuất ra số lượng vé theo bến
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        Task<List<QuanLyVeResult>> ExportQuanLyVeMobileAsync(QuanLyVeParams @params);
+
+        /// <summary>
+        /// Xem đồng loạt vé
+        /// </summary>
+        /// <param name="listPdfFiles"></param>
+        /// <returns></returns>
+        FileReturn XemVeDongLoat(List<string> listPdfFiles);
+
+        /// <summary>
+        /// Lấy danh sách vé đã xuất trên mobile
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        Task<List<HoaDonDienTuViewModel>> GetListVeMobileAsync(QuanLyVeParams @params);
     }
 }

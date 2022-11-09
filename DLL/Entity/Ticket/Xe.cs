@@ -11,6 +11,6 @@ namespace DLL.Entity.Ticket
         public string LoaiXe { get; set; }
 
         public List<User_Xe> User_Xes { get; set; }
-        public List<HoaDonDienTu> VeDienTus { get; set; }
+        public List<HoaDonDienTu> HoaDonDienTus { get; set; }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using DLL.Entity;
 using DLL.Enums;
+using HtmlAgilityPack;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Newtonsoft.Json;
 using Services.Helper;
+using Services.Helper.Constants;
 using Services.Helper.Params.HoaDon;
 using Services.ViewModels.Config;
 using Services.ViewModels.QuanLyHoaDonDienTu;
@@ -17,6 +20,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Xml;
 
 namespace ManagementServices.Helper
 {
@@ -1566,6 +1570,207 @@ namespace ManagementServices.Helper
         {
             var list = email.Split(";").Where(x => !(x.StartsWith("(CC)") || x.StartsWith("(BCC)"))).ToArray();
             return string.Join(";", list);
+        }
+
+        public static (float Width, float Height) GetSizeFromDataAttr(this string html)
+        {
+            var index = html.IndexOf("data-size");
+            var start = 0;
+            var end = 0;
+            var isFlag = false;
+            for (int i = index; i < html.Length; i++)
+            {
+                if (html[i] == '"')
+                {
+                    if (isFlag)
+                    {
+                        end = i;
+                        break;
+                    }
+                    else
+                    {
+                        isFlag = true;
+                        start = i;
+                    }
+                }
+            }
+
+            var subSize = html.Substring(start + 1, end - start - 1);
+
+            float width = float.Parse(subSize.Split("x")[0]);
+            float height = float.Parse(subSize.Split("x")[1]);
+            return (width, height);
+        }
+
+        public static string SetSizeHtml(this string content)
+        {
+            var doc = new HtmlDocument();
+            doc.LoadHtml(content);
+
+            var html = doc.DocumentNode.SelectSingleNode("//html");
+            html.Attributes.Remove("style");
+            html.SetAttributeValue("style", $"width: 0px; height: 0px;");
+
+            return doc.DocumentNode.OuterHtml;
+        }
+
+        public static string RemoveTagFromHtml(string html, string kyHieu = null, int hinhThucHienThiSoVe = 1, string nguoiChuyenDoi = null)
+        {
+            html = html.Replace("[(dd)]", "&nbsp;");
+            html = html.Replace("[(mm)]", "&nbsp;");
+            html = html.Replace("[(yy)]", "&nbsp;");
+
+            List<string> wordKeys = Enum.GetValues(typeof(LoaiChiTietTuyChonNoiDung))
+                .Cast<LoaiChiTietTuyChonNoiDung>()
+                .Select(v => $"[({v})]")
+                .ToList();
+
+            foreach (var key in wordKeys)
+            {
+                if (key == MauHoaDonHelper.GenerateTicketTag(LoaiChiTietTuyChonNoiDung.KyHieu))
+                {
+                    html = html.Replace(key, kyHieu ?? string.Empty);
+                }
+                else if (key == MauHoaDonHelper.GenerateTicketTag(LoaiChiTietTuyChonNoiDung.SoHoaDon))
+                {
+                    html = html.Replace(key, !string.IsNullOrEmpty(kyHieu) ? (hinhThucHienThiSoVe == 1 ? "00000000" : "0") : string.Empty);
+                }
+                else if (key == MauHoaDonHelper.GenerateTicketTag(LoaiChiTietTuyChonNoiDung.TenNguoiChuyenDoi))
+                {
+                    html = html.Replace(key, nguoiChuyenDoi ?? string.Empty);
+                }
+                else if (key == MauHoaDonHelper.GenerateTicketTag(LoaiChiTietTuyChonNoiDung.NgayChuyenDoi))
+                {
+                    html = html.Replace(key, !string.IsNullOrEmpty(nguoiChuyenDoi) ? DateTime.Now.ToString("dd/MM/yyyy") : string.Empty);
+                }
+                else
+                {
+                    html = html.Replace(key, "");
+                }
+            }
+
+            return html;
+        }
+
+        public static string VisibleConvertion(string html)
+        {
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+
+            foreach (var item in doc.DocumentNode.SelectNodes("//*[@data-field]"))
+            {
+                var dataField = item.GetAttributeValue("data-field", "");
+
+                if (dataField == Enum.GetName(typeof(LoaiChiTietTuyChonNoiDung), LoaiChiTietTuyChonNoiDung.TenNguoiChuyenDoi) ||
+                    dataField == Enum.GetName(typeof(LoaiChiTietTuyChonNoiDung), LoaiChiTietTuyChonNoiDung.NgayChuyenDoi))
+                {
+                    string attr = item.Attributes["class"].Value;
+
+                    item.SetAttributeValue("class", attr.Replace("display-none", ""));
+                }
+            }
+
+            return doc.DocumentNode.OuterHtml;
+        }
+
+        public static string GetMenhGiaByLoaiMau(this LoaiMauHoaDon loaiMauHoaDon)
+        {
+            string result = string.Empty;
+            switch (loaiMauHoaDon)
+            {
+                case LoaiMauHoaDon.VeVanTaiHanhKhachTheHienMenhGia:
+                case LoaiMauHoaDon.VeDichVuTheHienMenhGia:
+                case LoaiMauHoaDon.VeDichVuCongIchTheHienMenhGia:
+                case LoaiMauHoaDon.VeXeBuytTheHienMenhGia:
+                    result = "Thể hiện mệnh giá";
+                    break;
+                case LoaiMauHoaDon.VeVanTaiHanhKhachKhongTheHienMenhGia:
+                case LoaiMauHoaDon.VeDichVuKhongTheHienMenhGia:
+                    result = "Không thể hiện mệnh giá";
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
+        }
+
+        public static string ReplaceValue(this string content, HoaDonDienTuViewModel model, List<TuyChonViewModel> tuyChons)
+        {
+            content = content.Replace("[(SoHoaDon)]", model.SoHoaDon.ToString());
+            content = content.Replace("[(KyHieu)]", model.KyHieu);
+            content = content.Replace("[(SoTuyen)]", model.SoTuyen);
+            content = content.Replace("[(SoXe)]", model.SoXe);
+            content = content.Replace("[(ThoiGianKhoiHanh)]", model.ThoiGianKhoiHanh.Value.ToString("dd/MM/yyy HH:mm"));
+
+            string tienChuaThue = model.TongTienHang.Value.FormatNumberByTuyChon(tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, true);
+            content = content.Replace("[(CongTienHang)]", tienChuaThue);
+
+            content = content.Replace("[(ThueGTGT)]", model.ThueGTGT);
+
+            string tienThueGTGT = model.TongTienThueGTGT.Value.FormatNumberByTuyChon(tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, true);
+            content = content.Replace("[(TienThueGTGT)]", tienThueGTGT);
+
+            string tongTienThanhToan = model.TongTienThanhToan.Value.FormatNumberByTuyChon(tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, true);
+            content = content.Replace("[(TongTienThanhToan)]", tongTienThanhToan);
+
+            return content;
+        }
+
+        public static string AddStyleToTicketHTML(this string content, IHostingEnvironment env)
+        {
+            var doc = new HtmlDocument();
+            doc.LoadHtml(content);
+
+            var nodes = doc.DocumentNode.SelectNodes("//link[@type='text/css']");
+
+            foreach (var node in nodes)
+            {
+                node.Remove();
+            }
+
+            var head = doc.DocumentNode.SelectSingleNode("//head");
+
+            var cssPath = Path.Combine(env.WebRootPath, "assets/css/ticket.css");
+
+            string style = string.Format("<style>{0}</style>", File.ReadAllText(cssPath));
+            HtmlNode styleNode = HtmlNode.CreateNode(style);
+
+            head.AppendChild(styleNode);
+
+            return doc.DocumentNode.OuterHtml;
+        }
+
+        public static string AddScollToViewTicketHTML(this string content)
+        {
+            var doc = new HtmlDocument();
+            doc.LoadHtml(content);
+
+            var html = doc.DocumentNode.SelectSingleNode("//html");
+
+            html.Attributes.Remove("class");
+
+            var container = doc.DocumentNode.SelectSingleNode("//div[@class='component-container']");
+
+            container.SetAttributeValue("style", "overflow-x: hidden; overflow-y: auto; max-height: 88vh;");
+
+            return doc.DocumentNode.OuterHtml;
+        }
+
+        public static string RemoveScrollFromViewTicketHTML(this string content)
+        {
+            var doc = new HtmlDocument();
+            doc.LoadHtml(content);
+
+            var html = doc.DocumentNode.SelectSingleNode("//html");
+
+            html.SetAttributeValue("class", "scroll");
+
+            var container = doc.DocumentNode.SelectSingleNode("//div[@class='component-container']");
+
+            container.Attributes.Remove("style");
+
+            return doc.DocumentNode.OuterHtml;
         }
     }
 }

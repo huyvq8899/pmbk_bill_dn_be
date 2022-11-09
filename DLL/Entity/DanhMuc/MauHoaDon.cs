@@ -1,5 +1,6 @@
 ﻿using DLL.Entity.Config;
 using DLL.Entity.QuanLy;
+using DLL.Entity.Ticket;
 using DLL.Enums;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,10 @@ namespace DLL.Entity.DanhMuc
         public string TenFileChuyenDoi { get; set; }
         public string TenFileChietKhau { get; set; }
         public string TenFileNgoaiTe { get; set; }
-
+        /// vé
+        public Guid? TuyenDuongId { get; set; }
+        ///
+        public TuyenDuong TuyenDuong { get; set; }
         public List<MauHoaDonThietLapMacDinh> MauHoaDonThietLapMacDinhs { get; set; }
         public List<MauHoaDonTuyChinhChiTiet> MauHoaDonTuyChinhChiTiets { get; set; }
         public List<BoKyHieuHoaDon> BoKyHieuHoaDons { get; set; }

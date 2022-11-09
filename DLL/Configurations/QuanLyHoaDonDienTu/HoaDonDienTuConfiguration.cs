@@ -1,5 +1,4 @@
 ﻿using DLL.Entity.QuanLyHoaDon;
-using DLL.Enums;
 using DLL.Extentions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -40,6 +39,19 @@ namespace DLL.Configurations.QuanLyHoaDonDienTu
             entity.Property(c => c.PhuongThucVanChuyen).HasMaxLength(50);
             entity.Property(c => c.DiaChiKhoNhanHang).HasMaxLength(400);
             entity.Property(c => c.HoTenNguoiNhanHang).HasMaxLength(100);
+
+            entity.Property(r => r.SoLuong).HasColumnType("decimal(21,6)");
+            entity.Property(c => c.SoXe).HasMaxLength(256);
+            entity.Property(c => c.SoGhe).HasMaxLength(256);
+            entity.Property(c => c.MaTraCuu).HasMaxLength(256);
+            entity.Property(c => c.MaCuaCQT).HasMaxLength(256);
+            entity.Property(c => c.SoTuyen).HasMaxLength(256);
+            entity.Property(c => c.ThueGTGT).HasMaxLength(16);
+
+            entity.HasOne(u => u.Xe)
+            .WithMany(s => s.HoaDonDienTus)
+            .HasForeignKey(sc => sc.XeId)
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
