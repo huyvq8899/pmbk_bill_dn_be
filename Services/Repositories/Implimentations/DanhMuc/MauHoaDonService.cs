@@ -1569,7 +1569,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             var oldFiles = await (from mf in _db.MauHoaDonFiles
                                   join mhd in _db.MauHoaDons on mf.MauHoaDonId equals mhd.MauHoaDonId
-                                  where mhd.LoaiHoaDon == LoaiHoaDon.PXKKiemVanChuyenNoiBo || mhd.LoaiHoaDon == LoaiHoaDon.PXKHangGuiBanDaiLy
+                              //    where mhd.LoaiHoaDon == LoaiHoaDon.PXKKiemVanChuyenNoiBo || mhd.LoaiHoaDon == LoaiHoaDon.PXKHangGuiBanDaiLy
                                   select mf).ToListAsync();
 
             foreach (var item in oldFiles)

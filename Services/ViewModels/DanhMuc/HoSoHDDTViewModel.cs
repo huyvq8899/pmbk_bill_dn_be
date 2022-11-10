@@ -77,5 +77,7 @@ namespace Services.ViewModels.DanhMuc
         public List<CityParam> CoQuanThueCapCucs { get; set; }
         [IgnoreLogging]
         public List<DistrictsParam> CoQuanThueQuanLys { get; set; }
+        [IgnoreLogging]
+        public string PhatHanhBoi { get; set; }
     }
 }
