@@ -627,12 +627,15 @@ namespace Services.Repositories.Implimentations
 
                     foreach (var item in groupThueGTGT)
                     {
-                        hDonGTGT.DLHDon.NDHDon.TToan.THTTLTSuat.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LTSuat
+                        if (!string.IsNullOrEmpty(item.ThueGTGT))
                         {
-                            TSuat = item.ThueGTGT,
-                            ThTien = item.ThanhTien ?? 0,
-                            TThue = item.TienThueGTGT,
-                        });
+                            hDonGTGT.DLHDon.NDHDon.TToan.THTTLTSuat.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LTSuat
+                            {
+                                TSuat = item.ThueGTGT,
+                                ThTien = item.ThanhTien ?? 0,
+                                TThue = item.TienThueGTGT,
+                            });
+                        }
                     }
                     #endregion
 
