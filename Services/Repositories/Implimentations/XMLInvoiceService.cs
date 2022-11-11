@@ -422,7 +422,7 @@ namespace Services.Repositories.Implimentations
         {
             foreach (var item in xd.Descendants())
             {
-                if (item.Name.LocalName != "MTDTChieu" && item.Name.LocalName != "DSCKS" && item.Name.LocalName != "NBan" && item.Name.LocalName != "NNT" && (item.IsEmpty || string.IsNullOrWhiteSpace(item.Value) || string.IsNullOrEmpty(item.Value)))
+                if (item.Name.LocalName != "TSuat" && item.Name.LocalName != "MTDTChieu" && item.Name.LocalName != "DSCKS" && item.Name.LocalName != "NBan" && item.Name.LocalName != "NNT" && (item.IsEmpty || string.IsNullOrWhiteSpace(item.Value) || string.IsNullOrEmpty(item.Value)))
                 {
                     yield return item;
                 }
