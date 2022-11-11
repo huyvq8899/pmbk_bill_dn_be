@@ -149,8 +149,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> InsertVeTrongNgayFromMobileAsync(HoaDonDienTuViewModel model);
         Task<FileReturn> PreviewHTMLTicketAsync(HoaDonDienTuViewModel model);
         FileReturn PrintToPDF(List<string> base64s);
-        Task<(string Message, int Type)> WaitForTCTResonseAsync(List<string> ids);
-        Task<HoaDonDienTuViewModel> GetThongTinByMaTraCuuAsync(string maTraCuu);
+        Task<(string Message, int Type)> WaitForTCTResonseTicketAsync(List<string> ids);
 
         /// <summary>
         /// Get List tuyến đường có vé trong ngày

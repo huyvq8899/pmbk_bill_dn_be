@@ -993,6 +993,14 @@
     <Content Include="wwwroot\FilesUpload\UAT0200784873999Invoice\xml\unsign\TK-ffc935de-43a1-474c-a2bb-4947064e88f9.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="wwwroot\assets\js\bootstrap-colorpicker-plus.min.js" />
+    <None Include="wwwroot\assets\js\bootstrap-colorpicker.min.js" />
+    <None Include="wwwroot\assets\js\colResizable-1.6.min.js" />
+    <None Include="wwwroot\assets\js\jquery-3.3.1.min.js" />
+    <None Include="wwwroot\assets\js\jquery-ui.js" />
+    <None Include="wwwroot\assets\js\jQuery.resizableColumns.js" />
+    <None Include="wwwroot\assets\js\jquery.ui.rotatable.js" />
+    <None Include="wwwroot\assets\js\preview-ticket.js" />
     <None Include="wwwroot\FilesUpload\DemoDAInvoice\attach\0.2.HDBK.V123_QUAN LY - LK den 2021-11-06_59f9d6d6-2640-436a-b4a7-ae30028e38fd.xlsx" />
     <None Include="wwwroot\FilesUpload\DemoDAInvoice\attach\32-119_8c59a561-6f93-462e-98eb-1fbb73764b31.docx" />
     <None Include="wwwroot\FilesUpload\DemoDAInvoice\attach\32-119_a3765dbc-0245-47fa-afc2-93f08d662f34.docx" />

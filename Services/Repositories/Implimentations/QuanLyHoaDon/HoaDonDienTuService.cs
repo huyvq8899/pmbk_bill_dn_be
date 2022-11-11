@@ -18935,9 +18935,83 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result;
         }
 
-        public Task<List<string>> PreviewMultiTicketByIdsAsync(List<string> Ids)
+        public async Task<List<string>> PreviewMultiTicketByIdsAsync(List<string> Ids)
         {
-            throw new NotImplementedException();
+            List<string> result = new List<string>();
+
+            var query = from vdt in _db.HoaDonDienTus
+                        join bkh in _db.BoKyHieuHoaDons on vdt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                        join mhd in _db.MauHoaDons on vdt.MauHoaDonId equals mhd.MauHoaDonId
+                        join td in _db.TuyenDuongs on vdt.TuyenDuongId equals td.TuyenDuongId
+                        where Ids.Contains(vdt.HoaDonDienTuId)
+                        select new HoaDonDienTuViewModel
+                        {
+                            HoaDonDienTuId = vdt.HoaDonDienTuId,
+                            BoKyHieuHoaDonId = vdt.BoKyHieuHoaDonId,
+                            TuyenDuongId = vdt.TuyenDuongId,
+                            MauHoaDonId = vdt.MauHoaDonId,
+                            LoaiMau = mhd.LoaiMauHoaDon,
+                            TenLoaiMau = mhd.LoaiMauHoaDon.GetDescription(),
+                            LoaiHoaDon = (int)mhd.LoaiHoaDon,
+                            TenLoaiHoaDon = mhd.LoaiHoaDon == LoaiHoaDon.TemVeTheLaHoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng",
+                            TenMau = mhd.Ten,
+                            KyHieu = bkh.KyHieu,
+                            TenTuyenDuong = td.TenTuyenDuong,
+                            SoLuong = vdt.SoLuong,
+                            TongTienThanhToan = vdt.TongTienThanhToan,
+                            NgayHoaDon = vdt.NgayHoaDon,
+                            ThoiGianKhoiHanh = vdt.ThoiGianKhoiHanh,
+                            XeId = vdt.XeId,
+                            SoXe = vdt.SoXe,
+                            SoGhe = vdt.SoGhe,
+                            SoTuyen = vdt.SoTuyen,
+                            TrangThaiQuyTrinh = vdt.TrangThaiQuyTrinh,
+                            BenDen = vdt.BenDen,
+                            BenDi = vdt.BenDi,
+                            ThueGTGT = vdt.ThueGTGT,
+                            TongTienHang = vdt.TongTienHang,
+                            TongTienThueGTGT = vdt.TongTienThueGTGT,
+                            CreatedBy = vdt.CreatedBy,
+                            ModifyBy = vdt.ModifyBy,
+                            CreatedDate = vdt.CreatedDate,
+                            ModifyDate = vdt.ModifyDate,
+                            Status = vdt.Status,
+                            SoChuyen = vdt.SoChuyen,
+                            IsVeTam = vdt.IsVeTam,
+                            STT = td.STT,
+                            SoHoaDon = vdt.SoHoaDon,
+                            MaCuaCQT = vdt.MaCuaCQT,
+                            MaTraCuu = vdt.MaTraCuu,
+                            NgayKy = vdt.NgayKy,
+                            SoChang = vdt.SoChang,
+                        };
+
+            var queryList = await query.ToListAsync();
+            var mauHoaDonIds = queryList.Select(x => x.MauHoaDonId).ToList();
+            var fileDatas = await _db.FileDatas
+                .Where(x => mauHoaDonIds.Contains(x.RefId))
+                .Select(x => new FileData
+                {
+                    RefId = x.RefId,
+                    Content = x.Content
+                })
+                .ToListAsync();
+            var tuyChons = await _TuyChonService.GetAllAsync();
+
+            foreach (var id in Ids)
+            {
+                var item = queryList.FirstOrDefault(x => x.HoaDonDienTuId == id);
+
+                var fileData = fileDatas.FirstOrDefault(x => x.RefId == item.MauHoaDonId);
+
+                var content = fileData.Content.Insert(5, " style=\"margin:14px auto;\"").ReplaceValue(item, tuyChons).AddScollToViewTicketHTML();
+
+                string base64 = "data:text/html;base64," + TextHelper.Base64Encode(content);
+
+                result.Add(base64);
+            }
+
+            return result;
         }
 
         public async Task<bool> UpdateVeAsync(HoaDonDienTuViewModel model)
@@ -19106,14 +19180,55 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
 
-        public Task<(string Message, int Type)> WaitForTCTResonseAsync(List<string> ids)
+        public async Task<(string Message, int Type)> WaitForTCTResonseTicketAsync(List<string> ids)
         {
-            throw new NotImplementedException();
+            timeToListenResTCT = 0;
+            var result = await SetIntervalMultiTicket(ids);
+            return result;
         }
 
-        public Task<HoaDonDienTuViewModel> GetThongTinByMaTraCuuAsync(string maTraCuu)
+        private async Task<(string Message, int Type)> SetIntervalMultiTicket(List<string> ids)
         {
-            throw new NotImplementedException();
+            string message = string.Empty;
+
+            while (timeToListenResTCT <= 10)
+            {
+                var trangThaiQuyTrinhs = await _db.HoaDonDienTus.Where(x => ids.Contains(x.HoaDonDienTuId)).Select(x => x.TrangThaiQuyTrinh).ToListAsync();
+
+                var continueWait = trangThaiQuyTrinhs.Any(x => x == (int)TrangThaiQuyTrinh.GuiKhongLoi);
+                if (continueWait)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
+                    timeToListenResTCT += 1;
+                }
+
+                if (trangThaiQuyTrinhs.Any(x => x == (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa))
+                {
+                    message = "Có vé <strong>Không đủ điều kiện cấp mã</strong>. Vui lòng kiểm tra lại!";
+                    return (message, 1);
+                }
+
+                if (trangThaiQuyTrinhs.Any(x => x == (int)TrangThaiQuyTrinh.HoaDonKhongHopLe))
+                {
+                    message = "Có vé <strong>Không hợp lệ</strong>. Vui lòng kiểm tra lại!";
+                    return (message, 1);
+                }
+
+                if (trangThaiQuyTrinhs.All(x => x == (int)TrangThaiQuyTrinh.HoaDonHopLe))
+                {
+                    message = "<strong>Vé hợp lệ</strong>.";
+                    return (message, 2);
+                }
+
+                if (trangThaiQuyTrinhs.All(x => x == (int)TrangThaiQuyTrinh.CQTDaCapMa))
+                {
+                    message = "<strong>CQT đã cấp mã</strong> thành công.";
+                    return (message, 2);
+                }
+            }
+
+            message = "Vé đã được gửi lên CQT. Bạn cần theo dõi trạng thái cấp mã của vé ở <strong>Vé đã xuất/Trạng thái quy trình</strong> hoặc <strong>Bảng kê Thông điệp gửi/Trạng thái gửi và phản hồi từ TCTN và CQT.</strong>";
+            return (message, 1);
         }
 
         /// <summary>

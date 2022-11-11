@@ -555,7 +555,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                     x.HinhThucHoaDon == @params.HinhThucHoaDon &&
                                     x.LoaiHoaDon == @params.LoaiHoaDon &&
                                     x.LoaiMauHoaDon == @params.LoaiMau &&
-                                    (@params.LoaiHoaDon == 2 || @params.LoaiHoaDon == 7 || @params.LoaiHoaDon == 8 || x.LoaiThueGTGT == @params.LoaiThueGTGT) &&
+                                    (@params.LoaiHoaDon == 2 || @params.LoaiHoaDon == 7 || @params.LoaiHoaDon == 8 || @params.LoaiHoaDon == 9 || @params.LoaiHoaDon == 10 || x.LoaiThueGTGT == @params.LoaiThueGTGT) &&
                                     x.LoaiNgonNgu == @params.LoaiNgonNgu &&
                                     x.LoaiKhoGiay == @params.LoaiKhoGiay)
                         .Select(x => new MauParam

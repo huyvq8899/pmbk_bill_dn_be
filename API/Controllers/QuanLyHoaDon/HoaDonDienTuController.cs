@@ -2,6 +2,7 @@
 using DLL;
 using DLL.Constants;
 using DLL.Enums;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -1484,5 +1485,216 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpPost("GetListMauVeCanXuat")]
+        public async Task<IActionResult> GetListMauVeCanXuat(PagingParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetListMauVeCanXuatAsync(pagingParams);
+            return Ok(result);
+        }
+
+        [HttpGet("GetListVeTrongNgay/{loaiNghiepVu}")]
+        public async Task<IActionResult> GetListVeTrongNgay(int loaiNghiepVu)
+        {
+            var result = await _hoaDonDienTuService.GetListVeTrongNgayAsync(loaiNghiepVu);
+            return Ok(result);
+        }
+
+        [HttpPost("InsertVe")]
+        public async Task<IActionResult> InsertVe(HoaDonDienTuViewModel model)
+        {
+            var result = await _hoaDonDienTuService.InsertVeAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost("XuatMultiVe")]
+        public async Task<IActionResult> XuatMultiVe(List<ParamPhatHanhHD> list)
+        {
+            var result = await _hoaDonDienTuService.XuatMultiVeAsync(list);
+            return Ok(result);
+        }
+
+        [HttpGet("GetListByTuyenDuong/{tuyenDuongId}")]
+        public async Task<IActionResult> GetListByTuyenDuong(string tuyenDuongId)
+        {
+            var result = await _hoaDonDienTuService.GetListByTuyenDuongAsync(tuyenDuongId);
+            return Ok(result);
+        }
+
+        [HttpDelete("DeleteAllByLoai/{loaiNghiepVu}")]
+        public async Task<IActionResult> DeleteAllByLoai(int loaiNghiepVu)
+        {
+            var result = await _hoaDonDienTuService.DeleteAllByLoaiAsync(loaiNghiepVu);
+            return Ok(result);
+        }
+
+        [HttpGet("GetVeByIdAsync/{Id}")]
+        public async Task<IActionResult> GetVeByIdAsync(string Id)
+        {
+            var result = await _hoaDonDienTuService.GetVeByIdAsync(Id);
+            return Ok(result);
+        }
+
+        [HttpPost("SaveAllVeNhap")]
+        public async Task<IActionResult> SaveAllVeNhap(List<HoaDonDienTuViewModel> list)
+        {
+            var result = await _hoaDonDienTuService.SaveAllVeNhapAsync(list);
+            return Ok(result);
+        }
+
+        [HttpPost("PreviewPDFXuatVe")]
+        public async Task<IActionResult> PreviewPDFXuatVe(HoaDonDienTuViewModel model)
+        {
+            var result = await _hoaDonDienTuService.PreviewPDFXuatVeAsync(model);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        /// <summary>
+        /// Update vé
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut("UpdateVe")]
+        public async Task<IActionResult> UpdateVe(HoaDonDienTuViewModel model)
+        {
+            var result = await _hoaDonDienTuService.UpdateVeAsync(model);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Lấy số chuyến tiếp theo trong ngày
+        /// </summary>
+        /// <param name="tuyenDuongId"></param>
+        /// <returns></returns>
+        [HttpGet("GetSoChuyenByTuyenDuong/{tuyenDuongId}")]
+        public async Task<IActionResult> GetSoChuyenByTuyenDuong(string tuyenDuongId)
+        {
+            var result = await _hoaDonDienTuService.GetSoChuyenByTuyenDuongAsync(tuyenDuongId);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Get List tuyến đường có vé trong ngày
+        /// </summary>
+        /// <param name="SoChuyen"></param>
+        /// <returns></returns>
+        [HttpGet("GetVeToMobile")]
+        public async Task<IActionResult> GetVeToMobile(int SoChuyen)
+        {
+            var result = await _hoaDonDienTuService.GetVeToMobileAsync(SoChuyen);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Get các bến mà xe đi qua trong tuyến
+        /// </summary>
+        /// <param name="SoChuyen"></param>
+        /// <returns></returns>
+        [HttpGet("GetBenToMobile")]
+        public async Task<IActionResult> GetBenToMobile(int SoChuyen)
+        {
+            var result = await _hoaDonDienTuService.GetBenToMobileAsync(SoChuyen);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Lấy các vé theo tuyến đường trong ngày
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        [HttpPost("GetListVeBySoChuyenToMobile")]
+        public async Task<IActionResult> GetListVeBySoChuyenToMobile(MobileParamsExport @params)
+        {
+            var result = await _hoaDonDienTuService.GetListVeBySoChuyenToMobileAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpPost("GetListDeXuatVeDongLoat")]
+        public async Task<IActionResult> GetListDeXuatVeDongLoat(List<HoaDonDienTuViewModel> list)
+        {
+            var result = await _hoaDonDienTuService.GetListDeXuatVeDongLoatAsync(list);
+            return Ok(result);
+        }
+
+        [HttpPost("InsertVeTrongNgayFromMobile")]
+        public async Task<IActionResult> InsertVeTrongNgayFromMobile(HoaDonDienTuViewModel model)
+        {
+            var result = await _hoaDonDienTuService.InsertVeTrongNgayFromMobileAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost("PreviewHTMLTicket")]
+        public async Task<IActionResult> PreviewHTMLTicket(HoaDonDienTuViewModel model)
+        {
+            var result = await _hoaDonDienTuService.PreviewHTMLTicketAsync(model);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Xuất ra số lượng vé theo bến
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        [HttpPost("ExportQuanLyVeMobile")]
+        public async Task<IActionResult> ExportQuanLyVeMobile(QuanLyVeParams @params)
+        {
+            var result = await _hoaDonDienTuService.ExportQuanLyVeMobileAsync(@params);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Xuất báo cáo theo vé đã xuất theo tuyến đường
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        [HttpPost("ExportBaoCaoMobile")]
+        public async Task<IActionResult> ExportBaoCaoMobile(QuanLyVeParams @params)
+        {
+            var result = await _hoaDonDienTuService.ExportBaoCaoMobileAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpPost("PreviewMultiTicketByIds")]
+        public async Task<IActionResult> PreviewMultiTicketByIds(List<string> ids)
+        {
+            var result = await _hoaDonDienTuService.PreviewMultiTicketByIdsAsync(ids);
+            return Ok(result);
+        }
+
+        [HttpPost("PrintToPDF")]
+        public IActionResult PrintToPDF(List<string> base64s)
+        {
+            var result = _hoaDonDienTuService.PrintToPDF(base64s);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+        /// <summary>
+        /// Xem đồng loạt vé
+        /// </summary>
+        /// <param name="fileArray"></param>
+        /// <returns></returns>
+        [HttpPost("XemVeHangLoat")]
+        public IActionResult XemVeHangLoat(List<string> fileArray)
+        {
+            var result = _hoaDonDienTuService.XemVeDongLoat(fileArray);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPost("WaitForTCTResonseTicket")]
+        public async Task<IActionResult> WaitForTCTResonseTicket(List<string> ids)
+        {
+            var result = await _hoaDonDienTuService.WaitForTCTResonseTicketAsync(ids);
+            return Ok(new { result.Message, result.Type });
+        }
+
+        /// <summary>
+        /// Lấy danh sách vé đã xuất trên mobile
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        [HttpPost("GetListVeMobile")]
+        public async Task<IActionResult> GetListVeMobile(QuanLyVeParams @params)
+        {
+            var result = await _hoaDonDienTuService.GetListVeMobileAsync(@params);
+            return Ok(result);
+        }
     }
 }
