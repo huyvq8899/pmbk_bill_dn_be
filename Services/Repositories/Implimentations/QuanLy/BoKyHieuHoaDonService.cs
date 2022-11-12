@@ -852,14 +852,40 @@ namespace Services.Repositories.Implimentations.QuanLy
                     {
                         List<MauHoaDonXacThuc> mauHoaDonXacThucs = new List<MauHoaDonXacThuc>();
 
-                        var listMauHoaDon = await _mauHoaDonService.GetListMauHoaDonXacThucAsync(model.MauHoaDonId);
-                        foreach (var item in listMauHoaDon)
+                        switch (entity.LoaiHoaDon)
                         {
-                            mauHoaDonXacThucs.Add(new MauHoaDonXacThuc
-                            {
-                                FileByte = item.FileByte,
-                                FileType = item.FileType
-                            });
+                            case LoaiHoaDon.HoaDonGTGT:
+                            case LoaiHoaDon.HoaDonBanHang:
+                            case LoaiHoaDon.HoaDonBanTaiSanCong:
+                            case LoaiHoaDon.HoaDonBanHangDuTruQuocGia:
+                            case LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD:
+                            case LoaiHoaDon.PXKKiemVanChuyenNoiBo:
+                            case LoaiHoaDon.PXKHangGuiBanDaiLy:
+                                var listMauHoaDon = await _mauHoaDonService.GetListMauHoaDonXacThucAsync(model.MauHoaDonId);
+                                foreach (var item in listMauHoaDon)
+                                {
+                                    mauHoaDonXacThucs.Add(new MauHoaDonXacThuc
+                                    {
+                                        FileByte = item.FileByte,
+                                        FileType = item.FileType
+                                    });
+                                }
+                                break;
+                            case LoaiHoaDon.CacLoaiHoaDonKhac:
+                            case LoaiHoaDon.TemVeTheLaHoaDonGTGT:
+                            case LoaiHoaDon.TemVeTheLaHoaDonBanHang:
+                                var listMauVe = await _mauHoaDonService.GetListMauVeXacThucAsync(model.MauHoaDonId);
+                                foreach (var item in listMauVe)
+                                {
+                                    mauHoaDonXacThucs.Add(new MauHoaDonXacThuc
+                                    {
+                                        FileByte = item.FileByte,
+                                        FileType = item.FileType
+                                    });
+                                }
+                                break;
+                            default:
+                                break;
                         }
 
                         nhatKyDaXacThuc.MauHoaDonXacThucs = mauHoaDonXacThucs;
@@ -1196,6 +1222,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                 if (ndtKhai.LHDSDung.HDKhac == 1)
                 {
                     result.LoaiHoaDons.Add(LoaiHoaDon.CacLoaiHoaDonKhac);
+                    result.LoaiHoaDons.Add(LoaiHoaDon.TemVeTheLaHoaDonGTGT);
+                    result.LoaiHoaDons.Add(LoaiHoaDon.TemVeTheLaHoaDonBanHang);
                 }
                 if (ndtKhai.LHDSDung.CTu == 1)
                 {

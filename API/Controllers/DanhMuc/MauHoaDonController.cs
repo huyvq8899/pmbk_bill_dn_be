@@ -268,6 +268,20 @@ namespace API.Controllers.DanhMuc
             return File(result.Bytes, result.ContentType, result.FileName);
         }
 
+        [HttpPost("PreviewTicket")]
+        public async Task<IActionResult> PreviewTicket(MauHoaDonFileParams @params)
+        {
+            var result = await _mauHoaDonService.PreviewTicketAsync(@params);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPost("PreviewFileByType")]
+        public async Task<IActionResult> PreviewFileByType(MauHoaDonFileParams @params)
+        {
+            var result = await _mauHoaDonService.PreviewFileByTypeAsync(@params);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
         [HttpPost("DownloadFile")]
         public async Task<IActionResult> DownloadFile(MauHoaDonFileParams @params)
         {

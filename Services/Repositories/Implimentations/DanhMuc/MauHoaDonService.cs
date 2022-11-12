@@ -24,6 +24,8 @@ using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
 using Spire.Pdf;
+using Spire.Pdf.Graphics;
+using Spire.Pdf.HtmlConverter.Qt;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,6 +33,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Implimentations.DanhMuc
@@ -59,6 +62,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<bool> DeleteAsync(string id)
         {
             var entity = await _db.MauHoaDons.Include(x => x.MauHoaDonFiles).FirstOrDefaultAsync(x => x.MauHoaDonId == id);
+
+            var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == id);
+            if (fileData != null)
+            {
+                _db.FileDatas.Remove(fileData);
+            }
 
             // delelte files from docs folder
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
@@ -609,11 +618,28 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model)
         {
             // add mau hoa don
+            model.MauHoaDonId = Guid.NewGuid().ToString();
             var entity = _mp.Map<MauHoaDon>(model);
             await _db.MauHoaDons.AddAsync(entity);
+
+            model.HtmlContent = model.HtmlContent.AddStyleToTicketHTML(_hostingEnvironment);
+
+            if (!string.IsNullOrEmpty(model.HtmlContent))
+            {
+                var fileData = new DLL.Entity.FileData
+                {
+                    RefId = model.MauHoaDonId,
+                    Type = 1,
+                    DateTime = DateTime.Now,
+                    Content = model.HtmlContent,
+                    Binary = Encoding.ASCII.GetBytes(model.HtmlContent)
+                };
+
+                await _db.FileDatas.AddAsync(fileData);
+            }
+
             await _db.SaveChangesAsync();
             var result = _mp.Map<MauHoaDonViewModel>(entity);
-
             return result;
         }
 
@@ -629,11 +655,24 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 .ToListAsync();
             _db.MauHoaDonTuyChinhChiTiets.RemoveRange(mauHoaDonTuyChinhChiTiets);
 
-            var entity = await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId);
-            _db.Entry(entity).CurrentValues.SetValues(model);
-            entity.MauHoaDonThietLapMacDinhs = _mp.Map<List<MauHoaDonThietLapMacDinh>>(model.MauHoaDonThietLapMacDinhs);
-            entity.MauHoaDonTuyChinhChiTiets = _mp.Map<List<MauHoaDonTuyChinhChiTiet>>(model.MauHoaDonTuyChinhChiTiets);
-            entity.MauHoaDonFiles = _mp.Map<List<MauHoaDonFile>>(model.MauHoaDonFiles);
+            var fileDatas = await _db.FileDatas.Where(x => x.RefId == model.MauHoaDonId).ToListAsync();
+            _db.FileDatas.RemoveRange(fileDatas);
+
+            var entity = _mp.Map<MauHoaDon>(model);
+            if (!string.IsNullOrEmpty(model.HtmlContent))
+            {
+                var fileData = new DLL.Entity.FileData
+                {
+                    RefId = model.MauHoaDonId,
+                    Type = 1,
+                    DateTime = DateTime.Now,
+                    Content = model.HtmlContent,
+                    Binary = Encoding.ASCII.GetBytes(model.HtmlContent)
+                };
+
+                await _db.FileDatas.AddAsync(fileData);
+            }
+            _db.MauHoaDons.Update(entity);
             await _db.SaveChangesAsync();
             return true;
         }
@@ -1022,10 +1061,36 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 {
                     MauHoaDonId = x.MauHoaDonId,
                     Ten = x.Ten,
-                    NgayKy = x.NgayKy
+                    NgayKy = x.NgayKy,
+                    LoaiHoaDon = x.LoaiHoaDon,
+                    LoaiMauHoaDon = x.LoaiMauHoaDon,
+                    MenhGia = x.LoaiMauHoaDon.GetMenhGiaByLoaiMau(),
+                    LoaiThueGTGT = x.LoaiThueGTGT,
+                    TenLoaiThueGTGT = x.LoaiThueGTGT.GetDescription()
                 })
                 .OrderBy(x => x.Ten)
                 .ToListAsync();
+
+            if ((@params.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT) || (@params.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonBanHang))
+            {
+                switch (@params.LoaiMau)
+                {
+                    case 1: // Vé vận tải hành khách
+                        result = result.Where(x => x.LoaiMauHoaDon == LoaiMauHoaDon.VeVanTaiHanhKhachTheHienMenhGia || x.LoaiMauHoaDon == LoaiMauHoaDon.VeVanTaiHanhKhachKhongTheHienMenhGia).ToList();
+                        break;
+                    case 2: // Vé dịch vụ
+                        result = result.Where(x => x.LoaiMauHoaDon == LoaiMauHoaDon.VeDichVuTheHienMenhGia || x.LoaiMauHoaDon == LoaiMauHoaDon.VeDichVuKhongTheHienMenhGia).ToList();
+                        break;
+                    case 3: // Vé dịch vụ công ích
+                        result = result.Where(x => x.LoaiMauHoaDon == LoaiMauHoaDon.VeDichVuCongIchTheHienMenhGia).ToList();
+                        break;
+                    case 4: // Vé xe buýt
+                        result = result.Where(x => x.LoaiMauHoaDon == LoaiMauHoaDon.VeXeBuytTheHienMenhGia).ToList();
+                        break;
+                    default:
+                        break;
+                }
+            }
 
             return result;
         }
@@ -1584,6 +1649,141 @@ namespace Services.Repositories.Implimentations.DanhMuc
             _db.MauHoaDonFiles.RemoveRange(oldFiles);
             var result = await _db.SaveChangesAsync();
             return result > 0;
+        }
+
+        public async Task<List<MauHoaDonXacThuc>> GetListMauVeXacThucAsync(string id)
+        {
+            List<MauHoaDonXacThuc> result = new List<MauHoaDonXacThuc>();
+            var mauHoaDonIds = id.Split(";");
+
+            var fileDatas = await _db.FileDatas
+                .Where(x => mauHoaDonIds.Contains(x.RefId))
+                .ToListAsync();
+
+            foreach (var mauHoaDonId in mauHoaDonIds)
+            {
+                var resultPDF = await PreviewTicketAsync(new MauHoaDonFileParams { MauHoaDonId = id });
+                result.Add(new MauHoaDonXacThuc
+                {
+                    FileByte = resultPDF.Bytes,
+                    FileType = HinhThucMauHoaDon.HoaDonMauCoBan,
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<FileReturn> PreviewTicketAsync(MauHoaDonFileParams @params)
+        {
+            // get or generate 
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            var tempFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            var groupFolderPath = Path.Combine(tempFolderPath, Guid.NewGuid().ToString());
+            if (!Directory.Exists(tempFolderPath))
+            {
+                Directory.CreateDirectory(tempFolderPath);
+            }
+
+            Directory.CreateDirectory(groupFolderPath);
+
+            // combine path
+            string htmlFileName = $"{Guid.NewGuid()}.html";
+            string pdfFileName = $"{Guid.NewGuid()}.pdf";
+            string htmlFullPath = Path.Combine(groupFolderPath, htmlFileName);
+            string pdfFullPath = Path.Combine(groupFolderPath, pdfFileName);
+
+            // get html from filedata
+            var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == @params.MauHoaDonId);
+            if (fileData == null)
+            {
+                return null;
+            }
+
+            var hinhThucHienThiSoVe = await _db.MauHoaDonThietLapMacDinhs
+                .Where(x => x.MauHoaDonId == @params.MauHoaDonId && x.Loai == LoaiThietLapMacDinh.HinhThucHienThiSoVe)
+                .Select(x => int.Parse(x.GiaTri))
+                .DefaultIfEmpty(1)
+                .FirstOrDefaultAsync();
+
+            string fullName = null;
+            bool isChuyenDoi = false;
+
+            if (@params.Loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi)
+            {
+                fullName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.FULL_NAME)?.Value;
+                fileData.Content = TextHelper.VisibleConvertion(fileData.Content);
+                isChuyenDoi = true;
+            }
+
+            fileData.Content = TextHelper.RemoveTagFromHtml(fileData.Content, @params.KyHieu, hinhThucHienThiSoVe, fullName);
+
+            // create file html
+            await File.WriteAllTextAsync(htmlFullPath, fileData.Content);
+
+            // get size from html
+            var (width, height) = fileData.Content.GetSizeFromDataAttr();
+
+            // convert html to pdf
+            HtmlConverter.Convert(htmlFullPath, pdfFullPath,
+              //enable javascript
+              true,
+
+              //load timeout
+              100 * 1000,
+
+              //page size
+              new SizeF(width * 70 / 100, height * (isChuyenDoi ? 67 : 62) / 100),
+
+              //page margins
+              new PdfMargins(0, 0));
+
+            // convert path to bytes
+            var bytes = File.ReadAllBytes(pdfFullPath);
+
+            // remove group folder
+            if (Directory.Exists(groupFolderPath))
+            {
+                Directory.Delete(groupFolderPath, true);
+            }
+
+            return new FileReturn
+            {
+                Bytes = bytes,
+                ContentType = MimeTypes.GetMimeType(pdfFullPath),
+                FileName = Path.GetFileName(pdfFullPath)
+            };
+        }
+
+        public async Task<FileReturn> PreviewFileByTypeAsync(MauHoaDonFileParams @params)
+        {
+            FileReturn result = new FileReturn();
+
+            var loaiHoaDon = await _db.MauHoaDons
+                .Where(x => x.MauHoaDonId == @params.MauHoaDonId)
+                .Select(x => x.LoaiHoaDon)
+                .FirstOrDefaultAsync();
+
+            switch (loaiHoaDon)
+            {
+                case LoaiHoaDon.HoaDonGTGT:
+                case LoaiHoaDon.HoaDonBanHang:
+                case LoaiHoaDon.HoaDonBanTaiSanCong:
+                case LoaiHoaDon.HoaDonBanHangDuTruQuocGia:
+                case LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD:
+                case LoaiHoaDon.PXKKiemVanChuyenNoiBo:
+                case LoaiHoaDon.PXKHangGuiBanDaiLy:
+                    result = await PreviewPdfAsync(@params);
+                    break;
+                case LoaiHoaDon.CacLoaiHoaDonKhac:
+                case LoaiHoaDon.TemVeTheLaHoaDonGTGT:
+                case LoaiHoaDon.TemVeTheLaHoaDonBanHang:
+                    result = await PreviewTicketAsync(@params);
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
         }
     }
 }

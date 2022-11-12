@@ -32,6 +32,8 @@ namespace Services.Repositories.Interfaces.DanhMuc
         List<EnumModel> GetListLoaiNgonNgu();
         List<EnumModel> GetListLoaiKhoGiay();
         Task<FileReturn> PreviewPdfAsync(MauHoaDonFileParams @params);
+        Task<FileReturn> PreviewTicketAsync(MauHoaDonFileParams @params);
+        Task<FileReturn> PreviewFileByTypeAsync(MauHoaDonFileParams @params);
         Task<FileReturn> DownloadFileAsync(MauHoaDonFileParams @params);
         Task<string> CheckAllowUpdateAsync(MauHoaDonViewModel model); // 0 allow
         Task<FileReturn> ExportMauHoaDonAsync(ExportMauHoaDonParams @params);
@@ -42,6 +44,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<List<MauHoaDonViewModel>> GetListFromBoKyHieuHoaDonAsync(MauHoaDonParams @params);
         string GetFileToSign();
         Task<List<MauHoaDonXacThuc>> GetListMauHoaDonXacThucAsync(string id);
+        Task<List<MauHoaDonXacThuc>> GetListMauVeXacThucAsync(string id);
         Task<FileReturn> PreviewPdfOfXacThucAsync(MauHoaDonFileParams @params);
 
         Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model);

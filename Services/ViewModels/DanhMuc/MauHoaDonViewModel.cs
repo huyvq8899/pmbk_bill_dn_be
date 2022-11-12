@@ -38,7 +38,8 @@ namespace Services.ViewModels.DanhMuc
         public LoaiNgonNgu LoaiNgonNgu { get; set; }
         [IgnoreLogging]
         public LoaiKhoGiay LoaiKhoGiay { get; set; }
-
+        [IgnoreLogging]
+        public string MenhGia { get; set; }
         [IgnoreLogging]
         public string TenLoaiHoaDon { get; set; }
         [IgnoreLogging]
@@ -49,6 +50,11 @@ namespace Services.ViewModels.DanhMuc
         public string TenLoaiMau { get; set; }
         [IgnoreLogging]
         public string NgayCapNhatFilter { get; set; }
+        [IgnoreLogging]
+        public string TenLoaiThueGTGT { get; set; }
+        /// vé
+        [IgnoreLogging]
+        public Guid? TuyenDuongId { get; set; }
         ///////////////  property temp  //////////////////////////
         [IgnoreLogging]
         public string WebRootPath { get; set; }
@@ -59,7 +65,12 @@ namespace Services.ViewModels.DanhMuc
         [IgnoreLogging]
         public string FilePath { get; set; }
         /////////////////////////////////////////
-
+        [IgnoreLogging]
+        public string TenTuyenDuong { get; set; }
+        [IgnoreLogging]
+        public string TenLoaiHoaDonFull { get; set; }
+        [IgnoreLogging]
+        public string HtmlContent { get; set; }
         [IgnoreLogging]
         public List<string> KyHieus { get; set; }
         [IgnoreLogging]
