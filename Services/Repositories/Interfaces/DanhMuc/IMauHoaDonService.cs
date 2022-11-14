@@ -37,6 +37,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<FileReturn> DownloadFileAsync(MauHoaDonFileParams @params);
         Task<string> CheckAllowUpdateAsync(MauHoaDonViewModel model); // 0 allow
         Task<FileReturn> ExportMauHoaDonAsync(ExportMauHoaDonParams @params);
+        Task<FileReturn> ExportVeAsync(ExportMauHoaDonParams @params);
         Task<List<NhatKyTruyCapViewModel>> GetListNhatKyHoaDonAsync(string id);
         List<ImageParam> GetBackgrounds();
         List<ImageParam> GetBorders();
@@ -46,6 +47,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<List<MauHoaDonXacThuc>> GetListMauHoaDonXacThucAsync(string id);
         Task<List<MauHoaDonXacThuc>> GetListMauVeXacThucAsync(string id);
         Task<FileReturn> PreviewPdfOfXacThucAsync(MauHoaDonFileParams @params);
+        Task<LoaiHoaDon> GetLoaiHoaDonByIdAsync(string id);
 
         Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model);
         Task<bool> UpdateAsync(MauHoaDonViewModel model);

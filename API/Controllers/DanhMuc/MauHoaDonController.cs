@@ -296,6 +296,13 @@ namespace API.Controllers.DanhMuc
             return File(result.Bytes, result.ContentType, result.FileName);
         }
 
+        [HttpPost("ExportVe")]
+        public async Task<IActionResult> ExportVe(ExportMauHoaDonParams @params)
+        {
+            var result = await _mauHoaDonService.ExportVeAsync(@params);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
         [HttpGet("GetFileToSign")]
         public IActionResult GetFileToSign()
         {
@@ -449,6 +456,13 @@ namespace API.Controllers.DanhMuc
             }
 
             return Ok(false);
+        }
+
+        [HttpGet("GetLoaiHoaDonById/{mauHoaDonId}")]
+        public async Task<IActionResult> GetLoaiHoaDonById(string mauHoaDonId)
+        {
+            var result = await _mauHoaDonService.GetLoaiHoaDonByIdAsync(mauHoaDonId);
+            return Ok(result);
         }
     }
 }

@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Constants;
+using DLL.Entity;
 using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLy;
 using DLL.Enums;
@@ -28,7 +29,6 @@ using Spire.Pdf.Graphics;
 using Spire.Pdf.HtmlConverter.Qt;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
@@ -391,6 +391,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             CreatedBy = mhd.CreatedBy,
                             CreatedDate = mhd.CreatedDate,
                             Status = mhd.Status,
+                            TuyenDuongId = mhd.TuyenDuongId,
                             MauHoaDonThietLapMacDinhs = (from tlmd in _db.MauHoaDonThietLapMacDinhs
                                                          where tlmd.MauHoaDonId == mhd.MauHoaDonId
                                                          select new MauHoaDonThietLapMacDinhViewModel
@@ -1784,6 +1785,169 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
 
             return result;
+        }
+
+        public async Task<LoaiHoaDon> GetLoaiHoaDonByIdAsync(string id)
+        {
+            var result = await _db.MauHoaDons
+                .Where(x => x.MauHoaDonId == id)
+                .Select(x => x.LoaiHoaDon)
+                .FirstOrDefaultAsync();
+
+            return result;
+        }
+
+        public async Task<FileReturn> ExportVeAsync(ExportMauHoaDonParams @params)
+        {
+            List<string> filePaths = new List<string>();
+            string folderName = $"temp/export_ve_{Guid.NewGuid()}";
+            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderName);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            // get html from filedata
+            var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == @params.MauHoaDonId);
+            if (fileData == null)
+            {
+                return null;
+            }
+
+            var hinhThucHienThiSoVe = await _db.MauHoaDonThietLapMacDinhs
+                .Where(x => x.MauHoaDonId == @params.MauHoaDonId && x.Loai == LoaiThietLapMacDinh.HinhThucHienThiSoVe)
+                .Select(x => int.Parse(x.GiaTri))
+                .DefaultIfEmpty(1)
+                .FirstOrDefaultAsync();
+
+            List<Task<string>> tasks = new List<Task<string>>();
+
+            foreach (var item in @params.HinhThucMauHoaDon)
+            {
+                string fullName = null;
+                bool isChuyenDoi = false;
+                string htmlContent = fileData.Content;
+
+                // combine path
+                string htmlFileName = $"{Guid.NewGuid()}.html";
+                string pdfFileName = $"{Guid.NewGuid()}.pdf";
+                string htmlFullPath = Path.Combine(folderPath, htmlFileName);
+                string pdfFullPath = Path.Combine(folderPath, pdfFileName);
+
+                if (item == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi)
+                {
+                    fullName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.FULL_NAME)?.Value;
+                    htmlContent = TextHelper.VisibleConvertion(htmlContent);
+                    isChuyenDoi = true;
+                }
+
+                htmlContent = TextHelper.RemoveTagFromHtml(htmlContent, null, hinhThucHienThiSoVe, fullName);
+
+                tasks.Add(ConvertHTMLToPDF(htmlContent, htmlFullPath, pdfFullPath, isChuyenDoi));
+            }
+
+            var taskDone = await Task.WhenAll(tasks);
+            filePaths = taskDone.ToList();
+
+            if (@params.DinhDangTepMau != 0)
+            {
+                Parallel.For(0, filePaths.Count, i =>
+                {
+                    string path = filePaths[i];
+
+                    PdfDocument pdfDoc = new PdfDocument();
+                    pdfDoc.LoadFromFile(path);
+                    Image bmp = pdfDoc.SaveAsImage(0);
+                    Image emf = pdfDoc.SaveAsImage(0, PdfImageType.Bitmap);
+                    Image zoomImg = new Bitmap(emf.Size.Width * 2, emf.Size.Height * 2);
+                    using (Graphics gg = Graphics.FromImage(zoomImg))
+                    {
+                        gg.ScaleTransform(2.0f, 2.0f);
+                        gg.DrawImage(emf, new Rectangle(new Point(0, 0), emf.Size), new Rectangle(new Point(0, 0), emf.Size), GraphicsUnit.Pixel);
+                    }
+
+                    Document docEmpty = new Document(Path.Combine(_hostingEnvironment.WebRootPath, "docs/MauHoaDon/Hoa_don_trang.docx"));
+                    DocPicture picture2 = docEmpty.Sections[0].Paragraphs[0].AppendPicture(bmp);
+                    picture2.Width = 580;
+                    picture2.Height = 800;
+
+                    filePaths[i] = path.Replace(".pdf", (@params.DinhDangTepMau == DinhDangTepMau.DOC) ? ".doc" : ".docx");
+                    docEmpty.SaveToFile(filePaths[i], (@params.DinhDangTepMau == DinhDangTepMau.DOC) ? Spire.Doc.FileFormat.Doc : Spire.Doc.FileFormat.Docx);
+                });
+            }
+
+            if (filePaths.Count() > 1)
+            {
+                using (var zipFileMemoryStream = new MemoryStream())
+                {
+                    using (ZipArchive archive = new ZipArchive(zipFileMemoryStream, ZipArchiveMode.Create, leaveOpen: true))
+                    {
+                        foreach (var botFilePath in filePaths)
+                        {
+                            var botFileName = Path.GetFileName(botFilePath);
+                            var entry = archive.CreateEntry(botFileName, CompressionLevel.Fastest);
+                            using (var entryStream = entry.Open())
+                            using (var fileStream = File.OpenRead(botFilePath))
+                            {
+                                await fileStream.CopyToAsync(entryStream);
+                            }
+                        }
+                    }
+                    zipFileMemoryStream.Seek(0, SeekOrigin.Begin);
+                    // use stream as needed
+                    byte[] zipBytes = zipFileMemoryStream.ToArray(); //get all flushed data
+                    string zipPath = Path.Combine(folderPath, "compressed.zip");
+                    File.WriteAllBytes(Path.Combine(folderPath, "compressed.zip"), zipBytes);
+                    if (Directory.Exists(folderPath))
+                    {
+                        Directory.Delete(folderPath, true);
+                    }
+
+                    return new FileReturn
+                    {
+                        Bytes = zipBytes,
+                        ContentType = MimeTypes.GetMimeType(zipPath),
+                        FileName = Path.GetFileName(zipPath)
+                    };
+                }
+            }
+
+            byte[] bytes = File.ReadAllBytes(filePaths[0]);
+            if (Directory.Exists(folderPath))
+            {
+                Directory.Delete(folderPath, true);
+            }
+            return new FileReturn
+            {
+                Bytes = bytes,
+                ContentType = MimeTypes.GetMimeType(filePaths[0]),
+                FileName = Path.GetFileName(filePaths[0])
+            };
+        }
+
+        private async Task<string> ConvertHTMLToPDF(string htmlContent, string htmlFullPath, string pdfFullPath, bool isChuyenDoi)
+        {
+            // create file html
+            await File.WriteAllTextAsync(htmlFullPath, htmlContent);
+
+            // get size from html
+            var (width, height) = htmlContent.GetSizeFromDataAttr();
+
+            // convert html to pdf
+            HtmlConverter.Convert(htmlFullPath, pdfFullPath,
+              //enable javascript
+              true,
+
+              //load timeout
+              100 * 1000,
+
+              //page size
+              new SizeF(width * 70 / 100, height * (isChuyenDoi ? 67 : 62) / 100),
+
+              //page margins
+              new PdfMargins(0, 0));
+
+            return pdfFullPath;
         }
     }
 }
