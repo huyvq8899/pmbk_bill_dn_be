@@ -3,6 +3,7 @@ using DLL;
 using DLL.Constants;
 using DLL.Entity;
 using DLL.Entity.QuanLy;
+using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using ManagementServices.Helper;
@@ -1476,6 +1477,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             hddtViewModel.IsCapMa = true;
                             hddtViewModel.MaCuaCQT = node.InnerText;
                             hddtViewModel.DataXML = dataXML;
+
+                            hddt.MaCuaCQT = hddtViewModel.MaCuaCQT;
+                            hddt.TrangThaiQuyTrinh = (int?)TrangThaiQuyTrinh.CQTDaCapMa;
+                            await _dataContext.SaveChangesAsync();
+
                             await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hddtViewModel);
                             break;
                         default:

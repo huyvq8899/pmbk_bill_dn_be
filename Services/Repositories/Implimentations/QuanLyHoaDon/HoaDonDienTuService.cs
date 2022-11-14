@@ -4461,8 +4461,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.xml";
                         entity.XMLDaKy = xmlFileName;
-                        entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.CQTDaCapMa;
-                        entity.MaCuaCQT = hd.MaCuaCQT;
+                       // entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.CQTDaCapMa;
+                       // entity.MaCuaCQT = hd.MaCuaCQT;
                     }
                     else
                     {
