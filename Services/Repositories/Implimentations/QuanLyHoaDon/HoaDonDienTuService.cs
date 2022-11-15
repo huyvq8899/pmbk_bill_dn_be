@@ -19712,5 +19712,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var listVe = await query.OrderBy(x => x.CreatedDate).ToListAsync();
             return listVe;
         }
+
+        public async Task<HoaDonDienTuViewModel> ThongKeXuatVeTrongNgayAsync()
+        {
+            var query = from tk in _db.HoaDonDienTus
+                        where tk.NgayKy.Value.Date == DateTime.Now.Date
+                        select new HoaDonDienTuViewModel
+                        {
+                            SoLuong = tk.SoLuong,
+                            TongTienThanhToan = tk.TongTienThanhToan
+                        };
+
+            var result = new HoaDonDienTuViewModel
+            {
+                SoLuong = await query.SumAsync(x => x.SoLuong),
+                TongTienThanhToan = await query.SumAsync(x => x.TongTienThanhToan)
+            };
+
+            return result;
+        }
     }
 }
