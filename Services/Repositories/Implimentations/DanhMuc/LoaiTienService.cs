@@ -259,5 +259,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             return await _db.HoaDonDienTus.AnyAsync(x => x.LoaiTienId == id);
         }
+
+        public async Task<LoaiTienViewModel> GetLoaiTienVNDAsync()
+        {
+            var entity = await _db.LoaiTiens.AsNoTracking().FirstOrDefaultAsync(x => x.Ma == "VND");
+            var result = _mp.Map<LoaiTienViewModel>(entity);
+            return result;
+        }
     }
 }

@@ -1527,13 +1527,6 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [HttpGet("GetVeByIdAsync/{Id}")]
-        public async Task<IActionResult> GetVeByIdAsync(string Id)
-        {
-            var result = await _hoaDonDienTuService.GetVeByIdAsync(Id);
-            return Ok(result);
-        }
-
         [HttpPost("SaveAllVeNhap")]
         public async Task<IActionResult> SaveAllVeNhap(List<HoaDonDienTuViewModel> list)
         {
@@ -1694,6 +1687,13 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetListVeMobile(QuanLyVeParams @params)
         {
             var result = await _hoaDonDienTuService.GetListVeMobileAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpGet("ThongKeXuatVeTrongNgay")]
+        public async Task<IActionResult> ThongKeXuatVeTrongNgay()
+        {
+            var result = await _hoaDonDienTuService.ThongKeXuatVeTrongNgayAsync();
             return Ok(result);
         }
     }

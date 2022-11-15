@@ -1168,6 +1168,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from mhd in tmpMauHoaDons.DefaultIfEmpty()
                         join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
                         from kh in tmpKhachHangs.DefaultIfEmpty()
+                        join td in _db.TuyenDuongs on hd.TuyenDuongId equals td.TuyenDuongId into tmpTuyenDuongs
+                        from td in tmpTuyenDuongs.DefaultIfEmpty()
                             //join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
                             //from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
                         join nv in _db.DoiTuongs on hd.NhanVienBanHangId equals nv.DoiTuongId into tmpNhanViens
@@ -1326,6 +1328,25 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             HopDongVanChuyenSo = hd.HopDongVanChuyenSo,
                             TenNguoiVanChuyen = hd.TenNguoiVanChuyen,
                             PhuongThucVanChuyen = hd.PhuongThucVanChuyen,
+                            // ticket
+                            SoLuong = hd.SoLuong,
+                            TuyenDuongId = hd.TuyenDuongId,
+                            ThoiGianKhoiHanh = hd.ThoiGianKhoiHanh,
+                            XeId = hd.XeId,
+                            SoXe = hd.SoXe,
+                            SoGhe = hd.SoGhe,
+                            SoTuyen = hd.SoTuyen,
+                            SoChang = hd.SoChang,
+                            SoChuyen = hd.SoChuyen,
+                            TenTuyenDuong = td.TenTuyenDuong,
+                            BenDi = hd.BenDi,
+                            BenDen = hd.BenDen,
+                            IsVeTam = hd.IsVeTam,
+                            NgungXuatVe = hd.NgungXuatVe,
+                            ThueGTGT = hd.ThueGTGT,
+                            LoaiMau = mhd.LoaiMauHoaDon,
+                            TenLoaiMau = mhd.LoaiMauHoaDon.GetDescription(),
+                            //
                             HoaDonChiTiets = (
                                                from hdct in _db.HoaDonDienTuChiTiets
                                                join hd in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hd.HoaDonDienTuId into tmpHoaDons
@@ -18597,6 +18618,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <returns></returns>
         public async Task<bool> InsertVeAsync(HoaDonDienTuViewModel model)
         {
+            var loaiTien = await _loaiTienService.GetLoaiTienVNDAsync();
+            var _tuyChons = await _TuyChonService.GetAllAsync();
+
             switch (model.LoaiMau)
             {
                 case LoaiMauHoaDon.VeVanTaiHanhKhachTheHienMenhGia:
@@ -18625,8 +18649,27 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         SoChuyen = model.SoChuyen,
                         SoChang = model.SoChang,
                         SoGhe = model.SoGhe,
-                        XeId = model.XeId
+                        XeId = model.XeId,
+                        LoaiHoaDon = (int)model.LoaiHoaDon,
+                        LoaiTienId = loaiTien.LoaiTienId,
+                        TyGia = loaiTien.TyGiaQuyDoi,
+                        MaLoaiTien = loaiTien.Ma,
+                        TrangThai = (int)TrangThaiHoaDon.HoaDonGoc,
+                        TrangThaiGuiHoaDon = (int)TrangThaiGuiHoaDon.ChuaGui,
+                        TongTienChietKhau = 0,
+                        IsGiamTheoNghiQuyet = false,
+                        TyLePhanTramDoanhThu = 0,
+                        TongTienGiam = 0,
+                        TongTienGiamQuyDoi = 0,
+                        TyLeChietKhau = 0
                     };
+
+                    var isVND = loaiTien.Ma == "VND";
+
+                    entityInsert.TongTienHangQuyDoi = (entityInsert.TongTienHang * loaiTien.TyGiaQuyDoi).Value.MathRoundNumberByTuyChon(_tuyChons, isVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                    entityInsert.TongTienChietKhauQuyDoi = (entityInsert.TongTienChietKhau * loaiTien.TyGiaQuyDoi).Value.MathRoundNumberByTuyChon(_tuyChons, isVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                    entityInsert.TongTienThueGTGTQuyDoi = (entityInsert.TongTienThueGTGT * loaiTien.TyGiaQuyDoi).Value.MathRoundNumberByTuyChon(_tuyChons, isVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                    entityInsert.TongTienThanhToanQuyDoi = (entityInsert.TongTienThanhToan * loaiTien.TyGiaQuyDoi).Value.MathRoundNumberByTuyChon(_tuyChons, isVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
 
                     await _db.HoaDonDienTus.AddAsync(entityInsert);
                     break;
@@ -18837,102 +18880,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _db.HoaDonDienTus.RemoveRange(entities);
             var result = await _db.SaveChangesAsync();
             return result > 0;
-        }
-
-        public async Task<HoaDonDienTuViewModel> GetVeByIdAsync(string Id)
-        {
-            var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.AsNoTracking().ToList();
-            var thongDiepChungs = _db.ThongDiepChungs
-                .Select(x => new ThongDiepChung
-                {
-                    ThongDiepChungId = x.ThongDiepChungId,
-                    IdThamChieu = x.IdThamChieu,
-                    TrangThaiGui = x.TrangThaiGui
-                })
-                .ToList();
-            string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string folder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
-
-            var tuyChonKyKeKhai = (await _db.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
-
-            //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
-            List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                         where hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null
-                                                         select new HoaDonDienTu
-                                                         {
-                                                             HoaDonDienTuId = hoaDon.HoaDonDienTuId,
-                                                             SoHoaDon = hoaDon.SoHoaDon,
-                                                             ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
-                                                             DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
-                                                             NgayHoaDon = hoaDon.NgayHoaDon,
-                                                             TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh,
-                                                             MaCuaCQT = hoaDon.MaCuaCQT,
-                                                             ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
-                                                             TrangThaiGui04 = hoaDon.TrangThaiGui04,
-                                                             LanGui04 = hoaDon.LanGui04,
-                                                             IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04,
-                                                             CreatedDate = hoaDon.CreatedDate
-                                                         }).ToListAsync();
-
-            //đọc ra thông tin hóa đơn được nhập từ phần mềm khác, (được dùng để hiển thị cột thông tin sai sót ở hóa đơn điều chỉnh); việc đọc ra bảng này vì phải truy vấn thông tin với các hóa đơn được nhập từ phần mềm khác
-            List<ThongTinHoaDon> listThongTinHoaDon = await (from hoaDon in _db.ThongTinHoaDons
-                                                             join hddt in _db.HoaDonDienTus on hoaDon.Id equals hddt.DieuChinhChoHoaDonId
-                                                             //where listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.Id) > 0
-                                                             select new ThongTinHoaDon
-                                                             {
-                                                                 Id = hoaDon.Id,
-                                                                 TrangThaiHoaDon = hoaDon.TrangThaiHoaDon,
-                                                                 IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04,
-                                                                 LanGui04 = hoaDon.LanGui04,
-                                                                 ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
-                                                                 TrangThaiGui04 = hoaDon.TrangThaiGui04
-                                                             }).ToListAsync();
-
-            var query = from vdt in _db.HoaDonDienTus
-                        join bkh in _db.BoKyHieuHoaDons on vdt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
-                        join mhd in _db.MauHoaDons on vdt.MauHoaDonId equals mhd.MauHoaDonId
-                        join td in _db.TuyenDuongs on vdt.TuyenDuongId equals td.TuyenDuongId
-                        where vdt.HoaDonDienTuId == Id
-                        select new HoaDonDienTuViewModel
-                        {
-                            HoaDonDienTuId = vdt.HoaDonDienTuId,
-                            BoKyHieuHoaDonId = vdt.BoKyHieuHoaDonId,
-                            TuyenDuongId = vdt.TuyenDuongId,
-                            MauHoaDonId = vdt.MauHoaDonId,
-                            LoaiMau = mhd.LoaiMauHoaDon,
-                            TenLoaiMau = mhd.LoaiMauHoaDon.GetDescription(),
-                            LoaiHoaDon = (int)mhd.LoaiHoaDon,
-                            TenLoaiHoaDon = mhd.LoaiHoaDon == LoaiHoaDon.TemVeTheLaHoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng",
-                            TenMau = mhd.Ten,
-                            KyHieu = bkh.KyHieu,
-                            HinhThucHoaDon = (int)bkh.HinhThucHoaDon,
-                            TenTuyenDuong = td.TenTuyenDuong,
-                            SoLuong = vdt.SoLuong,
-                            TongTienThanhToan = vdt.TongTienThanhToan,
-                            NgayHoaDon = vdt.NgayHoaDon,
-                            ThoiGianKhoiHanh = vdt.ThoiGianKhoiHanh,
-                            XeId = vdt.XeId,
-                            SoXe = vdt.SoXe,
-                            SoGhe = vdt.SoGhe,
-                            SoTuyen = vdt.SoTuyen,
-                            TrangThaiQuyTrinh = vdt.TrangThaiQuyTrinh,
-                            BenDen = vdt.BenDen,
-                            BenDi = vdt.BenDi,
-                            ThueGTGT = vdt.ThueGTGT,
-                            TongTienHang = vdt.TongTienHang,
-                            TongTienThueGTGT = vdt.TongTienThueGTGT,
-                            CreatedBy = vdt.CreatedBy,
-                            ModifyBy = vdt.ModifyBy,
-                            CreatedDate = vdt.CreatedDate,
-                            ModifyDate = vdt.ModifyDate,
-                            Status = vdt.Status,
-                            SoChuyen = vdt.SoChuyen,
-                            IsVeTam = vdt.IsVeTam,
-                            STT = td.STT,
-                        };
-
-            var result = await query.FirstOrDefaultAsync();
-            return result;
         }
 
         public async Task<List<string>> PreviewMultiTicketByIdsAsync(List<string> Ids)
@@ -19716,7 +19663,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<HoaDonDienTuViewModel> ThongKeXuatVeTrongNgayAsync()
         {
             var query = from tk in _db.HoaDonDienTus
-                        where tk.NgayKy.Value.Date == DateTime.Now.Date
+                        where tk.NgayKy.Value.Date == DateTime.Now.Date &&
+                        ((tk.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT) || (tk.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonBanHang))
                         select new HoaDonDienTuViewModel
                         {
                             SoLuong = tk.SoLuong,

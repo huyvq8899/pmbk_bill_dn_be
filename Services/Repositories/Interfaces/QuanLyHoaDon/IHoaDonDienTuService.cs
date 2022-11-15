@@ -141,7 +141,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<FileReturn> PreviewPDFXuatVeAsync(HoaDonDienTuViewModel model);
         Task<bool> SaveAllVeNhapAsync(List<HoaDonDienTuViewModel> list);
         Task<bool> DeleteAllByLoaiAsync(int loaiNghiepVu);
-        Task<HoaDonDienTuViewModel> GetVeByIdAsync(string Id);
         Task<List<string>> PreviewMultiTicketByIdsAsync(List<string> Ids);
         Task<bool> UpdateVeAsync(HoaDonDienTuViewModel model);
         Task<List<HoaDonDienTuViewModel>> GetListDeXuatVeDongLoatAsync(List<HoaDonDienTuViewModel> list);
