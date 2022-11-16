@@ -93,7 +93,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không Bắt buộc</para>
         /// </summary>
-        [Column(TypeName = "decimal(19, 4)")]
+        [Column(TypeName = "decimal(21, 6)")]
         public decimal? STCKhau { get; set; }
 
         /// <summary>
@@ -103,16 +103,16 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [Column(TypeName = "decimal(19, 4)")]
+        [Column(TypeName = "decimal(21, 6)")]
         public decimal? ThTien { get; set; }
 
         /// <summary>
         /// <para>Thuế suất (Thuế suất thuế GTGT đối với hóa đơn khác thuộc loại hóa đơn GTGT, đối với hóa đơn khác thuộc loại hóa đơn bán hàng không có thẻ này)</para>
-        /// <para>Độ dài tối đa: 10</para>
+        /// <para>Độ dài tối đa: 11</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục V kèm theo Quy định này)</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        [MaxLength(10)]
+        [MaxLength(11)]
         public string TSuat { get; set; }
 
         public List<TTin> TTKhac { get; set; }

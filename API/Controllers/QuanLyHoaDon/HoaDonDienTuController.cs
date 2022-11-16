@@ -1,6 +1,7 @@
 ﻿using API.Extentions;
 using DLL;
 using DLL.Constants;
+using DLL.Data;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
@@ -68,6 +69,8 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("GetAllPaging")]
         public async Task<IActionResult> GetAllPaging(HoaDonParams pagingParams)
         {
+            var test = new ThietLapTruongDuLieuData().InitDataVe();
+
             var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
             return Ok(new { paged.Items, paged.AllItemIds, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages, pagingParams.TongTienThanhToan });
         }
@@ -1365,6 +1368,21 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
+        [HttpPost("CreateMultiTicketXMLToSign")]
+        public async Task<IActionResult> CreateMultiTicketXMLToSign(List<HoaDonDienTuViewModel> listHD)
+        {
+            try
+            {
+                var result = await _hoaDonDienTuService.CreateMultiTicketXMLToSignAsync(listHD);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                Tracert.WriteLog("CreateMultiXMLToSign", e);
+                return Ok(null);
+            }
+        }
+
         [HttpPost("GetListHoaDonDePhatHanhDongLoat")]
         public async Task<IActionResult> GetListHoaDonDePhatHanhDongLoat(HoaDonParams pagingParams)
         {
@@ -1694,6 +1712,13 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> ThongKeXuatVeTrongNgay()
         {
             var result = await _hoaDonDienTuService.ThongKeXuatVeTrongNgayAsync();
+            return Ok(result);
+        }
+
+        [HttpPost("GetListByIds")]
+        public async Task<IActionResult> GetListByIds(List<string> ids)
+        {
+            var result = await _hoaDonDienTuService.GetListByIdsAsync(ids);
             return Ok(result);
         }
     }

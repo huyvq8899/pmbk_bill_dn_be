@@ -12,7 +12,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
+        //[MaxLength(1)]
         public TCHDon TCHDon { get; set; }
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
+        //[MaxLength(1)]
         public LADHDDT LHDCLQuan { get; set; }
 
         /// <summary>

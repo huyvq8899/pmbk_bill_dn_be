@@ -82,7 +82,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
 
         /// <summary>
         /// <para>Website</para>
-        /// <para>Độ dài tối đa: 50</para>
+        /// <para>Độ dài tối đa: 100</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>

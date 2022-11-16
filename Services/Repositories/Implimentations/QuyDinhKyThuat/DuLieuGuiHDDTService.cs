@@ -1705,9 +1705,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             await _db.TransferLogs.AddRangeAsync(transferLog);
 
-            Tracert.WriteLog($"lstXml999NotEmmpty {DateTime.Now:dd/MM/yyyy HH:mm:ss}: " + lstXml999.Count(x => !string.IsNullOrEmpty(x)));
-            Tracert.WriteLog($"lstXml999 {DateTime.Now:dd/MM/yyyy HH:mm:ss}: " + string.Join("\n", lstXml999));
-
             // Handle hóa đơn
             result = await GuiThongDiepDuLieuHDDTAsync3(rsInsertThongDieps);
 

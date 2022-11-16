@@ -36,10 +36,12 @@ using HDonGTGT = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HDon;
 using HDonBanHang = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HDon;
 using HDonXuatKhoVanChuyenNoiBo = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.e.HDon;
 using HDonXuatKhoBanDaiLy = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f.HDon;
+using HDonCacLoaiHoaDonKhac = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.HDon;
 using TDiep200GTGT = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep;
 using TDiep200BH = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep2;
 using TDiep200PXKVanChuyenNoiBo = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep7;
 using TDiep200PXKBanDaiLy = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep8;
+using TDiep200CacLoaiHoaDonKhac = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep5;
 
 namespace Services.Repositories.Implimentations
 {
@@ -70,20 +72,8 @@ namespace Services.Repositories.Implimentations
 
         public async Task<bool> CreateXMLInvoice(string xmlFilePath, HoaDonDienTuViewModel model)
         {
-            try
-            {
-                if (model.MauHoaDon != null)
-                {
-                    await CreateInvoiceQD1450Async(xmlFilePath, model);
-                    return true;
-                }
-
-                return false;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            await CreateInvoiceQD1450Async(xmlFilePath, model);
+            return true;
         }
 
         /// <summary>
@@ -439,6 +429,7 @@ namespace Services.Repositories.Implimentations
 
             switch ((LoaiHoaDon)model.LoaiHoaDon)
             {
+                #region HoaDonGTGT
                 case LoaiHoaDon.HoaDonGTGT:
                     if (!string.IsNullOrWhiteSpace(model.IdHoaDonSaiSotBiThayThe))
                     {
@@ -594,23 +585,6 @@ namespace Services.Repositories.Implimentations
                             TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                         };
 
-                        //if (item.TienThueGTGT != 0)
-                        //{
-                        //    hhdvu.TTKhac.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin
-                        //    {
-                        //        TTruong = TDLieu.VAT_AMOUNT,
-                        //        KDLieu = KieuDuLieu.NUMERIC,
-                        //        DLieu = item.TienThueGTGT.Value.ToString("G29")
-                        //    });
-                        //}
-
-                        //hhdvu.TTKhac.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin
-                        //{
-                        //    TTruong = TDLieu.AMOUNT,
-                        //    KDLieu = KieuDuLieu.NUMERIC,
-                        //    DLieu = (item.ThanhTien - item.TienChietKhau + item.TienThueGTGT).Value.ToString("G29")
-                        //});
-
                         hDonGTGT.DLHDon.NDHDon.DSHHDVu.Add(hhdvu);
                     }
                     #endregion
@@ -661,6 +635,9 @@ namespace Services.Repositories.Implimentations
                     }
 
                     break;
+                #endregion
+
+                #region HoaDonBanHang
                 case LoaiHoaDon.HoaDonBanHang:
                     if (!string.IsNullOrWhiteSpace(model.IdHoaDonSaiSotBiThayThe))
                     {
@@ -839,6 +816,9 @@ namespace Services.Repositories.Implimentations
                         GenerateXML(hDonBanHang, xmlFilePath);
                     }
                     break;
+                #endregion
+
+                #region PXKKiemVanChuyenNoiBo
                 case LoaiHoaDon.PXKKiemVanChuyenNoiBo:
                     if (!string.IsNullOrWhiteSpace(model.IdHoaDonSaiSotBiThayThe))
                     {
@@ -984,6 +964,9 @@ namespace Services.Repositories.Implimentations
                         GenerateXML(hDonXuatKhoVanChuyenNoiBo, xmlFilePath);
                     }
                     break;
+                #endregion
+
+                #region PXKHangGuiBanDaiLy
                 case LoaiHoaDon.PXKHangGuiBanDaiLy:
                     if (!string.IsNullOrWhiteSpace(model.IdHoaDonSaiSotBiThayThe))
                     {
@@ -1130,6 +1113,189 @@ namespace Services.Repositories.Implimentations
                         GenerateXML(hDonXuatKhoBanDaiLy, xmlFilePath);
                     }
                     break;
+                #endregion
+
+                #region TemVeTheLaHoaDonGTGT
+                case LoaiHoaDon.TemVeTheLaHoaDonGTGT:
+                    if (!string.IsNullOrWhiteSpace(model.IdHoaDonSaiSotBiThayThe))
+                    {
+                        ttkhac_ThongTinSaiSot.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin { TTruong = "Hóa đơn liên quan", KDLieu = "string", DLieu = model.GhiChuThayTheSaiSot?.Replace("<b>", "").Replace("</b>", "") });
+                    }
+
+                    HDonCacLoaiHoaDonKhac hDonCacLoaiHoaDonKhac = new HDonCacLoaiHoaDonKhac
+                    {
+                        DLHDon = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.DLHDon
+                        {
+                            TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.TTChung
+                            {
+                                PBan = pBien,
+                                THDon = LoaiHoaDon.TemVeTheLaHoaDonGTGT.GetDescription(),
+                                KHMSHDon = model.MauSo,
+                                KHHDon = model.KyHieu,
+                                SHDon = model.SoHoaDon,
+                                NLap = model.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
+                                DVTTe = model.MaLoaiTien,
+                                TGia = model.TyGia,
+                                HTTToan = string.Empty,
+                                MSTTCGP = taxCode,
+                                MSTDVNUNLHDon = string.Empty,
+                                TDVNUNLHDon = string.Empty,
+                                DCDVNUNLHDon = string.Empty,
+                                TTHDLQuan = null,
+                                TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
+                            },
+                            NDHDon = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.NDHDon
+                            {
+                                NBan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.NBan
+                                {
+                                    //Ten = thongTinNguoiBan.TenDonViNguoiBan ?? string.Empty,
+                                    //MST = thongTinNguoiBan.MaSoThueNguoiBan ?? string.Empty,
+                                    //DChi = thongTinNguoiBan.DiaChiNguoiBan ?? string.Empty,
+                                    Ten = hoSoHDDT.TenDonVi ?? string.Empty,
+                                    MST = hoSoHDDT.MaSoThue ?? string.Empty,
+                                    DChi = hoSoHDDT.DiaChi ?? string.Empty,
+                                    SDThoai = string.Empty,
+                                    DCTDTu = string.Empty,
+                                    STKNHang = string.Empty,
+                                    TNHang = string.Empty,
+                                    Fax = string.Empty,
+                                    Website = string.Empty,
+                                    TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
+                                },
+                                NMua = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.NMua
+                                {
+                                    Ten = string.Empty,
+                                    MST = string.Empty,
+                                    DChi = string.Empty,
+                                    MKHang = string.Empty,
+                                    SDThoai = string.Empty,
+                                    DCTDTu = string.Empty,
+                                    HVTNMHang = string.Empty,
+                                    STKNHang = string.Empty,
+                                    TNHang = string.Empty,
+                                    TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>(),
+                                },
+                                DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.HHDVu>(),
+                                TToan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.TToan
+                                {
+                                    THTTLTSuat = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.LTSuat>(),
+                                    TgTCThue = model.TongTienHang ?? 0,
+                                    TgTThue = model.TongTienThueGTGT ?? 0,
+                                    DSLPhi = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.LPhi>
+                                    {
+                                        new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.LPhi()
+                                    },
+                                    TTCKTMai = model.TongTienChietKhau ?? 0,
+                                    TgTTTBSo = model.TongTienThanhToan ?? 0,
+                                    TgTTTBChu = model.SoTienBangChu,
+                                    TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
+                                }
+                            },
+                            TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
+                        },
+                        DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DSCKS
+                        {
+                            NBan = string.Empty,
+                            NMua = string.Empty,
+                            CCKSKhac = string.Empty,
+                        },
+                    };
+
+                    #region Nếu là thay thế/điều chỉnh
+                    if ((model.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe) || (model.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh))
+                    {
+                        HoaDonDienTuViewModel hdlq = null;
+                        if (model.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe)
+                        {
+                            hdlq = await GetHoaDonByIdAsync(model.ThayTheChoHoaDonId);
+                            if (hdlq == null)
+                            {
+                                hdlq = await GetThongTinHoaDonById(model.ThayTheChoHoaDonId);
+                            }
+                        }
+                        else if (model.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh)
+                        {
+                            hdlq = await GetHoaDonByIdAsync(model.DieuChinhChoHoaDonId);
+                            if (hdlq == null)
+                            {
+                                hdlq = await GetThongTinHoaDonById(model.DieuChinhChoHoaDonId);
+                            }
+                        }
+
+                        if (hdlq != null)
+                        {
+                            hDonCacLoaiHoaDonKhac.DLHDon.TTChung.TTHDLQuan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTHDLQuan
+                            {
+                                LHDCLQuan = model.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe ? (LADHDDT)hdlq.LoaiApDungHoaDonCanThayThe : (LADHDDT)hdlq.LoaiApDungHoaDonDieuChinh
+                            };
+
+                            if (model.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe)
+                            {
+                                hDonCacLoaiHoaDonKhac.DLHDon.TTChung.TTHDLQuan.TCHDon = TCHDon.ThayThe;
+                                hDonCacLoaiHoaDonKhac.DLHDon.TTChung.TTHDLQuan.KHMSHDCLQuan = model.LyDoThayTheModel.MauSo;
+                                hDonCacLoaiHoaDonKhac.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = model.LyDoThayTheModel.KyHieu;
+                                hDonCacLoaiHoaDonKhac.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoThayTheModel.SoHoaDon;
+                                hDonCacLoaiHoaDonKhac.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoThayTheModel.NgayHoaDon.ToString("yyyy-MM-dd");
+                                hDonCacLoaiHoaDonKhac.DLHDon.TTChung.TTHDLQuan.GChu = model.LyDoThayTheModel.LyDo;
+                            }
+                            else
+                            {
+                                hDonCacLoaiHoaDonKhac.DLHDon.TTChung.TTHDLQuan.TCHDon = TCHDon.DieuChinh;
+                                hDonCacLoaiHoaDonKhac.DLHDon.TTChung.TTHDLQuan.KHMSHDCLQuan = model.LyDoDieuChinhModel.MauSo;
+                                hDonCacLoaiHoaDonKhac.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = model.LyDoDieuChinhModel.KyHieu;
+                                hDonCacLoaiHoaDonKhac.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoDieuChinhModel.SoHoaDon;
+                                hDonCacLoaiHoaDonKhac.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoDieuChinhModel.NgayHoaDon.ToString("yyyy-MM-dd");
+                                hDonCacLoaiHoaDonKhac.DLHDon.TTChung.TTHDLQuan.GChu = model.LyDoDieuChinhModel.LyDo;
+                            }
+                        }
+                    }
+                    #endregion
+
+                    #region Hàng hóa chi tiết
+                    hDonCacLoaiHoaDonKhac.DLHDon.NDHDon.DSHHDVu.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.HHDVu
+                    {
+                        TChat = TChat.HangHoaDichVu,
+                        STT = 1,
+                        MHHDVu = string.Empty,
+                        THHDVu = "Vé xe buýt",
+                        DVTinh = string.Empty,
+                        SLuong = model.SoLuong,
+                        DGia = model.TongTienHang,
+                        TLCKhau = model.TyLeChietKhau,
+                        STCKhau = model.TongTienChietKhau,
+                        ThTien = model.TongTienHang,
+                        TSuat = model.ThueGTGT.GetThueHasPer(),
+                        TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
+                    });
+                    #endregion
+
+                    if (model.TTChungThongDiep != null)
+                    {
+                        TDiep200CacLoaiHoaDonKhac tDiep = new TDiep200CacLoaiHoaDonKhac
+                        {
+                            TTChung = model.TTChungThongDiep,
+                            DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.DLieu5
+                            {
+                                HDon = hDonCacLoaiHoaDonKhac
+                            }
+                        };
+
+                        GenerateXML(tDiep, xmlFilePath);
+                    }
+                    else
+                    {
+                        GenerateXML(hDonCacLoaiHoaDonKhac, xmlFilePath);
+                    }
+
+                    break;
+                #endregion
+
+                #region TemVeTheLaHoaDonBanHang
+                case LoaiHoaDon.TemVeTheLaHoaDonBanHang:
+
+                    break;
+                #endregion
+
                 default:
                     break;
             }

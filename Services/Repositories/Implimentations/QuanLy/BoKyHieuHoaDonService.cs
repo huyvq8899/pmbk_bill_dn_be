@@ -606,6 +606,50 @@ namespace Services.Repositories.Implimentations.QuanLy
             return null;
         }
 
+        public async Task<List<string>> GetListChungThuSoByIdsAsync(List<string> ids)
+        {
+            List<string> result = new List<string>();
+
+            var query = from bkhhd in _db.BoKyHieuHoaDons
+                        join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
+                        join tdg in _db.ThongDiepChungs on bkhhd.ThongDiepId equals tdg.ThongDiepChungId
+                        join tk in _db.ToKhaiDangKyThongTins on tdg.IdThamChieu equals tk.Id
+                        where ids.Contains(bkhhd.BoKyHieuHoaDonId)
+                        select new BoKyHieuHoaDonViewModel
+                        {
+                            ToKhaiForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
+                            {
+                                ToKhaiId = tk.Id,
+                                IsNhanUyNhiem = tk.NhanUyNhiem
+                            }
+                        };
+
+            var list = await query.ToListAsync();
+
+            var fileDatas = await _db.FileDatas
+                .AsNoTracking()
+                .Where(x => list.Select(y => y.ToKhaiForBoKyHieuHoaDon.ToKhaiId).Contains(x.RefId))
+                .ToListAsync();
+
+            foreach (var fileData in fileDatas)
+            {
+                var item = list.FirstOrDefault(x => x.ToKhaiForBoKyHieuHoaDon.ToKhaiId == fileData.RefId);
+
+                if (item.ToKhaiForBoKyHieuHoaDon.IsNhanUyNhiem == true)
+                {
+                    item.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(fileData.Content);
+                    result.AddRange(item.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSCTSSDung.Select(x => x.Seri).ToList());
+                }
+                else
+                {
+                    item.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(fileData.Content);
+                    result.AddRange(item.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung.Select(x => x.Seri).ToList());
+                }
+            }
+
+            return result.Distinct().ToList();
+        }
+
         public async Task<List<BoKyHieuHoaDonViewModel>> GetListByMauHoaDonIdAsync(string mauHoaDonId)
         {
             var query = from bkhhd in _db.BoKyHieuHoaDons

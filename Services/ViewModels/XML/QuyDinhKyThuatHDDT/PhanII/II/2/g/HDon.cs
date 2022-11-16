@@ -1,9 +1,11 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g
 {
+    [Serializable]
     public partial class HDon
     {
         public DLHDon DLHDon { get; set; }

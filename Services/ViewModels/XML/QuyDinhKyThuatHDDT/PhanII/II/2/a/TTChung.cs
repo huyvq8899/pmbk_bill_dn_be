@@ -54,7 +54,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Bắt buộc (Nếu có)</para>
         /// <para>Tham khảo: khoản 3 và 14 điều 10 ND 123</para>
         /// </summary>
-        [MaxLength(8)]
+        //[MaxLength(8)]
         public long? SHDon { get; set; }
 
         /// <summary>

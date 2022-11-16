@@ -161,6 +161,13 @@ namespace API.Controllers.QuanLy
             return Ok(result);
         }
 
+        [HttpPost("GetListChungThuSoByIds")]
+        public async Task<IActionResult> GetListChungThuSoByIds(List<string> ids)
+        {
+            var result = await _boKyHieuHoaDonService.GetListChungThuSoByIdsAsync(ids);
+            return Ok(result);
+        }
+
         [HttpGet("CheckDaKySoBatDau/{id}")]
         public async Task<IActionResult> CheckDaKySoBatDau(string id)
         {

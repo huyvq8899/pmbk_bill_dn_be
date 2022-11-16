@@ -7,6 +7,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g
 {
     public partial class TToan
     {
+        public List<LTSuat> THTTLTSuat { get; set; }
+
         /// <summary>
         /// <para>Tổng tiền chưa thuế (Tổng cộng thành tiền chưa có thuế GTGT)</para>
         /// <para>Độ dài tối đa: 19,4</para>
@@ -14,12 +16,12 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [Column(TypeName = "decimal(19, 4)")]
+        [Column(TypeName = "decimal(21, 6)")]
         public decimal TgTCThue { get; set; }
 
         /// <summary>
         /// <para>Tổng tiền thuế (Tổng cộng tiền thuế GTGT)</para>
-        /// <para>Độ dài tối đa: 19,4</para>
+        /// <para>Độ dài tối đa: 21,6</para>
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
@@ -27,23 +29,25 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g
         [Column(TypeName = "decimal(19, 4)")]
         public decimal TgTThue { get; set; }
 
+        public List<LPhi> DSLPhi { get; set; }
+
         /// <summary>
         /// <para>Tổng tiền chiết khấu thương mại</para>
-        /// <para>Độ dài tối đa: 19,4</para>
+        /// <para>Độ dài tối đa: 21,6</para>
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        [Column(TypeName = "decimal(19, 4)")]
+        [Column(TypeName = "decimal(21, 6)")]
         public decimal? TTCKTMai { get; set; }
 
         /// <summary>
         /// <para>Tổng tiền thanh toán bằng số</para>
-        /// <para>Độ dài tối đa: 19,4</para>
+        /// <para>Độ dài tối đa: 21,6</para>
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [Column(TypeName = "decimal(19, 4)")]
+        [Column(TypeName = "decimal(21, 6)")]
         public decimal TgTTTBSo { get; set; }
 
         /// <summary>
@@ -54,11 +58,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g
         /// </summary>
         [Required]
         [MaxLength(255)]
-        public decimal TgTTTBChu { get; set; }
-
-        public THTTLTSuat THTTLTSuat { get; set; }
-
-        public DSLPhi DSLPhi { get; set; }
+        public string TgTTTBChu { get; set; }
 
         public List<TTin> TTKhac { get; set; }
     }
@@ -72,37 +72,32 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g
     {
         /// <summary>
         /// <para>Thuế suất (Thuế suất thuế GTGT)</para>
-        /// <para>Độ dài tối đa: 10</para>
+        /// <para>Độ dài tối đa: 11</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục V kèm theo Quy định này)</para>
-        /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
+        /// <para>Bắt buộc (Nếu có) Khoản 6, khoản 14, Điều 10 Nghị định 123/2020/NĐ-CP</para>
         /// </summary>
         [MaxLength(10)]
         public string TSuat { get; set; }
 
         /// <summary>
         /// <para>Thành tiền (Thành tiền chưa có thuế GTGT)</para>
-        /// <para>Độ dài tối đa: 19,4</para>
+        /// <para>Độ dài tối đa: 21,6</para>
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [Column(TypeName = "decimal(19, 4)")]
+        [Column(TypeName = "decimal(21, 6)")]
         public decimal ThTien { get; set; }
 
         /// <summary>
         /// <para>Tiền thuế (Tiền thuế GTGT)</para>
-        /// <para>Độ dài tối đa: 19,4</para>
+        /// <para>Độ dài tối đa: 21,6</para>
         /// <para>Kiểu dữ liệu: Số</para>
-        /// <para>Bắt buộc</para>
+        /// <para>Bắt buộc (Nếu có) Khoản 6, khoản 14, Điều 10 Nghị định 123/2020/NĐ-CP</para>
         /// </summary>
         [Required]
-        [Column(TypeName = "decimal(19, 4)")]
+        [Column(TypeName = "decimal(21, 6)")]
         public decimal? TThue { get; set; }
-    }
-
-    public partial class DSLPhi
-    {
-        public List<LPhi> LPhi { get; set; }
     }
 
     public partial class LPhi
@@ -118,11 +113,11 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g
 
         /// <summary>
         /// <para>Tiền phí</para>
-        /// <para>Độ dài tối đa: 19,4</para>
+        /// <para>Độ dài tối đa: 21,6</para>
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        [Column(TypeName = "decimal(19, 4)")]
+        [Column(TypeName = "decimal(21, 6)")]
         public decimal? TPhi { get; set; }
     }
 }

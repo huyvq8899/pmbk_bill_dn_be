@@ -4,6 +4,7 @@ using HDonGTGT = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HDon;
 using HDonBH = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HDon;
 using HDonPXKVanChuyenNoiBo = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.e.HDon;
 using HDonPXKBanDaiLy = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f.HDon;
+using HDonCacLoaiHoaDonKhac = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.HDon;
 using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6
@@ -27,6 +28,15 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6
     {
         public TTChungThongDiep TTChung { get; set; }
         public DLieu2 DLieu { get; set; }
+    }
+
+    //------------------ Các loại hóa đơn khác ----------------------
+    [XmlRoot(ElementName = "TDiep")]
+    [XmlType(TypeName = "TDiep")]
+    public partial class TDiep5
+    {
+        public TTChungThongDiep TTChung { get; set; }
+        public DLieu5 DLieu { get; set; }
     }
 
     //------------------ Phiếu xuất kho vận chuyển nội bộ ----------------------
@@ -64,5 +74,10 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6
     public partial class DLieu8
     {
         public HDonPXKBanDaiLy HDon { get; set; }
+    }
+
+    public partial class DLieu5
+    {
+        public HDonCacLoaiHoaDonKhac HDon { get; set; }
     }
 }

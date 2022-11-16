@@ -52,7 +52,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
-        [MaxLength(8)]
+        //[MaxLength(8)]
         public long? SHDon { get; set; }
 
         /// <summary>

@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>0200784873</MNGui>
+    <MNNhan>V0200784873</MNNhan>
+    <MLTDiep>200</MLTDiep>
+    <MTDiep>02007848735B7FCF12F9A444879DCE30730B5EF80E</MTDiep>
+    <MTDTChieu />
+    <MST>0200784873-999</MST>
+    <SLuong>1</SLuong>
+  </TTChung>
+  <DLieu>
+    <HDon>
+      <DLHDon Id="SigningData">
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <THDon>Tem, vé, thẻ là hóa đơn GTGT</THDon>
+          <KHHDon>5C22GAB</KHHDon>
+          <SHDon>1</SHDon>
+          <NLap>2022-11-15</NLap>
+          <DVTTe>VND</DVTTe>
+          <MSTTCGP>0200784873</MSTTCGP>
+        </TTChung>
+        <NDHDon>
+          <NBan>
+            <Ten>CÔNG TY CỔ PHẦN THIẾT BỊ ĐIỆN - ĐIỆN TỬ BÁCH KHOA	</Ten>
+            <MST>0200784873-999</MST>
+            <DChi>Số 561 Nguyễn Bỉnh Khiêm, Phường Đằng Hải, Quận Hải An, TP Hải Phòng, Việt Nam</DChi>
+          </NBan>
+          <DSHHDVu>
+            <HHDVu>
+              <TChat>1</TChat>
+              <STT>1</STT>
+              <THHDVu>Vé xe buýt</THHDVu>
+              <SLuong>1</SLuong>
+              <DGia>15000</DGia>
+              <ThTien>15000</ThTien>
+              <TSuat>10%</TSuat>
+            </HHDVu>
+          </DSHHDVu>
+          <TToan>
+            <TgTCThue>13636</TgTCThue>
+            <TgTThue>1364</TgTThue>
+            <TTCKTMai>0</TTCKTMai>
+            <TgTTTBSo>15000</TgTTTBSo>
+            <TgTTTBChu>Mười lăm nghìn đồng chẵn.</TgTTTBChu>
+          </TToan>
+        </NDHDon>
+      </DLHDon>
+      <DSCKS>
+        <NBan />
+      </DSCKS>
+    </HDon>
+  </DLieu>
+</TDiep>

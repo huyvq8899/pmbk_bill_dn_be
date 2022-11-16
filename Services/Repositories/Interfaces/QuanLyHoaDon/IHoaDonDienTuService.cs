@@ -22,6 +22,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> DeleteAsync(string id);
         ThamChieuModel DeleteRangeHoaDonDienTuAsync(List<HoaDonDienTuViewModel> list);
         Task<HoaDonDienTuViewModel> GetByIdAsync(string id);
+        Task<List<HoaDonDienTuViewModel>> GetListByIdsAsync(List<string> ids);
         Task<List<HoaDonDienTuViewModel>> GetMultiByIdAsync(List<string> ids);
         Task<HoaDonDienTuViewModel> GetByIdAsync(long SoHoaDon, string KyHieuHoaDon, string KyHieuMauSoHoaDon);
         Task<List<HoaDonDienTuViewModel>> GetAllAsync();
@@ -123,6 +124,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<HoaDonChoKeToanBachKhoaViewModel>> GetHoaDonChoKeToanBachKhoaAsync(ThamSoLayDuLieuHoaDon thamSoLayDuLieu);
         Task<bool> UpdateTruongMaKhiSuaTrongDanhMucAsync(UpdateMa param);
         Task<FileReturn> CreateXMLToSignAsync(HoaDonDienTuViewModel hd);
+        Task<List<FileReturn>> CreateMultiTicketXMLToSignAsync(List<HoaDonDienTuViewModel> listHD);
         Task<PagedList<HoaDonDienTuViewModel>> GetListHoaDonDePhatHanhDongLoatAsync(HoaDonParams pagingParams);
         Task<PagedList<HoaDonDienTuViewModel>> GetListHoaDonDeGuiEmailDongLoatAsync(HoaDonParams pagingParams);
         Task<List<HoaDonDienTuViewModel>> GroupListDeXemDuLieuPhatHanhDongLoatAsync(List<HoaDonDienTuViewModel> list);
