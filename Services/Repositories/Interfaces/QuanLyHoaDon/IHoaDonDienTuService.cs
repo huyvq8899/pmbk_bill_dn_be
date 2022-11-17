@@ -141,7 +141,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> InsertVeAsync(HoaDonDienTuViewModel model);
         Task<bool> XuatMultiVeAsync(List<ParamPhatHanhHD> list);
         Task<FileReturn> PreviewPDFXuatVeAsync(HoaDonDienTuViewModel model);
-        Task<bool> SaveAllVeNhapAsync(List<HoaDonDienTuViewModel> list);
+        Task<bool> SaveAllVeNhapAsync(List<string> list);
         Task<bool> DeleteAllByLoaiAsync(int loaiNghiepVu);
         Task<List<string>> PreviewMultiTicketByIdsAsync(List<string> Ids);
         Task<bool> UpdateVeAsync(HoaDonDienTuViewModel model);

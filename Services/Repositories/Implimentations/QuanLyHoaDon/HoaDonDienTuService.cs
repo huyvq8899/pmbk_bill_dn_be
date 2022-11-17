@@ -18927,22 +18927,25 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             };
         }
 
-        public async Task<bool> SaveAllVeNhapAsync(List<HoaDonDienTuViewModel> list)
+        public async Task<bool> SaveAllVeNhapAsync(List<string> list)
         {
-            var entities = new List<HoaDonDienTu>();
+            var hoaDonDienTus = await _db.HoaDonDienTus.Where(x => list.Contains(x.HoaDonDienTuId))
+                .AsNoTracking()
+                .ToListAsync();
 
-            foreach (var item in list)
+            var addedEntities = new List<HoaDonDienTu>();
+
+            foreach (var item in hoaDonDienTus)
             {
                 item.HoaDonDienTuId = Guid.NewGuid().ToString();
                 item.SoLuong = 1;
                 item.IsVeTam = true;
                 item.NgungXuatVe = false;
 
-                var entity = _mp.Map<HoaDonDienTu>(item);
-                entities.Add(entity);
+                addedEntities.Add(item);
             }
 
-            await _db.HoaDonDienTus.AddRangeAsync(entities);
+            await _db.HoaDonDienTus.AddRangeAsync(addedEntities);
             var result = await _db.SaveChangesAsync();
             return result > 0;
         }
@@ -18950,7 +18953,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<bool> DeleteAllByLoaiAsync(int loaiNghiepVu)
         {
             var entities = await _db.HoaDonDienTus
-                .Where(x => loaiNghiepVu == 0 ? (x.IsVeTam == true) : (x.IsVeTam != true))
+                .Where(x => (x.LoaiHoaDon == 9 || x.LoaiHoaDon == 10) && x.TrangThaiQuyTrinh == 0 && (loaiNghiepVu == 0 ? (x.IsVeTam == true) : (x.IsVeTam != true)))
                 .ToListAsync();
 
             _db.HoaDonDienTus.RemoveRange(entities);

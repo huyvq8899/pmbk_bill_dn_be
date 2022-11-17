@@ -1544,7 +1544,7 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpPost("SaveAllVeNhap")]
-        public async Task<IActionResult> SaveAllVeNhap(List<HoaDonDienTuViewModel> list)
+        public async Task<IActionResult> SaveAllVeNhap(List<string> list)
         {
             var result = await _hoaDonDienTuService.SaveAllVeNhapAsync(list);
             return Ok(result);
