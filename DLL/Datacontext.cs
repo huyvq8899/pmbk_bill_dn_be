@@ -59,7 +59,8 @@ namespace DLL
         public DbSet<ThongTinPhatHanh> ThongTinPhatHanhs { get; set; }
         public DbSet<ThietLapTruongDuLieu> ThietLapTruongDuLieus { get; set; }
         public DbSet<TransferLog> TransferLogs { get; set; }
-        public DbSet<Entity.FileData> FileDatas { get; set; }
+        public DbSet<FileData> FileDatas { get; set; }
+        public DbSet<TaiKhoanSmartCA> TaiKhoanSmartCAs { get; set; }
         #region Danh mục
         public DbSet<CoQuanThue> CoQuanThues { get; set; }
         public DbSet<CoQuanThueCapCuc_DiaDanh> CoQuanThueCapCuc_DiaDanhs { get; set; }
@@ -161,6 +162,7 @@ namespace DLL
             modelBuilder.AddConfiguration(new AlertStartupConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoSaiThongTinConfiguration());
             modelBuilder.AddConfiguration(new ThongTinPhatHanhConfiguration());
+            modelBuilder.AddConfiguration(new TaiKhoanSmartCAConfiguration());
 
             #region Danh mục
             modelBuilder.AddConfiguration(new DoiTuongConfiguration());

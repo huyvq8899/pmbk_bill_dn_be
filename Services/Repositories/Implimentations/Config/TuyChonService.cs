@@ -33,7 +33,7 @@ namespace Services.Repositories.Implimentations.Config
                 .ProjectTo<ConfigNoiDungEmailViewModel>(_mp.ConfigurationProvider)
                 .ToListAsync();
 
-             return result;
+            return result;
         }
 
         public async Task<bool> LayLaiThietLapEmailMacDinh(int LoaiEmail)
@@ -68,9 +68,9 @@ namespace Services.Repositories.Implimentations.Config
         public async Task<List<TuyChonViewModel>> GetAllAsync(string keyword = null)
         {
             List<TuyChonViewModel> list = await _db.TuyChons
-                .Where(x => !string.IsNullOrEmpty(keyword) != true || x.Ma.Contains(keyword))
-                .ProjectTo<TuyChonViewModel>(_mp.ConfigurationProvider)
-                .ToListAsync();
+               .Where(x => (!string.IsNullOrEmpty(keyword) != true || x.Ma.Contains(keyword)) && x.Ma != "IsSelectChuKiCung")
+               .ProjectTo<TuyChonViewModel>(_mp.ConfigurationProvider)
+               .ToListAsync();
 
             return list;
         }
@@ -217,6 +217,20 @@ namespace Services.Repositories.Implimentations.Config
                                 select hddt.HoaDonDienTuId).AnyAsync();
 
             return result;
+        }
+
+        public async Task<bool> UpdateLoaiChuKi(TuyChonViewModel model)
+        {
+            var result = await _db.TuyChons.Where(x => x.Ma == "IsSelectChuKiCung").FirstOrDefaultAsync();
+            result.GiaTri = model.GiaTri;
+            _db.TuyChons.Update(result);
+            return await _db.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> GetTypeLoaiChuKi()
+        {
+            var result = await _db.TuyChons.Where(x => x.Ma == "IsSelectChuKiCung").FirstOrDefaultAsync();
+            return result.GiaTri == "KiCung";
         }
     }
 }

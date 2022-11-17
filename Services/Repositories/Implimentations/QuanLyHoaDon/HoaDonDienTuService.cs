@@ -268,7 +268,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //cột này hiển thị ở cả 4 tab hóa đơn
             //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
             List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                         where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (pagingParams.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
+                                                         where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (pagingParams.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (pagingParams.LoaiHoaDon == 2 ? (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8) : (hoaDon.LoaiHoaDon == 9 || hoaDon.LoaiHoaDon == 10)))
                                                          select new HoaDonDienTu
                                                          {
                                                              HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -317,7 +317,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                       join mb in _db.Users on hd.ModifyBy equals mb.UserId into tmpModifyBys
                                                       from mb in tmpModifyBys.DefaultIfEmpty()
                                                       where pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId) &&
-                                                      (pagingParams.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
+                                                      (pagingParams.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (pagingParams.LoaiNghiepVu == 2 ? (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8) : (hd.LoaiHoaDon == 9 || hd.LoaiHoaDon == 10)))
                                                       select new HoaDonDienTuViewModel
                                                       {
                                                           ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
@@ -466,6 +466,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           PhuongThucVanChuyen = hd.PhuongThucVanChuyen,
                                                           DiaChiKhoNhanHang = hd.DiaChiKhoNhanHang,
                                                           HoTenNguoiNhanHang = hd.HoTenNguoiNhanHang,
+                                                          // ticket
+                                                          SoLuong = hd.SoLuong,
+                                                          TuyenDuongId = hd.TuyenDuongId,
+                                                          ThoiGianKhoiHanh = hd.ThoiGianKhoiHanh,
+                                                          XeId = hd.XeId,
+                                                          SoXe = hd.SoXe,
+                                                          SoGhe = hd.SoGhe,
+                                                          SoTuyen = hd.SoTuyen,
+                                                          SoChang = hd.SoChang,
+                                                          SoChuyen = hd.SoChuyen,
+                                                          TenTuyenDuong = hd.TenTuyenDuong,
+                                                          BenDi = hd.BenDi,
+                                                          BenDen = hd.BenDen,
+                                                          IsVeTam = hd.IsVeTam,
+                                                          NgungXuatVe = hd.NgungXuatVe,
+                                                          ThueGTGT = hd.ThueGTGT,
+                                                          //
                                                           DaBiDieuChinh = (from hd1 in _db.HoaDonDienTus
                                                                            join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
                                                                            where hd1.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
@@ -2119,7 +2136,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from cb in tmpCreatedBy.DefaultIfEmpty()
                         join mb in _db.Users on hddt.ModifyBy equals mb.UserId into tmpModifiedBy
                         from mb in tmpModifiedBy.DefaultIfEmpty()
-                        where pagingParams.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8)
+                        where pagingParams.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (pagingParams.LoaiNghiepVu == 2 ? (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8) : (hddt.LoaiHoaDon == 9 || hddt.LoaiHoaDon == 10))
                         select new HoaDonDienTuViewModel
                         {
                             HoaDonDienTuId = hddt.HoaDonDienTuId,
@@ -2178,7 +2195,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
 
             List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                         where pagingParams.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8)
+                                                         where pagingParams.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (pagingParams.LoaiNghiepVu == 2 ? (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8) : (hoaDon.LoaiHoaDon == 9 || hoaDon.LoaiHoaDon == 10))
                                                          select new HoaDonDienTu
                                                          {
                                                              HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -2271,7 +2288,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var truongDuLieuBangKes = await _db.ThietLapTruongDuLieus
                     .Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomBangKe &&
-                                x.LoaiHoaDon == (pagingParams.LoaiNghiepVu == 1 ? LoaiHoaDon.None : LoaiHoaDon.PhieuXuatKho) &&
+                                x.LoaiHoaDon == (pagingParams.LoaiNghiepVu == 1 ? LoaiHoaDon.None : (pagingParams.LoaiNghiepVu == 2 ? LoaiHoaDon.PhieuXuatKho : LoaiHoaDon.CacLoaiHoaDonKhac)) &&
                                 x.HienThi == true)
                     .Select(x => new ThietLapTruongDuLieuViewModel
                     {
@@ -3105,7 +3122,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         && (@params.TrangThaiChuyenDoi == -1 || (@params.TrangThaiChuyenDoi != -1 && @params.TrangThaiChuyenDoi == 0 ? hd.SoLanChuyenDoi == 0 : hd.SoLanChuyenDoi > 0))
                         && (@params.KhachHangId.Contains("-1") || @params.KhachHangId.Contains(hd.KhachHangId))
                         && (@params.BoKyHieuHoaDonId.Contains("-1") || @params.BoKyHieuHoaDonId.Contains(hd.BoKyHieuHoaDonId))
-                        && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
+                        && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (@params.LoaiNghiepVu == 2 ? (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8) : (hd.LoaiHoaDon == 9 || hd.LoaiHoaDon == 10)))
                         select new HoaDonDienTuViewModel()
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -6862,7 +6879,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //cột này hiển thị ở cả 4 tab hóa đơn
             //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
             List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                         where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (@params.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
+                                                         where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (@params.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (@params.LoaiNghiepVu == 2 ? (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8) : (hoaDon.LoaiHoaDon == 9 || hoaDon.LoaiHoaDon == 10)))
                                                          select new HoaDonDienTu
                                                          {
                                                              HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -6915,7 +6932,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         && string.IsNullOrWhiteSpace(hd.ThayTheChoHoaDonId) == false //hiện ra các hóa đơn thay thế
                         && listHoaDonBiThayTheIds.Contains(hd.HoaDonDienTuId) == false //và loại ra những hóa đơn đã bị thay thế
                         && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
-                        && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
+                        && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (@params.LoaiNghiepVu == 2 ? (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8) : (hd.LoaiHoaDon == 9 || hd.LoaiHoaDon == 10)))
                         orderby hd.NgayHoaDon descending, hd.SoHoaDon descending
                         select new HoaDonDienTuViewModel
                         {
@@ -7004,7 +7021,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                              join bkhhd in queryBoKyHieuHoaDon on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDon
                              from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
                              where hd.HinhThucXoabo != null
-                             && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
+                             && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (@params.LoaiNghiepVu == 2 ? (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8) : (hd.LoaiHoaDon == 9 || hd.LoaiHoaDon == 10)))
                              select new HoaDonDienTuViewModel
                              {
                                  ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null, thongDiepChungs),
@@ -7160,7 +7177,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                           from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
                                           where listHoaDonBiThayTheIds.Contains(hd.HoaDonDienTuId) == true
                                           && hd.TrangThai != 2
-                                          && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
+                                          && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (@params.LoaiNghiepVu == 2 ? (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8) : (hd.LoaiHoaDon == 9 || hd.LoaiHoaDon == 10)))
                                           select new HoaDonDienTuViewModel
                                           {
                                               ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null, thongDiepChungs),
@@ -8555,7 +8572,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //cột này hiển thị ở cả 4 tab hóa đơn
                 //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
                 List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                             where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (@params.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
+                                                             where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (@params.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (@params.LoaiNghiepVu == 2 ? (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8) : (hoaDon.LoaiHoaDon == 9 || hoaDon.LoaiHoaDon == 10)))
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -8600,7 +8617,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             where ((TrangThaiHoaDon)hd.TrangThai) == TrangThaiHoaDon.HoaDonGoc && (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || bbdc != null)
                             && hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate
                             && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
-                            && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
+                            && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (@params.LoaiNghiepVu == 2 ? (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8) : (hd.LoaiHoaDon == 9 || hd.LoaiHoaDon == 10)))
                             orderby hd.NgayHoaDon, hd.SoHoaDon descending
                             select new HoaDonDienTuViewModel
                             {
@@ -8753,7 +8770,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                      from lt in tmpLoaiTiens.DefaultIfEmpty()
                                      where ((!string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) && hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh)) && hddc == null
                                      && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
-                                     && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
+                                     && (@params.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (@params.LoaiNghiepVu == 2 ? (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8) : (hd.LoaiHoaDon == 9 || hd.LoaiHoaDon == 10)))
                                      select new HoaDonDienTuViewModel
                                      {
                                          ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hd.DieuChinhChoHoaDonId), thongDiepChungs),
@@ -9623,7 +9640,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
 
-                            && (@params.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8))
+                            && (@params.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (@params.LoaiNghiepVu == 2 ? (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8) : (hddt.LoaiHoaDon == 9 || hddt.LoaiHoaDon == 10)))
 
                             orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending
                             select new HoaDonDienTuViewModel
@@ -9759,7 +9776,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         && (hddt.TrangThaiBienBanXoaBo == (int)TrangThaiBienBanXoaBo.ChuaLap)
                         && !listHoaDonDaLapThayTheIds.Contains(hddt.HoaDonDienTuId)
                         && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
-                        && (@params.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8))
+                        && (@params.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (@params.LoaiNghiepVu == 2 ? (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8) : (hddt.LoaiHoaDon == 9 || hddt.LoaiHoaDon == 10)))
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel
                         {
@@ -10417,7 +10434,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //cột này hiển thị ở cả 4 tab hóa đơn
                 //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
                 List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                             where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (pagingParams.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
+                                                             where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (pagingParams.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (pagingParams.LoaiNghiepVu == 2 ? (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8) : (hoaDon.LoaiHoaDon == 9 || hoaDon.LoaiHoaDon == 10)))
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -10457,7 +10474,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                                           from lt in tmpLoaiTiens.DefaultIfEmpty()
                                                           where (hd.TrangThai == 2 || hd.TrangThaiBienBanXoaBo > 0) && hd.NgayXoaBo != null && pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId) &&
-                                                          (pagingParams.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
+                                                          (pagingParams.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (pagingParams.LoaiNghiepVu == 2 ? (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8) : (hd.LoaiHoaDon == 9 || hd.LoaiHoaDon == 10)))
                                                           orderby hd.NgayXoaBo.Value.Date descending, hd.NgayHoaDon.Value.Date descending, bkhhd.UyNhiemLapHoaDon descending, bkhhd.KyHieuMauSoHoaDon descending, bkhhd.KyHieuHoaDon descending, hd.SoHoaDon descending, hd.NgayLap.Value.Date descending
                                                           select new HoaDonDienTuViewModel
                                                           {
@@ -10961,7 +10978,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //cột này hiển thị ở cả 4 tab hóa đơn
                 //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
                 List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
-                                                             where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (pagingParams.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8))
+                                                             where (hoaDon.HinhThucXoabo != null || hoaDon.ThayTheChoHoaDonId != null || hoaDon.DieuChinhChoHoaDonId != null) && (pagingParams.LoaiNghiepVu == 1 ? (hoaDon.LoaiHoaDon == 1 || hoaDon.LoaiHoaDon == 2) : (pagingParams.LoaiNghiepVu == 2 ? (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8) : (hoaDon.LoaiHoaDon == 9 || hoaDon.LoaiHoaDon == 10)))
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -10999,7 +11016,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                                           from lt in tmpLoaiTiens.DefaultIfEmpty()
                                                           where pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId) &&
-                                                          (pagingParams.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8))
+                                                          (pagingParams.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (pagingParams.LoaiNghiepVu == 2 ? (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8) : (hd.LoaiHoaDon == 9 || hd.LoaiHoaDon == 10)))
                                                           orderby hd.NgayXoaBo.Value.Date descending, hd.NgayHoaDon.Value.Date descending, bkhhd.UyNhiemLapHoaDon descending, bkhhd.KyHieuMauSoHoaDon descending, bkhhd.KyHieuHoaDon descending, hd.SoHoaDon descending, hd.NgayLap.Value.Date descending
                                                           select new HoaDonDienTuViewModel
                                                           {
@@ -17047,7 +17064,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiTCTNLoi) &&
                         (!string.IsNullOrEmpty(pagingParams.HoaDonDienTuId) ? pagingParams.HoaDonDienTuId == hddt.HoaDonDienTuId : ((!fromDate.HasValue || (fromDate <= hddt.NgayHoaDon)) && (!toDate.HasValue || (toDate >= hddt.NgayHoaDon)))) &&
                         (pagingParams.BoKyHieuHoaDonId == "-1" ? boKyHieuAll.Select(x => x.BoKyHieuHoaDonId).Contains(hddt.BoKyHieuHoaDonId) : (pagingParams.BoKyHieuHoaDonId == hddt.BoKyHieuHoaDonId)) &&
-                        (pagingParams.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8))
+                        (pagingParams.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (pagingParams.LoaiNghiepVu == 2 ? (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8) : (hddt.LoaiHoaDon == 9 || hddt.LoaiHoaDon == 10)))
                         orderby hddt.NgayHoaDon, bkh.KyHieu, hddt.CreatedDate
                         select new HoaDonDienTuViewModel
                         {
@@ -17556,7 +17573,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from kh in tempKhachHangs.DefaultIfEmpty()
                         where GetHoaDonThoaManDieuKienGuiEmail(pagingParams.IsBanNhap, hddt, bkh) && boKyHieuIds.Contains(hddt.BoKyHieuHoaDonId) &&
                         (!string.IsNullOrEmpty(pagingParams.HoaDonDienTuId) ? pagingParams.HoaDonDienTuId == hddt.HoaDonDienTuId : ((!fromDate.HasValue || (fromDate <= hddt.NgayHoaDon)) && (!toDate.HasValue || (toDate >= hddt.NgayHoaDon)))) &&
-                        (pagingParams.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8))
+                        (pagingParams.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (pagingParams.LoaiNghiepVu == 2 ? (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8) : (hddt.LoaiHoaDon == 9 || hddt.LoaiHoaDon == 10)))
                         orderby hddt.NgayHoaDon, bkh.KyHieu, hddt.SoHoaDon, hddt.CreatedDate
                         select new HoaDonDienTuViewModel
                         {

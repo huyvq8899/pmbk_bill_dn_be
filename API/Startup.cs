@@ -141,7 +141,7 @@ namespace API
             services.AddScoped<IXMLInvoiceService, XMLInvoiceService>();
             services.AddScoped<IThietLapTruongDuLieuService, ThietLapTruongDuLieuService>();
             services.AddScoped<IAlertStartupService, AlertStartupService>();
-
+            services.AddScoped<ISmartCAService, SmartCAService>();
 
             #region Danh mục
             services.AddScoped<IDoiTuongService, DoiTuongService>();

@@ -145,5 +145,26 @@ namespace API.Controllers.Config
             var result = await _tuyChonService.CheckCoPhatSinhNgoaiTeAsync();
             return Ok(result);
         }
+
+        [HttpGet("GetTypeChuKi")]
+        public async Task<IActionResult> GetTypeChuKi()
+        {
+            var result = await _tuyChonService.GetTypeLoaiChuKi();
+            return Ok(result);
+        }
+
+        [HttpPost("UpdateLoaiChuKi")]
+        public async Task<IActionResult> UpdateLoaiChuKi(TuyChonViewModel model)
+        {
+            try
+            {
+                var rs = await _tuyChonService.UpdateLoaiChuKi(model);
+                return Ok(rs);
+            }
+            catch (Exception)
+            {
+                return Ok(false);
+            }
+        }
     }
 }

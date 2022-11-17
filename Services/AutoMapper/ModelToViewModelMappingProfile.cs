@@ -40,6 +40,7 @@ namespace Services.AutoMapper
             CreateMap<ConfigNoiDungEmail, ConfigNoiDungEmailViewModel>();
             CreateMap<ThietLapTruongDuLieu, ThietLapTruongDuLieuViewModel>();
             CreateMap<PhanQuyenMauHoaDon, PhanQuyenMauHoaDonViewModel>();
+            CreateMap<TaiKhoanSmartCA, TaiKhoanSmartCAViewModel>();
             #endregion
 
             #region Danh mục
