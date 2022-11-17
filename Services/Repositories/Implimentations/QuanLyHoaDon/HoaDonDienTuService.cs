@@ -317,7 +317,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                       join mb in _db.Users on hd.ModifyBy equals mb.UserId into tmpModifyBys
                                                       from mb in tmpModifyBys.DefaultIfEmpty()
                                                       where pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId) &&
-                                                      (pagingParams.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (pagingParams.LoaiNghiepVu == 2 ? (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8) : (hd.LoaiHoaDon == 9 || hd.LoaiHoaDon == 10)))
+                                                      (pagingParams.LoaiNghiepVu == 1 ? (hd.LoaiHoaDon == 1 || hd.LoaiHoaDon == 2) : (pagingParams.LoaiNghiepVu == 2 ? (hd.LoaiHoaDon == 7 || hd.LoaiHoaDon == 8) : (hd.TrangThaiQuyTrinh != 0 && (hd.LoaiHoaDon == 9 || hd.LoaiHoaDon == 10))))
                                                       select new HoaDonDienTuViewModel
                                                       {
                                                           ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
