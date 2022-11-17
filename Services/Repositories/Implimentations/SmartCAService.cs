@@ -83,7 +83,7 @@ namespace Services.Repositories.Implimentations
         public async Task<string> AccessSmartCA(string type, string args)
         {
             System.Diagnostics.Process process = new System.Diagnostics.Process();
-            process.StartInfo.FileName = Path.Combine(_hostingEnvironment.WebRootPath, $"tools/SmartCA/GatewayServiceTest.exe");
+            process.StartInfo.FileName = Path.Combine(_hostingEnvironment.WebRootPath, $"Tools/SmartCA/GatewayServiceTest.exe");
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.Arguments = $"{type} {args}";
@@ -160,17 +160,17 @@ namespace Services.Repositories.Implimentations
         public async Task<string> SignSmartCAXML(TaiKhoanSmartCAViewModel model)
         {
             // Lấy thông tin tài khoản mềm
-            var accountCA = await this.GetChuKiMemMoiNhat();
+            var accountCA = await GetChuKiMemMoiNhat();
 
             // Data xml nguyên thủy chưa ký
             string dataXML = TextHelper.Decompress(model.DataUnsign);
 
             // Ghi xuống file cho tool ký
-            var path = Path.Combine(_hostingEnvironment.WebRootPath, $"tools/SmartCA/{Guid.NewGuid()}.xml");
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, $"Tools/SmartCA/{Guid.NewGuid()}.xml");
             await File.WriteAllTextAsync(path, dataXML);
 
             // Tạo param
-            var pathXMLSigned = Path.Combine(_hostingEnvironment.WebRootPath, $"tools/SmartCA/{Guid.NewGuid()}.xml");
+            var pathXMLSigned = Path.Combine(_hostingEnvironment.WebRootPath, $"Tools/SmartCA/{Guid.NewGuid()}.xml");
             string json = JsonConvert.SerializeObject(
                            new
                            {
@@ -215,11 +215,11 @@ namespace Services.Repositories.Implimentations
             var accountCA = await this.GetChuKiMemMoiNhat();
 
             // Ghi xuống file cho tool ký
-            var path = Path.Combine(_hostingEnvironment.WebRootPath, $"tools/SmartCA/{Guid.NewGuid()}.xml");
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, $"Tools/SmartCA/{Guid.NewGuid()}.xml");
             await File.WriteAllTextAsync(path, dataXML);
 
             // Tạo param
-            var pathXMLSigned = Path.Combine(_hostingEnvironment.WebRootPath, $"tools/SmartCA/{Guid.NewGuid()}.xml");
+            var pathXMLSigned = Path.Combine(_hostingEnvironment.WebRootPath, $"Tools/SmartCA/{Guid.NewGuid()}.xml");
             string json = JsonConvert.SerializeObject(
                            new
                            {
@@ -257,11 +257,11 @@ namespace Services.Repositories.Implimentations
 
             var accountCA = await this.GetChuKiMemMoiNhat();
 
-            var path = Path.Combine(_hostingEnvironment.WebRootPath, $"tools/SmartCA/{Guid.NewGuid()}.xml");
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, $"Tools/SmartCA/{Guid.NewGuid()}.xml");
             await File.WriteAllTextAsync(path, dataXML);
 
             // Tạo param
-            var pathXMLSigned = Path.Combine(_hostingEnvironment.WebRootPath, $"tools/SmartCA/{Guid.NewGuid()}.xml");
+            var pathXMLSigned = Path.Combine(_hostingEnvironment.WebRootPath, $"Tools/SmartCA/{Guid.NewGuid()}.xml");
             string json = JsonConvert.SerializeObject(
                            new
                            {
