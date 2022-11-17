@@ -818,4 +818,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenTrangThaiQuyTrinh { get; set; }
         public List<string> HoaDonDienTuIds { get; set; }
     }
+
+    public class XuLyNgayTrongNgay
+    {
+        public int? TrangThaiQuyTrinh { get; set; }
+        public int? SoLuong { get; set; }
+    }
 }

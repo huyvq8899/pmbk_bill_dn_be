@@ -1719,5 +1719,12 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.GetListByIdsAsync(ids);
             return Ok(result);
         }
+
+        [HttpGet("XuLyVeNgayTrongNgay")]
+        public async Task<IActionResult> XuLyVeNgayTrongNgay()
+        {
+            var result = await _hoaDonDienTuService.XuLyVeNgayTrongNgayAync();
+            return Ok(result);
+        }
     }
 }

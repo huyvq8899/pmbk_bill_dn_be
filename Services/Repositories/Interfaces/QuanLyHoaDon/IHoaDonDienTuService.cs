@@ -152,6 +152,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         FileReturn PrintToPDF(List<string> base64s);
         Task<(string Message, int Type)> WaitForTCTResonseTicketAsync(List<string> ids);
         Task<HoaDonDienTuViewModel> ThongKeXuatVeTrongNgayAsync();
+        Task<List<XuLyNgayTrongNgay>> XuLyVeNgayTrongNgayAync();
 
         /// <summary>
         /// Get List tuyến đường có vé trong ngày

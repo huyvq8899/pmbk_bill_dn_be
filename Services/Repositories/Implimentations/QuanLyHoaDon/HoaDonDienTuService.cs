@@ -20205,5 +20205,32 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             return result;
         }
+
+        public async Task<List<XuLyNgayTrongNgay>> XuLyVeNgayTrongNgayAync()
+        {
+            var result = await (from tk in _db.HoaDonDienTus
+                                where tk.NgayHoaDon.Value.Date == DateTime.Now.Date &&
+                                ((tk.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT) || (tk.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonBanHang)) &&
+                                ((tk.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DangKyDienTu) ||
+                                (tk.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KyDienTuLoi) ||
+                                (tk.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.ChoPhanHoi) ||
+                                (tk.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiTCTNLoi) ||
+                                (tk.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi) ||
+                                (tk.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiLoi) ||
+                                (tk.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa))
+                                select new XuLyNgayTrongNgay
+                                {
+                                    TrangThaiQuyTrinh = tk.TrangThaiQuyTrinh,
+                                })
+                                .GroupBy(x => x.TrangThaiQuyTrinh)
+                                .Select(x => new XuLyNgayTrongNgay
+                                {
+                                    TrangThaiQuyTrinh = x.Key,
+                                    SoLuong = x.Count()
+                                })
+                                .ToListAsync();
+
+            return result;
+        }
     }
 }
