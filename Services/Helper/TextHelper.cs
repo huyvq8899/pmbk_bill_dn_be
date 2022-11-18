@@ -1702,6 +1702,8 @@ namespace ManagementServices.Helper
             content = content.Replace("[(SoTuyen)]", model.SoTuyen);
             content = content.Replace("[(SoXe)]", model.SoXe);
             content = content.Replace("[(ThoiGianKhoiHanh)]", model.ThoiGianKhoiHanh.HasValue ? model.ThoiGianKhoiHanh.Value.ToString("dd/MM/yyy HH:mm") : string.Empty);
+            content = content.Replace("[(TenChuyenDoi)]", model.TenChuyenDoi);
+            content = content.Replace("[(NgayChuyenDoi)]", model.NgayChuyenDoi.HasValue ? model.NgayChuyenDoi.Value.ToString("dd/MM/yyy") : string.Empty);
 
             string tienChuaThue = (model.TongTienHang ?? 0).FormatNumberByTuyChon(tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, true);
             content = content.Replace("[(CongTienHang)]", tienChuaThue);

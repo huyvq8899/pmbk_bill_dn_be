@@ -1731,7 +1731,7 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> PreviewPDFConversion(HoaDonDienTuViewModel model)
         {
             var result = await _hoaDonDienTuService.PreviewPDFConversionAsync(model);
-            return Ok(result);
+            return File(result.Bytes, result.ContentType, result.FileName);
         }
     }
 }

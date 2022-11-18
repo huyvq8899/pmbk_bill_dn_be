@@ -1187,6 +1187,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from kh in tmpKhachHangs.DefaultIfEmpty()
                         join td in _db.TuyenDuongs on hd.TuyenDuongId equals td.TuyenDuongId into tmpTuyenDuongs
                         from td in tmpTuyenDuongs.DefaultIfEmpty()
+                        join x in _db.Xes on hd.XeId equals x.XeId into tmpXes
+                        from x in tmpXes.DefaultIfEmpty()
                             //join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
                             //from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
                         join nv in _db.DoiTuongs on hd.NhanVienBanHangId equals nv.DoiTuongId into tmpNhanViens
@@ -1350,7 +1352,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TuyenDuongId = hd.TuyenDuongId,
                             ThoiGianKhoiHanh = hd.ThoiGianKhoiHanh,
                             XeId = hd.XeId,
-                            SoXe = hd.SoXe,
+                            SoXe = x != null ? x.SoXe : string.Empty,
                             SoGhe = hd.SoGhe,
                             SoTuyen = hd.SoTuyen,
                             SoChang = hd.SoChang,
@@ -20340,7 +20342,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
               100 * 1000,
 
               //page size
-              new SizeF(width * 70 / 100, height * 62 / 100),
+              new SizeF(width * 70 / 100, height * 67 / 100),
 
               //page margins
               new PdfMargins(0, 0));

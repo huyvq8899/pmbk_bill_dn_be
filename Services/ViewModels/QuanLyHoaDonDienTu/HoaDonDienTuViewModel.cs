@@ -514,6 +514,11 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public bool? LapTuPMGP { get; set; }
 
+        [IgnoreLogging]
+        public string TenChuyenDoi { get; set; }
+
+        [IgnoreLogging]
+        public DateTime? NgayChuyenDoi { get; set; }
 
         [IgnoreLogging]
         public string StrSoHoaDon { get; set; }
