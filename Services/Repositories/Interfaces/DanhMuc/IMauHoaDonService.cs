@@ -48,6 +48,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<List<MauHoaDonXacThuc>> GetListMauVeXacThucAsync(string id);
         Task<FileReturn> PreviewPdfOfXacThucAsync(MauHoaDonFileParams @params);
         Task<LoaiHoaDon> GetLoaiHoaDonByIdAsync(string id);
+        Task<string> ConvertHTMLToPDF(string htmlContent, string htmlFullPath, string pdfFullPath, bool isChuyenDoi);
 
         Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model);
         Task<bool> UpdateAsync(MauHoaDonViewModel model);

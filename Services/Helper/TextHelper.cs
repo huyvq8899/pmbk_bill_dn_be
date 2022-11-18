@@ -1697,21 +1697,21 @@ namespace ManagementServices.Helper
 
         public static string ReplaceValue(this string content, HoaDonDienTuViewModel model, List<TuyChonViewModel> tuyChons)
         {
-            content = content.Replace("[(SoHoaDon)]", model.SoHoaDon.ToString());
+            content = content.Replace("[(SoHoaDon)]", model.SoHoaDon.HasValue ? model.SoHoaDon.ToString() : string.Empty);
             content = content.Replace("[(KyHieu)]", model.KyHieu);
             content = content.Replace("[(SoTuyen)]", model.SoTuyen);
             content = content.Replace("[(SoXe)]", model.SoXe);
-            content = content.Replace("[(ThoiGianKhoiHanh)]", model.ThoiGianKhoiHanh.Value.ToString("dd/MM/yyy HH:mm"));
+            content = content.Replace("[(ThoiGianKhoiHanh)]", model.ThoiGianKhoiHanh.HasValue ? model.ThoiGianKhoiHanh.Value.ToString("dd/MM/yyy HH:mm") : string.Empty);
 
-            string tienChuaThue = model.TongTienHang.Value.FormatNumberByTuyChon(tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, true);
+            string tienChuaThue = (model.TongTienHang ?? 0).FormatNumberByTuyChon(tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, true);
             content = content.Replace("[(CongTienHang)]", tienChuaThue);
 
-            content = content.Replace("[(ThueGTGT)]", model.ThueGTGT);
+            content = content.Replace("[(ThueGTGT)]", model.ThueGTGT.GetThueHasPer());
 
-            string tienThueGTGT = model.TongTienThueGTGT.Value.FormatNumberByTuyChon(tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, true);
+            string tienThueGTGT = (model.TongTienThueGTGT ?? 0).FormatNumberByTuyChon(tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, true);
             content = content.Replace("[(TienThueGTGT)]", tienThueGTGT);
 
-            string tongTienThanhToan = model.TongTienThanhToan.Value.FormatNumberByTuyChon(tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, true);
+            string tongTienThanhToan = (model.TongTienThanhToan ?? 0).FormatNumberByTuyChon(tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, true);
             content = content.Replace("[(TongTienThanhToan)]", tongTienThanhToan);
 
             return content;

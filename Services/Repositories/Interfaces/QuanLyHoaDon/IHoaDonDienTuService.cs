@@ -153,6 +153,8 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<(string Message, int Type)> WaitForTCTResonseTicketAsync(List<string> ids);
         Task<HoaDonDienTuViewModel> ThongKeXuatVeTrongNgayAsync();
         Task<List<XuLyNgayTrongNgay>> XuLyVeNgayTrongNgayAync();
+        Task<FileReturn> XemVeHangLoatAsync(List<HoaDonDienTuViewModel> list);
+        Task<FileReturn> PreviewPDFConversionAsync(HoaDonDienTuViewModel model);
 
         /// <summary>
         /// Get List tuyến đường có vé trong ngày
@@ -188,13 +190,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         /// <param name="params"></param>
         /// <returns></returns>
         Task<List<QuanLyVeResult>> ExportQuanLyVeMobileAsync(QuanLyVeParams @params);
-
-        /// <summary>
-        /// Xem đồng loạt vé
-        /// </summary>
-        /// <param name="listPdfFiles"></param>
-        /// <returns></returns>
-        FileReturn XemVeDongLoat(List<string> listPdfFiles);
 
         /// <summary>
         /// Lấy danh sách vé đã xuất trên mobile

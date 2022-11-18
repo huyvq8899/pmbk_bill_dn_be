@@ -1676,14 +1676,14 @@ namespace API.Controllers.QuanLyHoaDon
             return File(result.Bytes, result.ContentType, result.FileName);
         }
         /// <summary>
-        /// Xem đồng loạt vé
+        /// Xem vé đồng loạt
         /// </summary>
-        /// <param name="fileArray"></param>
+        /// <param name="list"></param>
         /// <returns></returns>
         [HttpPost("XemVeHangLoat")]
-        public IActionResult XemVeHangLoat(List<string> fileArray)
+        public async Task<IActionResult> XemVeHangLoat(List<HoaDonDienTuViewModel> list)
         {
-            var result = _hoaDonDienTuService.XemVeDongLoat(fileArray);
+            var result = await _hoaDonDienTuService.XemVeHangLoatAsync(list);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
 
@@ -1724,6 +1724,13 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> XuLyVeNgayTrongNgay()
         {
             var result = await _hoaDonDienTuService.XuLyVeNgayTrongNgayAync();
+            return Ok(result);
+        }
+
+        [HttpPost("PreviewPDFConversion")]
+        public async Task<IActionResult> PreviewPDFConversion(HoaDonDienTuViewModel model)
+        {
+            var result = await _hoaDonDienTuService.PreviewPDFConversionAsync(model);
             return Ok(result);
         }
     }

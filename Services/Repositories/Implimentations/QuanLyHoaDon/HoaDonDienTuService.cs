@@ -18862,6 +18862,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<FileReturn> PreviewPDFXuatVeAsync(HoaDonDienTuViewModel model)
         {
+            var fileData = await _db.FileDatas
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.RefId == model.HoaDonDienTuId && x.Type == 2 && x.IsSigned == true);
+
+            if (fileData != null && model.IsCreateFile != true)
+            {
+                return new FileReturn
+                {
+                    Bytes = fileData.Binary,
+                    ContentType = MimeTypes.GetMimeType(fileData.FileName),
+                    FileName = Path.GetFileName(fileData.FileName)
+                };
+            }
+
             // get or generate 
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             var tempFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
@@ -18880,11 +18894,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string pdfFullPath = Path.Combine(groupFolderPath, pdfFileName);
 
             // get html from filedata
-            var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == model.HoaDonDienTuId && x.IsSigned.HasValue);
-            if (fileData == null)
-            {
-                fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == model.MauHoaDonId && x.Type == 1);
-            }
+            fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == model.MauHoaDonId && x.Type == 1);
 
             var tuyChons = await _TuyChonService.GetAllAsync();
 
@@ -19626,55 +19636,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
 
-        public FileReturn XemVeDongLoat(List<string> listPdfFiles)
-        {
-            string outPutFilePath = Path.Combine(_hostingEnvironment.WebRootPath, "temp");
-            if (!Directory.Exists(outPutFilePath))
-            {
-                Directory.CreateDirectory(outPutFilePath);
-            }
-
-            for (int i = 0; i < listPdfFiles.Count; i++)
-            {
-                listPdfFiles[i] = Path.Combine(_hostingEnvironment.WebRootPath, listPdfFiles[i]);
-            }
-
-            // File PDF output
-            string fileName = $"{Guid.NewGuid()}.pdf";
-            string filePath = Path.Combine(outPutFilePath, fileName);
-
-            // Meger file pdf
-            bool res = FileHelper.MergePDF(listPdfFiles, filePath);
-
-            //string fileName = $"{Guid.NewGuid()}.pdf";
-            //string filePath = Path.Combine(outPutFilePath, fileName);
-            //using (var targetDoc = new PdfSharp.Pdf.PdfDocument())
-            //{
-            //    foreach (var pdf in listPdfFiles)
-            //    {
-            //        using (var pdfDoc = PdfReader.Open(pdf, PdfDocumentOpenMode.Import))
-            //        {
-            //            for (var i = 0; i < pdfDoc.PageCount; i++)
-            //                targetDoc.AddPage(pdfDoc.Pages[i]);
-            //        }
-            //    }
-            //    targetDoc.Save(filePath);
-            //}
-
-            byte[] fileByte = File.ReadAllBytes(filePath);
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-
-            return new FileReturn
-            {
-                Bytes = fileByte,
-                ContentType = MimeTypes.GetMimeType(filePath),
-                FileName = fileName
-            };
-        }
-
         public async Task<List<HoaDonDienTuViewModel>> GetListVeMobileAsync(QuanLyVeParams @params)
         {
             DateTime fromDate = DateTime.Now;
@@ -20234,6 +20195,171 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 .ToListAsync();
 
             return result;
+        }
+
+        public async Task<FileReturn> XemVeHangLoatAsync(List<HoaDonDienTuViewModel> list)
+        {
+            var hoaDonDienTuIds = list.Select(x => x.HoaDonDienTuId).ToList();
+            var listFull = await GetListByIdsAsync(hoaDonDienTuIds);
+            var mauHoaDonIds = listFull.Select(x => x.MauHoaDonId).Distinct().ToList();
+            var dicListFull = listFull.ToDictionary(x => x.HoaDonDienTuId);
+            var tuyChons = await _TuyChonService.GetAllAsync();
+            List<string> listPDFPath = new List<string>();
+
+            var fileDatas = await _db.FileDatas
+                .AsNoTracking()
+                .Where(x => (hoaDonDienTuIds.Contains(x.RefId) && x.Type == 2 && x.IsSigned == true) || (mauHoaDonIds.Contains(x.RefId) && x.Type == 1))
+                .Select(x => new FileData
+                {
+                    RefId = x.RefId,
+                    Content = x.Content,
+                    IsSigned = x.IsSigned,
+                    Binary = x.Binary,
+                    Type = x.Type
+                })
+                .ToListAsync();
+
+            // get or generate 
+            string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            var tempFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            var groupFolderPath = Path.Combine(tempFolderPath, Guid.NewGuid().ToString());
+            if (!Directory.Exists(tempFolderPath))
+            {
+                Directory.CreateDirectory(tempFolderPath);
+            }
+
+            Directory.CreateDirectory(groupFolderPath);
+
+            List<Task<string>> tasks = new List<Task<string>>();
+
+            foreach (var item in list)
+            {
+                // combine path
+                string htmlFileName = $"{Guid.NewGuid()}.html";
+                string pdfFileName = $"{Guid.NewGuid()}.pdf";
+                string htmlFullPath = Path.Combine(groupFolderPath, htmlFileName);
+                string pdfFullPath = Path.Combine(groupFolderPath, pdfFileName);
+
+                var itemFull = dicListFull[item.HoaDonDienTuId];
+
+                var fileData = fileDatas.FirstOrDefault(x => x.RefId == itemFull.HoaDonDienTuId && x.Type == 2 && x.IsSigned == true);
+
+                if (fileData != null)
+                {
+                    File.WriteAllBytes(pdfFullPath, fileData.Binary);
+
+                    listPDFPath.Add(pdfFullPath);
+                }
+                else
+                {
+                    fileData = fileDatas.FirstOrDefault(x => x.RefId == itemFull.MauHoaDonId && x.Type == 1);
+
+                    string htmlContent = fileData.Content.ReplaceValue(itemFull, tuyChons);
+
+                    tasks.Add(_MauHoaDonService.ConvertHTMLToPDF(htmlContent, htmlFullPath, pdfFullPath, false));
+                }
+            }
+
+            if (tasks.Any())
+            {
+                var taskDone = await Task.WhenAll(tasks);
+                listPDFPath = taskDone.ToList();
+            }
+
+            object _object = new object();
+
+            lock (_object)
+            {
+                // File merged PDF output
+                string fileName = $"{Guid.NewGuid()}.pdf";
+                string filePath = Path.Combine(groupFolderPath, fileName);
+
+                // Meger file pdf
+                FileHelper.MergePDF(listPDFPath, filePath);
+                byte[] fileByte = File.ReadAllBytes(filePath);
+
+                // remove group folder
+                if (Directory.Exists(groupFolderPath))
+                {
+                    GC.Collect();
+                    DictionaryHelper.ClearAttributes(groupFolderPath);
+                    Directory.Delete(groupFolderPath, true);
+                }
+
+                return new FileReturn
+                {
+                    Bytes = fileByte,
+                    ContentType = MimeTypes.GetMimeType(filePath),
+                    FileName = fileName
+                };
+            }
+        }
+
+        public async Task<FileReturn> PreviewPDFConversionAsync(HoaDonDienTuViewModel model)
+        {
+            // get or generate 
+            string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            var tempFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            var groupFolderPath = Path.Combine(tempFolderPath, Guid.NewGuid().ToString());
+            if (!Directory.Exists(tempFolderPath))
+            {
+                Directory.CreateDirectory(tempFolderPath);
+            }
+
+            Directory.CreateDirectory(groupFolderPath);
+
+            // combine path
+            string htmlFileName = $"{Guid.NewGuid()}.html";
+            string pdfFileName = $"{Guid.NewGuid()}.pdf";
+            string htmlFullPath = Path.Combine(groupFolderPath, htmlFileName);
+            string pdfFullPath = Path.Combine(groupFolderPath, pdfFileName);
+
+            // get html from filedata
+            var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == model.MauHoaDonId);
+            if (fileData == null)
+            {
+                return null;
+            }
+
+            var tuyChons = await _TuyChonService.GetAllAsync();
+
+            fileData.Content = TextHelper.VisibleConvertion(fileData.Content).ReplaceValue(model, tuyChons);
+
+            // create file html
+            await File.WriteAllTextAsync(htmlFullPath, fileData.Content);
+
+            // get size from html
+            var (width, height) = fileData.Content.GetSizeFromDataAttr();
+
+            // convert html to pdf
+            HtmlConverter.Convert(htmlFullPath, pdfFullPath,
+              //enable javascript
+              true,
+
+              //load timeout
+              100 * 1000,
+
+              //page size
+              new SizeF(width * 70 / 100, height * 62 / 100),
+
+              //page margins
+              new PdfMargins(0, 0));
+
+            // convert path to bytes
+            var bytes = File.ReadAllBytes(pdfFullPath);
+
+            // remove group folder
+            if (Directory.Exists(groupFolderPath))
+            {
+                Directory.Delete(groupFolderPath, true);
+            }
+
+            return new FileReturn
+            {
+                Bytes = bytes,
+                ContentType = MimeTypes.GetMimeType(pdfFullPath),
+                FileName = Path.GetFileName(pdfFullPath)
+            };
         }
     }
 }

@@ -742,6 +742,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool HasHoaDonKhacNhau { get; set; }
 
         [IgnoreLogging]
+        public bool? IsCreateFile { get; set; }
+
+        [IgnoreLogging]
         public int? Count { get; set; }
 
         public object Clone()

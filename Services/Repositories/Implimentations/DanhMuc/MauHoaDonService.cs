@@ -1925,7 +1925,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             };
         }
 
-        private async Task<string> ConvertHTMLToPDF(string htmlContent, string htmlFullPath, string pdfFullPath, bool isChuyenDoi)
+        public async Task<string> ConvertHTMLToPDF(string htmlContent, string htmlFullPath, string pdfFullPath, bool isChuyenDoi)
         {
             // create file html
             await File.WriteAllTextAsync(htmlFullPath, htmlContent);

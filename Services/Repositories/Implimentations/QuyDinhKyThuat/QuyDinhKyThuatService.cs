@@ -211,7 +211,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe, Name = TrangThaiGuiThongDiep.GoiDuLieuHopLe.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe, Name = TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe.GetDescription() });
 
-                        if(maLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue)
+                        if (maLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue)
                         {
                             result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiTCTNLoi, Name = TrangThaiGuiThongDiep.GuiTCTNLoi.GetDescription() });
                         }
@@ -1472,17 +1472,113 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             doc.LoadXml(dataXML);
                             XmlNode node = doc.SelectSingleNode("/TDiep/DLieu/HDon/MCCQT");
 
-                            var hddtViewModel = await _hoaDonDienTuService.GetByIdAsync(hddt.HoaDonDienTuId);
-                            hddtViewModel.IsCapMa = true;
-                            hddtViewModel.MaCuaCQT = node.InnerText;
-                            hddtViewModel.DataXML = dataXML;
-                            await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hddtViewModel);
+                            if (hddt.LoaiHoaDon == 9 || hddt.LoaiHoaDon == 10)
+                            {
+                                var hddtViewModel = await _hoaDonDienTuService.GetByIdAsync(hddt.HoaDonDienTuId);
+
+                                await SaveFileTicketAsync(hddtViewModel, dataXML);
+
+                                hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.CQTDaCapMa;
+                                hddt.MaCuaCQT = node.InnerText;
+                                hddt.XMLDaKy = hddtViewModel.XMLDaKy;
+                                hddt.FileDaKy = hddtViewModel.FileDaKy;
+                            }
+                            else
+                            {
+                                var hddtViewModel = await _hoaDonDienTuService.GetByIdAsync(hddt.HoaDonDienTuId);
+                                hddtViewModel.IsCapMa = true;
+                                hddtViewModel.MaCuaCQT = node.InnerText;
+                                hddtViewModel.DataXML = dataXML;
+                                await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hddtViewModel);
+                            }
+
                             break;
                         default:
                             break;
                     }
                 }
             }
+        }
+
+        public async Task SaveFileTicketAsync(HoaDonDienTuViewModel hddt, string dataXML)
+        {
+            // Save file
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string xmlFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
+            string pdfFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
+            if (!Directory.Exists(xmlFolderPath))
+            {
+                Directory.CreateDirectory(xmlFolderPath);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(hddt.XMLDaKy))
+                {
+                    string oldFilePath = Path.Combine(xmlFolderPath, hddt.XMLDaKy);
+                    if (File.Exists(oldFilePath))
+                    {
+                        File.Delete(oldFilePath);
+                    }
+                }
+            }
+
+            if (!Directory.Exists(pdfFolderPath))
+            {
+                Directory.CreateDirectory(pdfFolderPath);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(hddt.FileDaKy))
+                {
+                    string oldFilePath = Path.Combine(pdfFolderPath, hddt.FileDaKy);
+                    if (File.Exists(oldFilePath))
+                    {
+                        File.Delete(oldFilePath);
+                    }
+                }
+            }
+
+            string pdfFileName = $"{hddt.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.pdf";
+            string xmlFileName = $"{hddt.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.xml";
+
+            string pdfFullPath = Path.Combine(pdfFolderPath, pdfFileName);
+            string xmlFullPath = Path.Combine(xmlFolderPath, xmlFileName);
+
+            var oldFileDatas = await _dataContext.FileDatas
+                                    .Where(x => x.RefId == hddt.HoaDonDienTuId && (x.Type == 1 || x.Type == 2) && x.IsSigned == true)
+                                    .ToListAsync();
+            _dataContext.FileDatas.RemoveRange(oldFileDatas);
+
+            hddt.IsCreateFile = true;
+            hddt.XMLDaKy = xmlFileName;
+            hddt.FileDaKy = pdfFileName;
+            var filePDF = await _hoaDonDienTuService.PreviewPDFXuatVeAsync(hddt);
+
+            await File.WriteAllBytesAsync(pdfFullPath, filePDF.Bytes);
+            await File.WriteAllTextAsync(xmlFullPath, dataXML);
+
+            List<FileData> fileDatas = new List<FileData>
+            {
+                new FileData
+                {
+                    RefId = hddt.HoaDonDienTuId,
+                    Binary = filePDF.Bytes,
+                    IsSigned = true,
+                    Type = 2,
+                    FileName = pdfFileName
+                },
+                new FileData
+                {
+                    RefId = hddt.HoaDonDienTuId,
+                    Binary = File.ReadAllBytes(xmlFullPath),
+                    IsSigned = true,
+                    Content = dataXML,
+                    FileName = xmlFileName,
+                    Type = 1
+                }
+            };
+
+            await _dataContext.FileDatas.AddRangeAsync(fileDatas);
         }
 
         /// <summary>
