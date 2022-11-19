@@ -2139,6 +2139,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from cb in tmpCreatedBy.DefaultIfEmpty()
                         join mb in _db.Users on hddt.ModifyBy equals mb.UserId into tmpModifiedBy
                         from mb in tmpModifiedBy.DefaultIfEmpty()
+                        join x in _db.Xes on hddt.XeId equals x.XeId into tmpXes
+                        from x in tmpXes.DefaultIfEmpty()
+                        join td in _db.TuyenDuongs on hddt.TuyenDuongId equals td.TuyenDuongId into tmpTuyenDuongs
+                        from td in tmpTuyenDuongs.DefaultIfEmpty()
                         where pagingParams.LoaiNghiepVu == 1 ? (hddt.LoaiHoaDon == 1 || hddt.LoaiHoaDon == 2) : (pagingParams.LoaiNghiepVu == 2 ? (hddt.LoaiHoaDon == 7 || hddt.LoaiHoaDon == 8) : (hddt.LoaiHoaDon == 9 || hddt.LoaiHoaDon == 10))
                         select new HoaDonDienTuViewModel
                         {
@@ -2169,6 +2173,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             EmailNguoiNhanHD = hddt.EmailNguoiNhanHD,
                             SoDienThoaiNguoiNhanHD = hddt.SoDienThoaiNguoiNhanHD,
                             SoLanChuyenDoi = hddt.SoLanChuyenDoi,
+                            // ticket
+                            SoLuong = hddt.SoLuong,
+                            TuyenDuongId = hddt.TuyenDuongId,
+                            ThoiGianKhoiHanh = hddt.ThoiGianKhoiHanh,
+                            XeId = hddt.XeId,
+                            SoXe = x != null ? x.SoXe : string.Empty,
+                            SoGhe = hddt.SoGhe,
+                            SoTuyen = hddt.SoTuyen,
+                            SoChang = hddt.SoChang,
+                            SoChuyen = hddt.SoChuyen,
+                            TenTuyenDuong = td.TenTuyenDuong,
+                            BenDi = hddt.BenDi,
+                            BenDen = hddt.BenDen,
+                            IsVeTam = hddt.IsVeTam,
+                            NgungXuatVe = hddt.NgungXuatVe,
+                            ThueGTGT = hddt.ThueGTGT,
                             // Dinh kem
                             LyDoXoaBo = hddt.LyDoXoaBo,
                             // thong bao sai sot
@@ -2324,6 +2344,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 case "Ký hiệu mẫu số hóa đơn":
                                 case "Ký hiệu hóa đơn":
+                                case "Tuyến đường":
+                                case "Bến đi":
+                                case "Bến đến":
+                                case "Số xe":
+                                case "Số ghế":
+                                case "Ngày khởi hành":
+                                case "Giờ khởi hành":
                                     type = KieuDuLieuThietLapTuyChinh.Chu;
                                     break;
                                 case "Số hóa đơn":
