@@ -3566,6 +3566,7 @@ namespace Services.Helper
         public string FileName { get; set; }
         public string Base64 { get; set; }
         public string RefId { get; set; }
+        public string Path { get; set; }
     }
 
     public class GroupThongTinNguoiKy

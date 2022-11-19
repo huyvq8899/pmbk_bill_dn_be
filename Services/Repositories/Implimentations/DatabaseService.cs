@@ -173,41 +173,54 @@ namespace Services.Repositories.Implimentations
             {
                 List<CompanyModel> companyModels = await GetCompanies();
 
+                List<Task<CompanyModel>> tasks = new List<Task<CompanyModel>>();
+
                 foreach (var item in companyModels)
                 {
-                    try
-                    {
-                        if (item.Server != "10.10.20.11")
-                        {
-                            var a = 0;
-                        }
-                        using (SqlConnection connection = new SqlConnection(item.ConnectionString))
-                        {
-                            string query = $"SELECT COUNT(*) FROM HoaDonDienTus WHERE MaTraCuu = @MaTraCuu";
-                            using (SqlCommand command = new SqlCommand(query, connection))
-                            {
-                                command.Parameters.Add("@MaTraCuu", SqlDbType.NVarChar);
-                                command.Parameters["@MaTraCuu"].Value = lookupCode;
+                    tasks.Add(CheckExistsMaTraCuu(item, lookupCode));
+                }
 
-                                await connection.OpenAsync();
-                                object result = await command.ExecuteScalarAsync();
-                                if ((int)result > 0)
-                                {
-                                    return item;
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Tracert.WriteLog(ex.Message);
-                        continue;
-                    }
+                var result = await Task.WhenAll(tasks);
+
+                if (result.Any(x => x != null))
+                {
+                    return result.Where(x => x != null).First();
                 }
 
                 return null;
             }
             catch (Exception ex)
+            {
+                Tracert.WriteLog(ex.Message);
+                return null;
+            }
+        }
+
+        private async Task<CompanyModel> CheckExistsMaTraCuu(CompanyModel item, string lookupCode)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(item.ConnectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string query = $"SELECT COUNT(*) FROM HoaDonDienTus WHERE MaTraCuu = @MaTraCuu";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add("@MaTraCuu", SqlDbType.NVarChar);
+                        command.Parameters["@MaTraCuu"].Value = lookupCode;
+
+                        object result = await command.ExecuteScalarAsync();
+                        if ((int)result > 0)
+                        {
+                            return item;
+                        }
+                    }
+                }
+
+                return null;
+            }
+            catch
             {
                 return null;
             }
@@ -337,9 +350,9 @@ namespace Services.Repositories.Implimentations
             }
 
             //companyModels = companyModels.Where(x => x.Server == server).ToList();
-            var servers = companyModels.DistinctBy(x => x.Server).Select(x => x.Server).ToList();
-            var availableServer = servers.Where(x => IsAvailableServer(x)).ToList();
-            companyModels = companyModels.Where(x => availableServer.Contains(x.Server)).ToList();
+            //var servers = companyModels.DistinctBy(x => x.Server).Select(x => x.Server).ToList();
+            //var availableServer = servers.Where(x => IsAvailableServer(x)).ToList();
+            //companyModels = companyModels.Where(x => availableServer.Contains(x.Server)).ToList();
             return companyModels;
         }
 

@@ -515,7 +515,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? LapTuPMGP { get; set; }
 
         [IgnoreLogging]
-        public string TenChuyenDoi { get; set; }
+        public string NguoiChuyenDoi { get; set; }
 
         [IgnoreLogging]
         public DateTime? NgayChuyenDoi { get; set; }
@@ -531,6 +531,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string ThongTinTao { get; set; }
+
+        [IgnoreLogging]
+        public bool? KeepFilePDF { get; set; }
 
         [IgnoreLogging]
         public string ThongTinCapNhat { get; set; }

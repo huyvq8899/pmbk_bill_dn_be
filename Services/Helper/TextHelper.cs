@@ -16,6 +16,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -1673,6 +1674,30 @@ namespace ManagementServices.Helper
             return doc.DocumentNode.OuterHtml;
         }
 
+        public static string HiddenConvertion(string html)
+        {
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+
+            foreach (var item in doc.DocumentNode.SelectNodes("//*[@data-field]"))
+            {
+                var dataField = item.GetAttributeValue("data-field", "");
+
+                if (dataField == Enum.GetName(typeof(LoaiChiTietTuyChonNoiDung), LoaiChiTietTuyChonNoiDung.TenNguoiChuyenDoi) ||
+                    dataField == Enum.GetName(typeof(LoaiChiTietTuyChonNoiDung), LoaiChiTietTuyChonNoiDung.NgayChuyenDoi))
+                {
+                    string attr = item.Attributes["class"].Value;
+
+                    if (!attr.Contains("display-none"))
+                    {
+                        item.SetAttributeValue("class", attr + " display-none");
+                    }
+                }
+            }
+
+            return doc.DocumentNode.OuterHtml;
+        }
+
         public static string GetMenhGiaByLoaiMau(this LoaiMauHoaDon loaiMauHoaDon)
         {
             string result = string.Empty;
@@ -1697,12 +1722,13 @@ namespace ManagementServices.Helper
 
         public static string ReplaceValue(this string content, HoaDonDienTuViewModel model, List<TuyChonViewModel> tuyChons)
         {
+            content = content.Replace("[(MaCuaCQT)]", model.MaCuaCQT);
             content = content.Replace("[(SoHoaDon)]", model.SoHoaDon.HasValue ? model.SoHoaDon.ToString() : string.Empty);
             content = content.Replace("[(KyHieu)]", model.KyHieu);
             content = content.Replace("[(SoTuyen)]", model.SoTuyen);
             content = content.Replace("[(SoXe)]", model.SoXe);
             content = content.Replace("[(ThoiGianKhoiHanh)]", model.ThoiGianKhoiHanh.HasValue ? model.ThoiGianKhoiHanh.Value.ToString("dd/MM/yyy HH:mm") : string.Empty);
-            content = content.Replace("[(TenChuyenDoi)]", model.TenChuyenDoi);
+            content = content.Replace("[(TenNguoiChuyenDoi)]", model.NguoiChuyenDoi);
             content = content.Replace("[(NgayChuyenDoi)]", model.NgayChuyenDoi.HasValue ? model.NgayChuyenDoi.Value.ToString("dd/MM/yyy") : string.Empty);
 
             string tienChuaThue = (model.TongTienHang ?? 0).FormatNumberByTuyChon(tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, true);
@@ -1721,6 +1747,8 @@ namespace ManagementServices.Helper
 
         public static string AddStyleToTicketHTML(this string content, IHostingEnvironment env)
         {
+            content = HiddenConvertion(content);
+
             var doc = new HtmlDocument();
             doc.LoadHtml(content);
 

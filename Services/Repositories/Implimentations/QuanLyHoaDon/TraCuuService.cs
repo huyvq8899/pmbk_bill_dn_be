@@ -128,8 +128,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from mhd in tmpMauHoaDons.DefaultIfEmpty()
                         join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
                         from kh in tmpKhachHangs.DefaultIfEmpty()
-                        //join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
-                        //from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
+                            //join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
+                            //from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
                         join nv in _db.DoiTuongs on hd.NhanVienBanHangId equals nv.DoiTuongId into tmpNhanViens
                         from nv in tmpNhanViens.DefaultIfEmpty()
                         join nl in _db.DoiTuongs on hd.CreatedBy equals nl.DoiTuongId into tmpNguoiLaps
@@ -502,6 +502,25 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
                             LyDoThayTheModel = string.IsNullOrEmpty(hd.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe),
                             GhiChuThayTheSaiSot = hd.GhiChuThayTheSaiSot,
+                            // ticket
+                            SoLuong = hd.SoLuong,
+                            TuyenDuongId = hd.TuyenDuongId,
+                            ThoiGianKhoiHanh = hd.ThoiGianKhoiHanh,
+                            XeId = hd.XeId,
+                            //SoXe = x != null ? x.SoXe : string.Empty,
+                            SoGhe = hd.SoGhe,
+                            SoTuyen = hd.SoTuyen,
+                            SoChang = hd.SoChang,
+                            SoChuyen = hd.SoChuyen,
+                            //TenTuyenDuong = td.TenTuyenDuong,
+                            BenDi = hd.BenDi,
+                            BenDen = hd.BenDen,
+                            IsVeTam = hd.IsVeTam,
+                            NgungXuatVe = hd.NgungXuatVe,
+                            ThueGTGT = hd.ThueGTGT,
+                            LoaiMau = mhd.LoaiMauHoaDon,
+                            TenLoaiMau = mhd.LoaiMauHoaDon.GetDescription(),
+                            //
                             HoaDonChiTiets = (
                                                from hdct in _db.HoaDonDienTuChiTiets
                                                join hd in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hd.HoaDonDienTuId into tmpHoaDons
@@ -802,7 +821,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (string.IsNullOrEmpty(dataXML))
                 {
-                    var bin = _db.FileDatas.Where(x => x.RefId == hoaDonDienTuId && x.Type==1).FirstOrDefault().Binary;
+                    var bin = _db.FileDatas.Where(x => x.RefId == hoaDonDienTuId && x.Type == 1).FirstOrDefault().Binary;
                     dataXML = Encoding.UTF8.GetString(bin);
                 }
 

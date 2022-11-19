@@ -662,7 +662,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var entity = _mp.Map<MauHoaDon>(model);
             if (!string.IsNullOrEmpty(model.HtmlContent))
             {
-                var fileData = new DLL.Entity.FileData
+                model.HtmlContent = TextHelper.HiddenConvertion(model.HtmlContent);
+
+                var fileData = new FileData
                 {
                     RefId = model.MauHoaDonId,
                     Type = 1,

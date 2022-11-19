@@ -20,6 +20,7 @@ using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.Repositories.Interfaces.TienIch;
 using Services.ViewModels.FormActions;
 using Services.ViewModels.Import;
+using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
@@ -735,8 +736,20 @@ namespace API.Controllers.QuanLyHoaDon
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 
             var result = await _traCuuService.TraCuuByMa(MaTraCuu.Trim());
-            var res = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(result);
-            return Ok(new { data = result, path = res.FilePDF });
+            KetQuaConvertPDF ketQuaConverted = new KetQuaConvertPDF();
+
+            if ((result.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT) || (result.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT))
+            {
+                result.KeepFilePDF = true;
+                var fileReturn = await _hoaDonDienTuService.PreviewPDFXuatVeAsync(result);
+                ketQuaConverted.FilePDF = fileReturn.Path;
+            }
+            else
+            {
+                ketQuaConverted = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(result);
+            }
+
+            return Ok(new { data = result, path = ketQuaConverted.FilePDF });
         }
 
         [AllowAnonymous]
