@@ -23,7 +23,6 @@ using Services.Helper.Constants;
 using Services.Helper.Params.Filter;
 using Services.Helper.Params.HeThong;
 using Services.Helper.Params.HoaDon;
-using Services.Repositories.Implimentations.Config;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.DanhMuc;
@@ -18799,6 +18798,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     // Tạm thời dùng cho xe bus nên không lấy số ghế
                     HoaDonDienTu entityInsert = new HoaDonDienTu
                     {
+                        HoaDonDienTuId = Guid.NewGuid().ToString(),
                         BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
                         MauHoaDonId = model.MauHoaDonId,
                         SoLuong = 1,
@@ -18832,8 +18832,47 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         TyLePhanTramDoanhThu = 0,
                         TongTienGiam = 0,
                         TongTienGiamQuyDoi = 0,
-                        TyLeChietKhau = 0
+                        TyLeChietKhau = 0,
+                        SoLanChuyenDoi = 0,
                     };
+
+                    if (!string.IsNullOrEmpty(model.BienBanDieuChinhId))
+                    {
+                        BienBanDieuChinh bienBanDieuChinh = await _db.BienBanDieuChinhs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == model.BienBanDieuChinhId);
+                        if (bienBanDieuChinh != null)
+                        {
+                            bienBanDieuChinh.HoaDonDieuChinhId = entityInsert.HoaDonDienTuId;
+                        }
+
+                        // copy tài liệu đính kèm biên bản -> hóa đơn điều chỉnh
+                        var addedTaiLieuDinhKiems = await _db.TaiLieuDinhKems.Where(x => x.NghiepVuId == model.BienBanDieuChinhId)
+                            .Select(x => new TaiLieuDinhKem
+                            {
+                                Status = true,
+                                LoaiNghiepVu = RefType.HoaDonDienTu,
+                                TenGoc = x.TenGoc,
+                                TenGuid = x.TenGuid,
+                                NghiepVuId = model.HoaDonDienTuId
+                            })
+                            .ToListAsync();
+
+                        await _db.TaiLieuDinhKems.AddRangeAsync(addedTaiLieuDinhKiems);
+                    }
+
+                    if (!string.IsNullOrEmpty(model.LyDoThayThe))
+                    {
+                        entityInsert.TrangThai = (int)TrangThaiHoaDon.HoaDonThayThe;
+                        entityInsert.ThayTheChoHoaDonId = model.ThayTheChoHoaDonId;
+                        entityInsert.LyDoThayThe = model.LyDoThayThe;
+                    }
+
+                    if (!string.IsNullOrEmpty(model.LyDoDieuChinh))
+                    {
+                        entityInsert.TrangThai = (int)TrangThaiHoaDon.HoaDonDieuChinh;
+                        entityInsert.DieuChinhChoHoaDonId = model.DieuChinhChoHoaDonId;
+                        entityInsert.LyDoDieuChinh = model.LyDoDieuChinh;
+                        entityInsert.LoaiDieuChinh = model.LoaiDieuChinh;
+                    }
 
                     var isVND = loaiTien.Ma == "VND";
 
