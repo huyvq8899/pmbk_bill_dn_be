@@ -1258,5 +1258,77 @@ namespace Services.Repositories.Implimentations.TienIch
 
             return await query.ToListAsync();
         }
+
+        public async Task<bool> InsertRangeAsync(bool hasSaveChanges, List<NhatKyTruyCapViewModel> models)
+        {
+            bool isAllowAdd = true;
+            List<NhatKyTruyCap> entities = new List<NhatKyTruyCap>();
+
+            foreach (var model in models)
+            {
+                NhatKyTruyCap entity = new NhatKyTruyCap
+                {
+                    DoiTuongThaoTac = !string.IsNullOrEmpty(model.DoiTuongThaoTac) ? (model.DoiTuongThaoTac == "empty" ? string.Empty : model.DoiTuongThaoTac) : model.RefType.GetDescription(),
+                    HanhDong = !string.IsNullOrEmpty(model.HanhDong) ? model.HanhDong : model.LoaiHanhDong.GetDescription(),
+                    ThamChieu = model.ThamChieu,
+                    MoTaChiTiet = model.MoTaChiTiet,
+                    DiaChiIP = GetIpAddressOfClient(),
+                    TenMayTinh = "",
+                    RefFile = model.RefFile,
+                    RefId = model.RefId,
+                    RefType = model.RefType,
+                    Status = true
+                };
+
+                switch (model.LoaiHanhDong)
+                {
+                    case LoaiHanhDong.Them:
+                        break;
+                    case LoaiHanhDong.Sua:
+                        if (model.DuLieuCu == null || model.DuLieuMoi == null)
+                        {
+                            break;
+                        }
+
+                        object[] oldEntries = null;
+                        object[] newEntries = null;
+                        if (model.RefType == RefType.HoaDonDienTu)
+                        {
+                            oldEntries = model.DuLieuChiTietCu;
+                            newEntries = model.DuLieuChiTietMoi;
+                        }
+
+                        entity.MoTaChiTiet = GetChanges(model.RefType, model.DuLieuCu, model.DuLieuMoi, oldEntries, newEntries);
+                        if (string.IsNullOrEmpty(entity.MoTaChiTiet))
+                        {
+                            isAllowAdd = false;
+                        }
+
+                        if (model.RefType == RefType.ThongBaoKetQuaHuyHoaDon)
+                        {
+                            entity.MoTaChiTiet = null;
+                        }
+
+                        break;
+                    case LoaiHanhDong.Xoa:
+                        break;
+                    default:
+                        break;
+                }
+
+                entities.Add(entity);
+            }
+
+            if (isAllowAdd == true)
+            {
+                await _db.NhatKyTruyCaps.AddRangeAsync(entities);
+
+                if (hasSaveChanges)
+                {
+                    await _db.SaveChangesAsync();
+                }
+            }
+            return true;
+        }
     }
 }

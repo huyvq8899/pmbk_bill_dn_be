@@ -2639,6 +2639,34 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             case "Trường thông tin bổ sung 10":
                                 worksheet.Cells[idx, i].Value = it.TruongThongTinBoSung10;
                                 break;
+                            //////////////////////////////////////////////////////////////////
+                            case "Tuyến đường":
+                                worksheet.Cells[idx, i].Value = it.TenTuyenDuong;
+                                break;
+                            case "Bến đi":
+                                worksheet.Cells[idx, i].Value = it.BenDi;
+                                break;
+                            case "Bến đến":
+                                worksheet.Cells[idx, i].Value = it.BenDen;
+                                break;
+                            case "Số xe":
+                                worksheet.Cells[idx, i].Value = it.SoXe;
+                                break;
+                            case "Số ghế":
+                                worksheet.Cells[idx, i].Value = it.SoGhe;
+                                break;
+                            case "Ngày khởi hành":
+                                worksheet.Cells[idx, i].Value = it.ThoiGianKhoiHanh.HasValue ? it.ThoiGianKhoiHanh.Value.ToString("dd/MM/yyyy") : string.Empty;
+                                break;
+                            case "Giờ khởi hành":
+                                worksheet.Cells[idx, i].Value = it.ThoiGianKhoiHanh.HasValue ? it.ThoiGianKhoiHanh.Value.ToString("HH:mm:ss") : string.Empty;
+                                break;
+                            case "Số lần in vé":
+                                worksheet.Cells[idx, i].Value = string.Empty;
+                                break;
+                            case "Thông tin xuất vé":
+                                worksheet.Cells[idx, i].Value = string.Empty;
+                                break;
                             default:
                                 break;
                         }
@@ -18925,6 +18953,25 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             var listVeRemoved = await _db.HoaDonDienTus.Where(x => listRemovedIdVeCanXuat.Contains(x.HoaDonDienTuId)).ToListAsync();
+
+            if (listVeAdded.Any())
+            {
+                List<NhatKyTruyCapViewModel> nhatKyTruyCaps = new List<NhatKyTruyCapViewModel>();
+
+                foreach (var item in listVeAdded)
+                {
+                    nhatKyTruyCaps.Add(new NhatKyTruyCapViewModel
+                    {
+                        LoaiHanhDong = LoaiHanhDong.Them,
+                        RefType = RefType.HoaDonDienTu,
+                        DoiTuongThaoTac = $"Tên loại hóa đơn: {((LoaiHoaDon)item.LoaiHoaDon).GetDescription()}",
+                        ThamChieu = $"Số hóa đơn {item.SoHoaDon}\nNgày hóa đơn {item.NgayHoaDon.Value.ToString("dd/MM/yyyy")}",
+                        RefId = item.HoaDonDienTuId
+                    });
+                }
+
+                await _nhatKyTruyCapService.InsertRangeAsync(false, nhatKyTruyCaps);
+            }
 
             _db.HoaDonDienTus.RemoveRange(listVeRemoved);
             await _db.HoaDonDienTus.AddRangeAsync(listVeAdded);
