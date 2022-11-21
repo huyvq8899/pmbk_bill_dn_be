@@ -10134,7 +10134,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 case TrangThaiQuyTrinh.DangKyDienTu:
                 case TrangThaiQuyTrinh.KyDienTuLoi:
                 case TrangThaiQuyTrinh.GuiTCTNLoi:
-                    if (hoaDonDienTuViewModel.LoaiHoaDon == 9 || hoaDonDienTuViewModel.LoaiHoaDon == 10)
+                    if ((hoaDonDienTuViewModel.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT) ||
+                        (hoaDonDienTuViewModel.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonBanHang))
                     {
                         var convertedPDF = await PreviewPDFXuatVeAsync(hoaDonDienTuViewModel);
                         filePdfName = $"{hoaDonDienTuViewModel.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.pdf";
