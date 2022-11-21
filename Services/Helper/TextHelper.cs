@@ -1059,6 +1059,7 @@ namespace ManagementServices.Helper
 
         public static string GetThueHasPer(this string value)
         {
+            if (string.IsNullOrEmpty(value)) return string.Empty;
             if (value == "KCT" || value == "KKKNT")
             {
                 return value;
