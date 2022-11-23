@@ -6263,10 +6263,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
-                    isBanNhap = true;
-                    var convertPDF = await ConvertHoaDonToFilePDF(hddt);
-                    pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FilePDF);
-                    xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FileXML);
+                    if ((hddt.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT) || (hddt.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonBanHang))
+                    {
+                        isBanNhap = true;
+
+                        hddt.KeepFilePDF = true;
+                        var returnPDF = await PreviewPDFXuatVeAsync(hddt);
+                        var returnXML = await CreateXMLToSignAsync(hddt);
+
+                        pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, returnPDF.Path);
+                        xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, returnXML.Path);
+                    }
+                    else
+                    {
+                        isBanNhap = true;
+                        var convertPDF = await ConvertHoaDonToFilePDF(hddt);
+                        pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FilePDF);
+                        xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FileXML);
+                    }
                 }
 
                 var banMauEmail = await _db.ConfigNoiDungEmails.Where(x => x.LoaiEmail == @params.LoaiEmail && x.IsDefault != true)
@@ -15169,9 +15183,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
 
-                if (hoaDon.LoaiHoaDon == 7 || hoaDon.LoaiHoaDon == 8)
+                if ((hoaDon.LoaiHoaDon == (int)LoaiHoaDon.PXKKiemVanChuyenNoiBo) || (hoaDon.LoaiHoaDon == (int)LoaiHoaDon.PXKHangGuiBanDaiLy))
                 {
                     hoaDon.LoaiHoaDon = 6;
+                }
+
+                if ((hoaDon.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT) || (hoaDon.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonBanHang))
+                {
+                    hoaDon.LoaiHoaDon = 5;
                 }
 
                 // get thông tin hóa đơn
@@ -17043,7 +17062,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             string xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.xml";
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
+            string xmlFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
+
+            if (!hd.SoHoaDon.HasValue)
+            {
+                xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.xml";
+                xmlFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}";
+            }
+
+            string fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, xmlFolder);
 
             #region create folder
             if (!Directory.Exists(fullXmlFolder))
@@ -17055,6 +17082,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (!string.IsNullOrEmpty(hd.XMLDaKy))
                 {
                     string oldFilePath = Path.Combine(fullXmlFolder, hd.XMLDaKy);
+                    if (File.Exists(oldFilePath))
+                    {
+                        File.Delete(oldFilePath);
+                    }
+                }
+                if (!string.IsNullOrEmpty(hd.XMLChuaKy))
+                {
+                    string oldFilePath = Path.Combine(fullXmlFolder, hd.XMLChuaKy);
                     if (File.Exists(oldFilePath))
                     {
                         File.Delete(oldFilePath);
@@ -17088,10 +17123,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             await _db.SaveChangesAsync();
 
+            string base64 = TextHelper.Compress(File.ReadAllText(fullXmlFilePath));
+
             return new FileReturn
             {
-                Base64 = TextHelper.Compress(File.ReadAllText(fullXmlFilePath)),
-                RefId = hd.HoaDonDienTuId
+                Base64 = base64,
+                RefId = hd.HoaDonDienTuId,
+                Path = Path.Combine(xmlFolder, xmlFileName)
             };
         }
 

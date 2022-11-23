@@ -1472,7 +1472,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             doc.LoadXml(dataXML);
                             XmlNode node = doc.SelectSingleNode("/TDiep/DLieu/HDon/MCCQT");
 
-                            if (hddt.LoaiHoaDon == 9 || hddt.LoaiHoaDon == 10)
+                            if ((hddt.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT) || (hddt.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonBanHang))
                             {
                                 var hddtViewModel = await _hoaDonDienTuService.GetByIdAsync(hddt.HoaDonDienTuId);
 
