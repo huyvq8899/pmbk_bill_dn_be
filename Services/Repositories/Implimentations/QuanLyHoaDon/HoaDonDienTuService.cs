@@ -18753,6 +18753,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             Status = vdt.Status,
                             SoChuyen = vdt.SoChuyen,
                             IsVeTam = vdt.IsVeTam,
+                            NgungXuatVe = vdt.NgungXuatVe,
                             STT = td.STT,
                             MaCuaCQT = vdt.MaCuaCQT,
                             MaTraCuu = vdt.MaTraCuu,
@@ -18873,6 +18874,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         TongTienGiamQuyDoi = 0,
                         TyLeChietKhau = 0,
                         SoLanChuyenDoi = 0,
+                        NgungXuatVe = false
                     };
 
                     if (!string.IsNullOrEmpty(model.BienBanDieuChinhId))
@@ -19007,6 +19009,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var itemAdd = _mp.Map<HoaDonDienTu>(item);
                     itemAdd.NgayKy = DateTime.Now;
                     itemAdd.NgayHoaDon = DateTime.Now;
+                    itemAdd.IsVeTam = false;
+                    itemAdd.NgungXuatVe = false;
                     itemAdd.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.DaKyDienTu;
                     itemAdd.CreatedBy = null;
                     itemAdd.CreatedDate = null;
@@ -19348,6 +19352,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             itemClone.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.ChuaKyDienTu;
             itemClone.NgayHoaDon = DateTime.Now;
             itemClone.IsVeTam = false;
+            itemClone.NgungXuatVe = false;
             itemClone.CreatedDate = null;
             itemClone.ModifyDate = null;
             itemClone.CreatedBy = null;
@@ -20622,6 +20627,34 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 ContentType = MimeTypes.GetMimeType(pdfFullPath),
                 FileName = Path.GetFileName(pdfFullPath)
             };
+        }
+
+        public async Task<bool> NgungXuatVeAsync(string id)
+        {
+            var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
+            entity.NgungXuatVe = !(entity.NgungXuatVe ?? false);
+            var result = await _db.SaveChangesAsync();
+            return result > 0;
+        }
+
+        public async Task<bool> ThemSangXuatVeTrongNgayAsync(string id)
+        {
+            var entity = await _db.HoaDonDienTus
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
+
+            entity.HoaDonDienTuId = Guid.NewGuid().ToString();
+            entity.IsVeTam = false;
+            entity.NgayHoaDon = DateTime.Now;
+            entity.NgungXuatVe = false;
+            entity.CreatedBy = null;
+            entity.CreatedDate = null;
+            entity.ModifyBy = null;
+            entity.ModifyDate = null;
+
+            await _db.HoaDonDienTus.AddAsync(entity);
+            var result = await _db.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

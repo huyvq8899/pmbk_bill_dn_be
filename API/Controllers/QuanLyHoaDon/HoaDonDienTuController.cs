@@ -1746,5 +1746,19 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.PreviewPDFConversionAsync(model);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
+
+        [HttpGet("NgungXuatVe/{id}")]
+        public async Task<IActionResult> NgungXuatVe(string id)
+        {
+            var result = await _hoaDonDienTuService.NgungXuatVeAsync(id);
+            return Ok(result);
+        }
+
+        [HttpGet("ThemSangXuatVeTrongNgay/{id}")]
+        public async Task<IActionResult> ThemSangXuatVeTrongNgay(string id)
+        {
+            var result = await _hoaDonDienTuService.ThemSangXuatVeTrongNgayAsync(id);
+            return Ok(result);
+        }
     }
 }
