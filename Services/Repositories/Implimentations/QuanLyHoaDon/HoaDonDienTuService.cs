@@ -20413,7 +20413,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<List<XuLyNgayTrongNgay>> XuLyVeNgayTrongNgayAync()
         {
             var result = await (from tk in _db.HoaDonDienTus
-                                where tk.NgayHoaDon.Value.Date == DateTime.Now.Date &&
+                                where /*tk.NgayHoaDon.Value.Date == DateTime.Now.Date &&*/
                                 ((tk.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT) || (tk.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonBanHang)) &&
                                 ((tk.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DangKyDienTu) ||
                                 (tk.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KyDienTuLoi) ||

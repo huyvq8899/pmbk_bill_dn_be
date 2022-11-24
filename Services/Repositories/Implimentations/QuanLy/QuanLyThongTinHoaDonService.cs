@@ -462,23 +462,23 @@ namespace Services.Repositories.Implimentations.QuanLy
 
             if (dangSuDungs.Contains(LoaiThongTinChiTiet.CacLoaiHoaDonKhac))
             {
+                //result.Add(new EnumModel
+                //{
+                //    Value = (int)LoaiHoaDon.CacLoaiHoaDonKhac,
+                //    Name = LoaiHoaDon.CacLoaiHoaDonKhac.GetDescription()
+                //});
+
                 result.Add(new EnumModel
                 {
-                    Value = (int)LoaiHoaDon.CacLoaiHoaDonKhac,
-                    Name = LoaiHoaDon.CacLoaiHoaDonKhac.GetDescription()
+                    Value = (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT,
+                    Name = LoaiHoaDon.TemVeTheLaHoaDonGTGT.GetDescription()
                 });
 
-                //result.Add(new EnumModel
-                //{
-                //    Value = (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT,
-                //    Name = LoaiHoaDon.TemVeTheLaHoaDonGTGT.GetDescription()
-                //});
-
-                //result.Add(new EnumModel
-                //{
-                //    Value = (int)LoaiHoaDon.TemVeTheLaHoaDonBanHang,
-                //    Name = LoaiHoaDon.TemVeTheLaHoaDonBanHang.GetDescription()
-                //});
+                result.Add(new EnumModel
+                {
+                    Value = (int)LoaiHoaDon.TemVeTheLaHoaDonBanHang,
+                    Name = LoaiHoaDon.TemVeTheLaHoaDonBanHang.GetDescription()
+                });
             }
 
             if (dangSuDungs.Contains(LoaiThongTinChiTiet.CacChungTuDuocInPhatHanhSuDungVaQuanLyNhuHoaDon))
