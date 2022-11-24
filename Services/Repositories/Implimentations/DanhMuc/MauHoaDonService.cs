@@ -662,7 +662,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var entity = _mp.Map<MauHoaDon>(model);
             if (!string.IsNullOrEmpty(model.HtmlContent))
             {
-                model.HtmlContent = TextHelper.HiddenConvertion(model.HtmlContent);
+                model.HtmlContent = model.HtmlContent.AddStyleToTicketHTML(_hostingEnvironment);
 
                 var fileData = new FileData
                 {
