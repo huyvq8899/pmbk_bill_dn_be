@@ -565,7 +565,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                     x.HinhThucHoaDon == @params.HinhThucHoaDon &&
                                     x.LoaiHoaDon == @params.LoaiHoaDon &&
                                     x.LoaiMauHoaDon == @params.LoaiMau &&
-                                    (@params.LoaiHoaDon == 2 || @params.LoaiHoaDon == 7 || @params.LoaiHoaDon == 8 || @params.LoaiHoaDon == 9 || @params.LoaiHoaDon == 10 || x.LoaiThueGTGT == @params.LoaiThueGTGT) &&
+                                    (@params.LoaiHoaDon == 2 || @params.LoaiHoaDon == 7 || @params.LoaiHoaDon == 8 || (@params.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT) || (@params.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonBanHang) || x.LoaiThueGTGT == @params.LoaiThueGTGT) &&
                                     x.LoaiNgonNgu == @params.LoaiNgonNgu &&
                                     x.LoaiKhoGiay == @params.LoaiKhoGiay)
                         .Select(x => new MauParam
@@ -1735,7 +1735,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
               100 * 1000,
 
               //page size
-              new SizeF(width * 70 / 100, height * (isChuyenDoi ? 67 : 62) / 100),
+              new SizeF(width * 70 / 100, height * (isChuyenDoi ? 77 : 70) / 100),
 
               //page margins
               new PdfMargins(0, 0));
@@ -1944,7 +1944,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
               100 * 1000,
 
               //page size
-              new SizeF(width * 70 / 100, height * (isChuyenDoi ? 67 : 62) / 100),
+              new SizeF(width * 70 / 100, height * (isChuyenDoi ? 77 : 70) / 100),
 
               //page margins
               new PdfMargins(0, 0));

@@ -157,6 +157,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<FileReturn> PreviewPDFConversionAsync(HoaDonDienTuViewModel model);
         Task<bool> NgungXuatVeAsync(string id);
         Task<bool> ThemSangXuatVeTrongNgayAsync(string id);
+        Task<bool> CheckPhatSinhVeAsync(string boKyHieuHoaDonId);
 
         /// <summary>
         /// Get List tuyến đường có vé trong ngày
