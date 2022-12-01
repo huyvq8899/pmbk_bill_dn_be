@@ -1742,6 +1742,57 @@ namespace ManagementServices.Helper
             string tongTienThanhToan = (model.TongTienThanhToan ?? 0).FormatNumberByTuyChon(tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, true);
             content = content.Replace("[(TongTienThanhToan)]", tongTienThanhToan);
 
+            if (!string.IsNullOrEmpty(model.LyDoThayThe) || !string.IsNullOrEmpty(model.LyDoDieuChinh))
+            {
+                var doc = new HtmlDocument();
+                doc.LoadHtml(content);
+
+                var thongTinNguoiBan = doc.DocumentNode.SelectSingleNode("//div[@group-field='ThongTinNguoiBan']");
+
+                var nodes = thongTinNguoiBan.SelectNodes("*[@data-field]");
+                HtmlNode node = null;
+                foreach (var item in nodes)
+                {
+                    if (item.Name == "div")
+                    {
+                        node = item;
+                        break;
+                    }
+                }
+
+                if (node != null)
+                {
+                    List<string> lyDos = new List<string>();
+
+                    if (!string.IsNullOrEmpty(model.LyDoThayThe))
+                    {
+                        lyDos.Add(string.Format("<div>{0}</div>", JsonConvert.DeserializeObject<LyDoThayTheModel>(model.LyDoThayThe).ToString()));
+                        if (model.IsTheHienLyDoTrenHoaDon == true && !string.IsNullOrEmpty(model.LyDoThayTheModel.LyDo))
+                        {
+                            lyDos.Add($"<div>{model.LyDoThayTheModel.LyDo}</div>");
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(model.LyDoDieuChinh))
+                    {
+                        lyDos.Add(string.Format("<div>{0}</div>", JsonConvert.DeserializeObject<LyDoDieuChinhModel>(model.LyDoDieuChinh).ToString()));
+                        if (model.IsTheHienLyDoTrenHoaDon == true && !string.IsNullOrEmpty(model.LyDoDieuChinhModel.LyDo))
+                        {
+                            lyDos.Add($"<div>{model.LyDoDieuChinhModel.LyDo}</div>");
+                        }
+                    }
+
+                    lyDos.Reverse();
+                    foreach (var lyDo in lyDos)
+                    {
+                        HtmlNode styleNode = HtmlNode.CreateNode(lyDo);
+                        thongTinNguoiBan.InsertAfter(styleNode, node);
+                    }
+                }
+
+                content = doc.DocumentNode.OuterHtml;
+            }
+
             return content;
         }
 

@@ -1087,9 +1087,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     case 3: // Vé dịch vụ công ích
                         result = result.Where(x => x.LoaiMauHoaDon == LoaiMauHoaDon.VeDichVuCongIchTheHienMenhGia).ToList();
                         break;
-                    case 4: // Vé xe buýt
-                        result = result.Where(x => x.LoaiMauHoaDon == LoaiMauHoaDon.VeXeBuytTheHienMenhGia).ToList();
-                        break;
                     default:
                         break;
                 }
