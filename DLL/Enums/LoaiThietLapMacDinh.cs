@@ -45,6 +45,14 @@ namespace DLL.Enums
         [Description("Hiển thị QR Code tại vị trí")]
         HienThiQRCodeTaiViTri,
         [Description("Vị trí QR Code")]
-        ViTriQRCode
+        ViTriQRCode,
+        [Description("Giảm thuế")]
+        GiamThueTheoNQ,
+        [Description("Tỷ lệ % tính thuế GTGT trên doanh thu")]
+        TyLePhanTramDoanhThu,
+        [Description("Tổng tiền (chưa thuế)")]
+        TongTienChuaThue,
+        [Description("Tiền thuế")]
+        TienThue
     }
 }

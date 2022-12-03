@@ -18624,9 +18624,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MauHoaDons = (from mhd in _db.MauHoaDons
                                           join td in _db.TuyenDuongs on mhd.TuyenDuongId equals td.TuyenDuongId into tmpTuyenDuongs
                                           from td in tmpTuyenDuongs.DefaultIfEmpty()
-                                          let thongTinMenhGia = _db.MauHoaDonThietLapMacDinhs.Where(x => x.MauHoaDonId == mhd.MauHoaDonId && (x.Loai == LoaiThietLapMacDinh.ThueGTGT || x.Loai == LoaiThietLapMacDinh.TongTien))
-                                          let tongTien = thongTinMenhGia.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.TongTien).GiaTri
-                                          let thueGTGT = thongTinMenhGia.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.ThueGTGT).GiaTri
                                           where bkh.MauHoaDonId.Contains(mhd.MauHoaDonId)
                                           orderby mhd.Ten
                                           select new HoaDonDienTuViewModel
@@ -18639,8 +18636,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                               TenLoaiHoaDon = mhd.LoaiHoaDon == LoaiHoaDon.TemVeTheLaHoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng",
                                               TuyenDuongId = mhd.TuyenDuongId,
                                               TenTuyenDuong = td != null ? td.TenTuyenDuong : null,
-                                              TongTienThanhToan = !string.IsNullOrEmpty(tongTien) ? decimal.Parse(tongTien) : (decimal?)null,
-                                              ThueGTGT = thueGTGT,
+                                              MauHoaDon = new MauHoaDonViewModel
+                                              {
+                                                  MauHoaDonThietLapMacDinhs = _db.MauHoaDonThietLapMacDinhs
+                                                                            .Where(x => x.MauHoaDonId == mhd.MauHoaDonId && (x.Loai == LoaiThietLapMacDinh.ThueGTGT || x.Loai == LoaiThietLapMacDinh.TongTien || x.Loai == LoaiThietLapMacDinh.GiamThueTheoNQ || x.Loai == LoaiThietLapMacDinh.TyLePhanTramDoanhThu || x.Loai == LoaiThietLapMacDinh.TongTienChuaThue || x.Loai == LoaiThietLapMacDinh.TienThue))
+                                                                            .Select(x => new MauHoaDonThietLapMacDinhViewModel
+                                                                            {
+                                                                                Loai = x.Loai,
+                                                                                GiaTri = x.GiaTri
+                                                                            })
+                                                                            .ToList()
+                                              }
                                           })
                                           .ToList()
                         };
@@ -18652,27 +18658,62 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 foreach (var mhd in bkh.MauHoaDons)
                 {
-                    if (mhd.TongTienThanhToan != null)
-                    {
-                        if (mhd.ThueGTGT == "KCT" || mhd.ThueGTGT == "KKKNT" || mhd.ThueGTGT == "0")
-                        {
-                            mhd.TongTienThueGTGT = 0;
-                        }
-                        else if (mhd.ThueGTGT == "10")
-                        {
-                            mhd.TongTienThueGTGT = (mhd.TongTienThanhToan / 1.1M * 0.1M).Value.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
-                        }
-                        else if (mhd.ThueGTGT == "5")
-                        {
-                            mhd.TongTienThueGTGT = (mhd.TongTienThanhToan / 1.05M * 0.05M).Value.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
-                        }
+                    var mauHoaDonThietLapMacDinhs = mhd.MauHoaDon.MauHoaDonThietLapMacDinhs;
 
-                        mhd.TongTienHang = mhd.TongTienThanhToan - mhd.TongTienThueGTGT;
-                    }
-                    else
+                    if (mauHoaDonThietLapMacDinhs.Any(x => x.Loai == LoaiThietLapMacDinh.TongTien))
                     {
-                        mhd.TongTienThueGTGT = null;
-                        mhd.TongTienHang = null;
+                        mhd.TongTienThanhToan = decimal.Parse(mauHoaDonThietLapMacDinhs.First(x => x.Loai == LoaiThietLapMacDinh.TongTien).GiaTri ?? "0");
+                    }
+
+                    if (mauHoaDonThietLapMacDinhs.Any(x => x.Loai == LoaiThietLapMacDinh.ThueGTGT))
+                    {
+                        mhd.ThueGTGT = mauHoaDonThietLapMacDinhs.First(x => x.Loai == LoaiThietLapMacDinh.ThueGTGT).GiaTri;
+                    }
+
+                    if (mauHoaDonThietLapMacDinhs.Any(x => x.Loai == LoaiThietLapMacDinh.GiamThueTheoNQ))
+                    {
+                        mhd.IsGiamTheoNghiQuyet = mauHoaDonThietLapMacDinhs.First(x => x.Loai == LoaiThietLapMacDinh.GiamThueTheoNQ).GiaTri == "true";
+                    }
+
+                    if (mauHoaDonThietLapMacDinhs.Any(x => x.Loai == LoaiThietLapMacDinh.TyLePhanTramDoanhThu))
+                    {
+                        mhd.TyLePhanTramDoanhThu = decimal.Parse(mauHoaDonThietLapMacDinhs.First(x => x.Loai == LoaiThietLapMacDinh.TyLePhanTramDoanhThu).GiaTri ?? "0");
+                    }
+
+                    if (mauHoaDonThietLapMacDinhs.Any(x => x.Loai == LoaiThietLapMacDinh.TongTienChuaThue))
+                    {
+                        mhd.TongTienHang = decimal.Parse(mauHoaDonThietLapMacDinhs.First(x => x.Loai == LoaiThietLapMacDinh.TongTienChuaThue).GiaTri ?? "0");
+                    }
+
+                    if (mauHoaDonThietLapMacDinhs.Any(x => x.Loai == LoaiThietLapMacDinh.TienThue))
+                    {
+                        mhd.TongTienGiam = decimal.Parse(mauHoaDonThietLapMacDinhs.First(x => x.Loai == LoaiThietLapMacDinh.TienThue).GiaTri ?? "0");
+                    }
+
+                    if (mhd.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT)
+                    {
+                        if (mhd.TongTienThanhToan != null)
+                        {
+                            if (mhd.ThueGTGT == "KCT" || mhd.ThueGTGT == "KKKNT" || mhd.ThueGTGT == "0")
+                            {
+                                mhd.TongTienThueGTGT = 0;
+                            }
+                            else if (mhd.ThueGTGT == "10")
+                            {
+                                mhd.TongTienThueGTGT = (mhd.TongTienThanhToan / 1.1M * 0.1M).Value.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
+                            }
+                            else if (mhd.ThueGTGT == "5")
+                            {
+                                mhd.TongTienThueGTGT = (mhd.TongTienThanhToan / 1.05M * 0.05M).Value.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
+                            }
+
+                            mhd.TongTienHang = mhd.TongTienThanhToan - mhd.TongTienThueGTGT;
+                        }
+                        else
+                        {
+                            mhd.TongTienThueGTGT = null;
+                            mhd.TongTienHang = null;
+                        }
                     }
 
                     result.Add(new HoaDonDienTuViewModel
@@ -18691,6 +18732,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         ThueGTGT = mhd.ThueGTGT,
                         TongTienThueGTGT = mhd.TongTienThueGTGT,
                         TongTienHang = mhd.TongTienHang,
+                        TyLePhanTramDoanhThu = mhd.TyLePhanTramDoanhThu,
+                        TongTienGiam = mhd.TongTienGiam,
+                        IsGiamTheoNghiQuyet = mhd.IsGiamTheoNghiQuyet
                     });
                 }
             }

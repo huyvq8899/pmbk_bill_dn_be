@@ -162,6 +162,7 @@
         GiuVeDeKiemTra,
         SoTuyen,
         TenNguoiChuyenDoi,
-        NgayChuyenDoi
+        NgayChuyenDoi,
+        DaGiamTheoNQ
     }
 }
