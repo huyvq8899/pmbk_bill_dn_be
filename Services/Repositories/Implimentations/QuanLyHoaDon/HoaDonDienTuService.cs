@@ -18912,9 +18912,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         TrangThai = (int)TrangThaiHoaDon.HoaDonGoc,
                         TrangThaiGuiHoaDon = (int)TrangThaiGuiHoaDon.ChuaGui,
                         TongTienChietKhau = 0,
-                        IsGiamTheoNghiQuyet = false,
-                        TyLePhanTramDoanhThu = 0,
-                        TongTienGiam = 0,
+                        IsGiamTheoNghiQuyet = model.IsGiamTheoNghiQuyet,
+                        TyLePhanTramDoanhThu = model.TyLePhanTramDoanhThu,
+                        TongTienGiam = model.TongTienGiam ?? 0,
                         TongTienGiamQuyDoi = 0,
                         TyLeChietKhau = 0,
                         SoLanChuyenDoi = 0,
@@ -18962,6 +18962,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var isVND = loaiTien.Ma == "VND";
 
                     entityInsert.TongTienHangQuyDoi = (entityInsert.TongTienHang * loaiTien.TyGiaQuyDoi).Value.MathRoundNumberByTuyChon(_tuyChons, isVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                    entityInsert.TongTienGiamQuyDoi = (entityInsert.TongTienGiam * loaiTien.TyGiaQuyDoi).Value.MathRoundNumberByTuyChon(_tuyChons, isVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                     entityInsert.TongTienChietKhauQuyDoi = (entityInsert.TongTienChietKhau * loaiTien.TyGiaQuyDoi).Value.MathRoundNumberByTuyChon(_tuyChons, isVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                     entityInsert.TongTienThueGTGTQuyDoi = (entityInsert.TongTienThueGTGT * loaiTien.TyGiaQuyDoi).Value.MathRoundNumberByTuyChon(_tuyChons, isVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                     entityInsert.TongTienThanhToanQuyDoi = (entityInsert.TongTienThanhToan * loaiTien.TyGiaQuyDoi).Value.MathRoundNumberByTuyChon(_tuyChons, isVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
