@@ -17,7 +17,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g
         /// </summary>
         [Required]
         [Column(TypeName = "decimal(21, 6)")]
-        public decimal TgTCThue { get; set; }
+        public decimal? TgTCThue { get; set; }
 
         /// <summary>
         /// <para>Tổng tiền thuế (Tổng cộng tiền thuế GTGT)</para>
@@ -27,7 +27,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g
         /// </summary>
         [Required]
         [Column(TypeName = "decimal(19, 4)")]
-        public decimal TgTThue { get; set; }
+        public decimal? TgTThue { get; set; }
 
         public List<LPhi> DSLPhi { get; set; }
 

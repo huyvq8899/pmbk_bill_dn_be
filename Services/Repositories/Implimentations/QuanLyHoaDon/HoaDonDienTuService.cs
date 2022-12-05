@@ -453,6 +453,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           NgayCapNhat = hd.ModifyDate,
                                                           NgayGuiTBaoSaiSotKhongPhaiLapHD = hd.NgayGuiTBaoSaiSotKhongPhaiLapHD,
                                                           LanGui04 = hd.LanGui04,
+                                                          IsGiamTheoNghiQuyet = hd.IsGiamTheoNghiQuyet,
                                                           // pxk
                                                           CanCuSo = hd.CanCuSo,
                                                           NgayCanCu = hd.NgayCanCu,
@@ -18803,7 +18804,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaTraCuu = vdt.MaTraCuu,
                             SoHoaDon = vdt.SoHoaDon,
                             MaLoaiTien = lt.Ma,
-                            IsVND = lt.Ma == "VND"
+                            IsVND = lt.Ma == "VND",
+                            IsGiamTheoNghiQuyet = vdt.IsGiamTheoNghiQuyet,
+                            TyLePhanTramDoanhThu = vdt.TyLePhanTramDoanhThu,
+                            TongTienGiam = vdt.TongTienGiam
                         };
 
             var result = await query.OrderBy(x => x.ThoiGianKhoiHanh).ThenBy(x => x.STT).ToListAsync();
@@ -18899,7 +18903,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         TenTuyenDuong = model.TenTuyenDuong,
                         ThueGTGT = model.ThueGTGT,
                         TongTienThueGTGT = model.TongTienThueGTGT ?? 0,
-                        TongTienHang = model.TongTienHang ?? 0,
+                        TongTienHang = (model.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT) ? (model.TongTienHang ?? 0) : (model.IsGiamTheoNghiQuyet == true ? model.TongTienHang : model.TongTienThanhToan),
                         IsVeTam = model.IsVeTam,
                         SoChuyen = model.SoChuyen,
                         SoChang = model.SoChang,

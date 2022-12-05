@@ -1064,6 +1064,11 @@ namespace ManagementServices.Helper
 
         public static string GetThueHasPer(this string value)
         {
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+
             if (value == "KCT" || value == "KKKNT")
             {
                 return value;
@@ -1788,6 +1793,23 @@ namespace ManagementServices.Helper
                         HtmlNode styleNode = HtmlNode.CreateNode(lyDo);
                         thongTinNguoiBan.InsertAfter(styleNode, node);
                     }
+                }
+
+                content = doc.DocumentNode.OuterHtml;
+            }
+
+            if (model.IsGiamTheoNghiQuyet == true && (model.LoaiMau == LoaiMauHoaDon.VeVanTaiHanhKhachKhongTheHienMenhGia || model.LoaiMau == LoaiMauHoaDon.VeDichVuKhongTheHienMenhGia))
+            {
+                var doc = new HtmlDocument();
+                doc.LoadHtml(content);
+
+                var daGiamTheoNQ = doc.DocumentNode.SelectSingleNode("//div[@data-field='DaGiamTheoNQ']");
+                if (daGiamTheoNQ != null)
+                {
+                    string attr = daGiamTheoNQ.Attributes["class"].Value;
+                    daGiamTheoNQ.SetAttributeValue("class", attr.Replace("display-none", ""));
+                    var editValue = daGiamTheoNQ.SelectSingleNode("span");
+                    editValue.InnerHtml = $"Đã giảm {(model.TongTienGiam ?? 0).FormatNumberByTuyChon(tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, true)} đồng, tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết số 43/2022/QH15.";
                 }
 
                 content = doc.DocumentNode.OuterHtml;

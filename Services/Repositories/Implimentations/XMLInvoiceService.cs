@@ -1115,8 +1115,9 @@ namespace Services.Repositories.Implimentations
                     break;
                 #endregion
 
-                #region TemVeTheLaHoaDonGTGT
+                #region TemVeTheLaHoaDonGTGT, TemVeTheLaHoaDonBanHang
                 case LoaiHoaDon.TemVeTheLaHoaDonGTGT:
+                case LoaiHoaDon.TemVeTheLaHoaDonBanHang:
                     if (!string.IsNullOrWhiteSpace(model.IdHoaDonSaiSotBiThayThe))
                     {
                         ttkhac_ThongTinSaiSot.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin { TTruong = "Hóa đơn liên quan", KDLieu = "string", DLieu = model.GhiChuThayTheSaiSot?.Replace("<b>", "").Replace("</b>", "") });
@@ -1179,8 +1180,8 @@ namespace Services.Repositories.Implimentations
                                 TToan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.TToan
                                 {
                                     THTTLTSuat = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.LTSuat>(),
-                                    TgTCThue = model.TongTienHang ?? 0,
-                                    TgTThue = model.TongTienThueGTGT ?? 0,
+                                    TgTCThue = (model.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT) ? (model.TongTienHang ?? 0) : (decimal?)null,
+                                    TgTThue = (model.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT) ? (model.TongTienThueGTGT ?? 0) : (decimal?)null,
                                     DSLPhi = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.LPhi>
                                     {
                                         new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.g.LPhi()
@@ -1264,7 +1265,7 @@ namespace Services.Repositories.Implimentations
                         TLCKhau = model.TyLeChietKhau,
                         STCKhau = model.TongTienChietKhau,
                         ThTien = model.TongTienHang,
-                        TSuat = model.ThueGTGT.GetThueHasPer(),
+                        TSuat = (model.LoaiHoaDon == (int)LoaiHoaDon.TemVeTheLaHoaDonGTGT) ? model.ThueGTGT.GetThueHasPer() : null,
                         TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                     });
                     #endregion
@@ -1286,12 +1287,6 @@ namespace Services.Repositories.Implimentations
                     {
                         GenerateXML(hDonCacLoaiHoaDonKhac, xmlFilePath);
                     }
-
-                    break;
-                #endregion
-
-                #region TemVeTheLaHoaDonBanHang
-                case LoaiHoaDon.TemVeTheLaHoaDonBanHang:
 
                     break;
                 #endregion
