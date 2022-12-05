@@ -450,7 +450,7 @@
     "loaiThueGTGT": 0,
     "loaiNgonNgu": 1,
     "loaiKhoGiay": 0,
-    "avatar": "ve-dien-tu.png"
+    "avatar": "ve-co-ma-the-hien-menh-gia.PNG"
   },
   "36": {
     "key": "36",
@@ -463,7 +463,7 @@
     "loaiThueGTGT": 0,
     "loaiNgonNgu": 1,
     "loaiKhoGiay": 0,
-    "avatar": "ve-dien-tu.png"
+    "avatar": "ve-co-ma-khong-the-hien-menh-gia.PNG"
   },
   "37": {
     "key": "37",
@@ -476,7 +476,7 @@
     "loaiThueGTGT": 0,
     "loaiNgonNgu": 1,
     "loaiKhoGiay": 0,
-    "avatar": "ve-dien-tu.png"
+    "avatar": "ve-co-ma-the-hien-menh-gia.PNG"
   },
   "38": {
     "key": "38",
@@ -489,6 +489,58 @@
     "loaiThueGTGT": 0,
     "loaiNgonNgu": 1,
     "loaiKhoGiay": 0,
-    "avatar": "ve-dien-tu.png"
+    "avatar": "ve-co-ma-khong-the-hien-menh-gia.PNG"
+  },
+  "39": {
+    "key": "39",
+    "code": "ve-dien-tu",
+    "file": "ve-dien-tu.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 0,
+    "loaiHoaDon": 9,
+    "loaiMauHoaDon": 2,
+    "loaiThueGTGT": 0,
+    "loaiNgonNgu": 1,
+    "loaiKhoGiay": 0,
+    "avatar": "ve-khong-ma-the-hien-menh-gia.PNG"
+  },
+  "40": {
+    "key": "40",
+    "code": "ve-dien-tu",
+    "file": "ve-dien-tu.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 0,
+    "loaiHoaDon": 9,
+    "loaiMauHoaDon": 3,
+    "loaiThueGTGT": 0,
+    "loaiNgonNgu": 1,
+    "loaiKhoGiay": 0,
+    "avatar": "ve-khong-ma-khong-the-hien-menh-gia.PNG"
+  },
+  "41": {
+    "key": "41",
+    "code": "ve-dien-tu",
+    "file": "ve-dien-tu.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 0,
+    "loaiHoaDon": 10,
+    "loaiMauHoaDon": 2,
+    "loaiThueGTGT": 0,
+    "loaiNgonNgu": 1,
+    "loaiKhoGiay": 0,
+    "avatar": "ve-khong-ma-the-hien-menh-gia.PNG"
+  },
+  "42": {
+    "key": "42",
+    "code": "ve-dien-tu",
+    "file": "ve-dien-tu.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 0,
+    "loaiHoaDon": 10,
+    "loaiMauHoaDon": 3,
+    "loaiThueGTGT": 0,
+    "loaiNgonNgu": 1,
+    "loaiKhoGiay": 0,
+    "avatar": "ve-khong-ma-khong-the-hien-menh-gia.PNG"
   }
 }
