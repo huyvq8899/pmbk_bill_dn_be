@@ -3442,10 +3442,58 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             using (ExcelPackage package = new ExcelPackage(file))
             {
-                List<HoaDonDienTuViewModel> list = query.OrderBy(x => x.NgayHoaDon).ToList();
+                List<HoaDonDienTuViewModel> list = await query.OrderBy(x => x.NgayHoaDon).ToListAsync();
+
+                // vé
+                if (@params.LoaiNghiepVu == 3)
+                {
+                    var dicVeDienTus = await _db.HoaDonDienTus
+                        .Where(x => list.Select(y => y.HoaDonDienTuId).Contains(x.HoaDonDienTuId))
+                        .Select(x => new HoaDonDienTuViewModel
+                        {
+                            HoaDonDienTuId = x.HoaDonDienTuId,
+                            TongTienHang = x.TongTienHang,
+                            TongTienHangQuyDoi = x.TongTienHangQuyDoi,
+                            TyLeChietKhau = x.TyLeChietKhau,
+                            TongTienChietKhau = x.TongTienChietKhau,
+                            TongTienChietKhauQuyDoi = x.TongTienChietKhauQuyDoi,
+                            ThueGTGT = x.ThueGTGT,
+                            TongTienThueGTGT = x.TongTienThueGTGT,
+                            TongTienThueGTGTQuyDoi = x.TongTienThueGTGTQuyDoi,
+                            TongTienGiam = x.TongTienGiam,
+                            TongTienGiamQuyDoi = x.TongTienGiamQuyDoi,
+                            TongTienThanhToan = x.TongTienThanhToan,
+                            TongTienThanhToanQuyDoi = x.TongTienThanhToanQuyDoi
+                        })
+                        .ToDictionaryAsync(x => x.HoaDonDienTuId);
+
+                    foreach (var item in list)
+                    {
+                        var dicItem = dicVeDienTus[item.HoaDonDienTuId];
+
+                        item.HoaDonChiTiets.Add(new HoaDonDienTuChiTietViewModel
+                        {
+                            STT = 1,
+                            TenHang = "Vé xe buýt",
+                            TinhChat = (int)TChat.HangHoaDichVu,
+                            SoLuong = 1,
+                            DonGia = dicItem.TongTienHang,
+                            ThanhTien = dicItem.TongTienHang,
+                            ThanhTienQuyDoi = dicItem.TongTienHangQuyDoi,
+                            TyLeChietKhau = dicItem.TyLeChietKhau,
+                            TienChietKhau = dicItem.TongTienChietKhau,
+                            TienChietKhauQuyDoi = dicItem.TongTienChietKhauQuyDoi,
+                            ThueGTGT = dicItem.ThueGTGT,
+                            TienThueGTGT = dicItem.TongTienThueGTGT,
+                            TienThueGTGTQuyDoi = dicItem.TongTienThueGTGTQuyDoi,
+                            TienGiam = dicItem.TongTienGiam,
+                            TienGiamQuyDoi = dicItem.TongTienGiamQuyDoi
+                        });
+                    }
+                }
+
                 // Open sheet1
                 int totalRows = list.Sum(x => x.HoaDonChiTiets.Count);
-
 
                 // Begin row
                 int begin_row = 5;
