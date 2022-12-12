@@ -755,6 +755,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public int? Count { get; set; }
 
+        [IgnoreLogging]
+        public bool? IsAddNew { get; set; }
+
         public object Clone()
         {
             var obj = (HoaDonDienTuViewModel)MemberwiseClone();

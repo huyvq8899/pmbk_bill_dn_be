@@ -148,6 +148,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<HoaDonDienTuViewModel>> GetListDeXuatVeDongLoatAsync(List<HoaDonDienTuViewModel> list);
         Task<int> GetSoChuyenByTuyenDuongAsync(string tuyenDuongId);
         Task<bool> InsertVeTrongNgayFromMobileAsync(HoaDonDienTuViewModel model);
+        Task<HoaDonDienTuViewModel> CloneAndInsertAsync(HoaDonDienTuViewModel model);
         Task<FileReturn> PreviewHTMLTicketAsync(HoaDonDienTuViewModel model);
         FileReturn PrintToPDF(List<string> base64s);
         Task<(string Message, int Type)> WaitForTCTResonseTicketAsync(List<string> ids);

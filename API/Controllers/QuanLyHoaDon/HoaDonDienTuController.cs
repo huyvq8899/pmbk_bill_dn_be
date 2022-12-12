@@ -1767,5 +1767,12 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.CheckPhatSinhVeAsync(boKyHieuHoaDonId);
             return Ok(result);
         }
+
+        [HttpPost("CloneAndInsert")]
+        public async Task<IActionResult> CloneAndInsert(HoaDonDienTuViewModel model)
+        {
+            var result = await _hoaDonDienTuService.CloneAndInsertAsync(model);
+            return Ok(result);
+        }
     }
 }

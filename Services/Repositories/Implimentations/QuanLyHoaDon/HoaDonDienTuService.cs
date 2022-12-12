@@ -3921,7 +3921,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             KetQuaCapSoHoaDon result = new KetQuaCapSoHoaDon();
 
-            if (hd.SoHoaDon.HasValue)
+            if (hd.SoHoaDon.HasValue && hd.IsAddNew != true)
             {
                 result.SoHoaDon = hd.SoHoaDon;
                 return result;
@@ -14946,6 +14946,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var ngayHoaDon = hoaDon.NgayHoaDon.Value.Date;
 
+                if (@param.IsAddNew == true)
+                {
+                    ngayHoaDon = DateTime.Now.Date;
+                }
+
                 if (boKyHieuHoaDon.TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc && param.IsPhatHanh == true)
                 {
                     return new KetQuaCapSoHoaDon
@@ -17164,7 +17169,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             hd.HoaDonChiTiets = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId, false);
 
             var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hd.HoaDonDienTuId);
-            entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.DangKyDienTu;
+
+            if (hd.IsAddNew != true)
+            {
+                entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.DangKyDienTu;
+            }
+
             entity.XMLDaKy = xmlFileName;
 
             string fullXmlFilePath = Path.Combine(fullXmlFolder, xmlFileName);
@@ -20758,6 +20768,34 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             var result = await _db.HoaDonDienTus.AnyAsync(x => x.BoKyHieuHoaDonId == boKyHieuHoaDonId);
             return result;
+        }
+
+        /// <summary>
+        /// Clone và insert hóa đơn
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public async Task<HoaDonDienTuViewModel> CloneAndInsertAsync(HoaDonDienTuViewModel model)
+        {
+            var itemClone = (HoaDonDienTuViewModel)model.Clone();
+            itemClone.HoaDonDienTuId = Guid.NewGuid().ToString();
+            itemClone.NgayHoaDon = DateTime.Now;
+            itemClone.CreatedDate = null;
+            itemClone.ModifyDate = null;
+            itemClone.CreatedBy = null;
+            itemClone.ModifyBy = null;
+            itemClone.BoKyHieuHoaDon = null;
+            itemClone.MauHoaDon = null;
+            itemClone.KhachHang = null;
+            itemClone.LoaiTien = null;
+            itemClone.NhanVienBanHang = null;
+            itemClone.TaiLieuDinhKem = null;
+
+            var itemAdd = _mp.Map<HoaDonDienTu>(itemClone);
+
+            await _db.HoaDonDienTus.AddAsync(itemAdd);
+            await _db.SaveChangesAsync();
+            return itemClone;
         }
     }
 }

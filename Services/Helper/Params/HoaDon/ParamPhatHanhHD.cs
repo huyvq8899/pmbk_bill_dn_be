@@ -25,9 +25,8 @@ namespace Services.Helper.Params.HoaDon
         public HoaDonDienTuViewModel HoaDon { get; set; }
         public string DataPDF { set; get; }
         public string DataXML { set; get; }
-
         public bool IsBuyerSigned { get; set; } = false;
-
+        public bool? IsAddNew { get; set; }
         public TTChungThongDiep TTChungThongDiep { get; set; }
         public bool? SkipCheckHetHieuLucTrongKhoang { get; set; }
         public bool? SkipChecNgayKyLonHonNgayHoaDon { get; set; }

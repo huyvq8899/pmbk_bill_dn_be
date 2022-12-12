@@ -136,8 +136,8 @@ namespace API.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return tokenHandler.WriteToken(token).EncodeToken();
-            //return tokenHandler.WriteToken(token);
+            //return tokenHandler.WriteToken(token).EncodeToken();
+            return tokenHandler.WriteToken(token);
         }
 
         /// <summary>
