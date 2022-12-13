@@ -3,6 +3,7 @@ using DLL;
 using DLL.Constants;
 using DLL.Entity;
 using DLL.Entity.QuanLy;
+using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using ManagementServices.Helper;

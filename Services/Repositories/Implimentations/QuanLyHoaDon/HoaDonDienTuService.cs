@@ -4465,7 +4465,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                 // Chiết khấu thương mại
                                 // Ghi chú/diễn giải
-                                if (models[i].TinhChat == 4 || isDieuChinhThongTin)
+                                if (models[i].TinhChat == 4)
                                 {
                                     continue;
                                 }
@@ -4473,6 +4473,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     par.SetValuePar2(models[i].MaHang, LoaiChiTietTuyChonNoiDung.MaHang);
                                     par.SetValuePar2(models[i].TenDonViTinh, LoaiChiTietTuyChonNoiDung.DonViTinh);
+
+                                    if (isDieuChinhThongTin) continue;
                                     par.SetValuePar2(models[i].SoLuong.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG), LoaiChiTietTuyChonNoiDung.SoLuong);
                                     par.SetValuePar2((models[i].SoLuongNhap ?? 0).FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG), LoaiChiTietTuyChonNoiDung.SoLuongNhap);
                                     par.SetValuePar2(models[i].DonGia.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.DonGia);
@@ -4609,8 +4611,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.xml";
                         entity.XMLDaKy = xmlFileName;
-                        entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.CQTDaCapMa;
-                        entity.MaCuaCQT = hd.MaCuaCQT;
+                       // entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.CQTDaCapMa;
+                       // entity.MaCuaCQT = hd.MaCuaCQT;
                     }
                     else
                     {
@@ -5189,7 +5191,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                         // Chiết khấu thương mại
                         // Ghi chú/diễn giải
-                        if (models[i].TinhChat == 4 || isDieuChinhThongTin)
+                        if (models[i].TinhChat == 4)
                         {
                             continue;
                         }
