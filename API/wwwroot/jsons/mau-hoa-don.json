@@ -1,0 +1,16 @@
+﻿[
+  {
+    "TenBanMau": "01.CB.01.SN",
+    "ChiTiets": [
+      {
+        "code": "01.CB.01",
+        "file": "01.CB.01.docx",
+        "loaiHoaDon": 1,
+        "loaiMau": 1,
+        "loaiThueGTGT": 1,
+        "loaiNgonNgu": 1,
+        "loaiKhoGiay": 1
+      }
+    ]
+  }
+]

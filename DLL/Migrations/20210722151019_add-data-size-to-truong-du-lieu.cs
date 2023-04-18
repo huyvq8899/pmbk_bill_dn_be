@@ -1,0 +1,123 @@
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+namespace DLL.Migrations
+{
+    public partial class Adddatasizetotruongdulieu : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.UpdateData(
+                table: "TruongDuLieus",
+                column: "Size",
+                values: new object[] {
+                    50,
+                    150,
+                    100,
+                    100,
+                    100,
+                    150,
+                    200,
+                    300,
+                    100,
+                    200,
+                    150,
+                    100,
+                    100,
+                    100,
+                    150,
+                    50,
+                    100,
+                    150,
+                    150,
+                    150,
+                    150,
+                    100,
+                    150,
+                    150,
+                    150,
+                    150,
+                    100,
+                    150,
+                    150,
+                    150,
+                    150,
+                    100,
+                    100,
+                    100,
+                    150,
+                    100,
+                    100,
+                    150,
+                    200,
+                    150,
+                    200,
+                    150,
+                    100,
+                    150,
+                    150,
+                    100,
+                    200,
+                    150,
+                    150
+                },
+                keyColumn: "MaTruong",
+                keyValues: new object[]
+                {
+                    "stt",
+                    "ngayHoaDon",
+                    "soHoaDon",
+                    "mauSoHoaDon",
+                    "kyHieuHoaDon",
+                    "maKhachHang",
+                    "tenKhachHang",
+                    "diaChi",
+                    "maSoThue",
+                    "nguoiMuaHang",
+                    "hinhThucThanhToan",
+                    "loaiTien",
+                    "tyGia",
+                    "maHang",
+                    "tenHang",
+                    "donViTinh",
+                    "soLuong",
+                    "donGiaSauThue",
+                    "donGia",
+                    "thanhTienSauThue",
+                    "thanhTien",
+                    "thanhTienQuyDoi",
+                    "tyLeChietKhau",
+                    "tienChietKhau",
+                    "tienChietKhauQuyDoi",
+                    "doanhSoBanChuaThue",
+                    "doanhSoBanChuaThueQuyDoi",
+                    "thueGTGT",
+                    "tienThueGTGT",
+                    "tienThueGTGTQuyDoi",
+                    "tongTienThanhToan",
+                    "tongTienThanhToanQuyDoi",
+                    "hangKhuyenMai",
+                    "maQuyCach",
+                    "soLo",
+                    "hanSuDung",
+                    "soKhung",
+                    "soMay",
+                    "xuatBanPhi",
+                    "ghiChu",
+                    "maNhanVien",
+                    "tenNhanVien",
+                    "loaiHoaDon",
+                    "trangThaiHoaDon",
+                    "trangThaiPhatHanh",
+                    "maTraCuu",
+                    "lyDoXoaBo",
+                    "ngayLap",
+                    "nguoiLap"
+                });
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+
+        }
+    }
+}

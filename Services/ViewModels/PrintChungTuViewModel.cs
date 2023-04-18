@@ -1,0 +1,12 @@
+﻿namespace Services.ViewModels
+{
+    public class PrintChungTuViewModel
+    {
+        public string PdfFileName { get; set; }
+    }
+
+    public class PrintViewModel
+    {
+        public string FileExcelPath { get; set; }
+    }
+}
