@@ -167,20 +167,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly List<TrangThai> TrangThaiHoaDons = new List<TrangThai>()
         {
             new TrangThai(){ TrangThaiId = 1, Ten = "Hóa đơn gốc", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 2, Ten = "Hóa đơn xóa bỏ", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 2, Ten = "Hóa đơn chưa lập thay thế", TrangThaiChaId = null, Level = 0 },
             new TrangThai(){ TrangThaiId = 3, Ten = "Hóa đơn thay thế", TrangThaiChaId = null, Level = 0 },
             new TrangThai(){ TrangThaiId = 4, Ten = "Hóa đơn điều chỉnh", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 5, Ten = "Hóa đơn điều chỉnh tăng", TrangThaiChaId = 4, Level = 1 },
-            new TrangThai(){ TrangThaiId = 6, Ten = "Hóa đơn điều chỉnh giảm", TrangThaiChaId = 4, Level = 1 },
-            new TrangThai(){ TrangThaiId = 7, Ten = "Hóa đơn điều chỉnh thông tin", TrangThaiChaId = 4, Level = 1 },
-            new TrangThai(){ TrangThaiId = 8, Ten = "Hóa đơn bị điều chỉnh", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 9, Ten = "Hóa đơn bị thay thế", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 10, Ten = "Hóa đơn gốc bị thay thế", TrangThaiChaId = 9, Level = 1 },
-            new TrangThai(){ TrangThaiId = 11, Ten = "Hóa đơn thay thế bị thay thế", TrangThaiChaId = 9, Level = 1 },
-            new TrangThai(){ TrangThaiId = 12, Ten = "Hóa đơn hủy", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 13, Ten = "Hóa đơn gốc bị hủy", TrangThaiChaId = 12, Level = 1 },
-            new TrangThai(){ TrangThaiId = 14, Ten = "Hóa đơn thay thế bị hủy", TrangThaiChaId = 12, Level = 1 },
-            new TrangThai(){ TrangThaiId = 15, Ten = "Hóa đơn hủy CQT không tiếp nhận", TrangThaiChaId = 12, Level = 1 },
+            new TrangThai(){ TrangThaiId = 5, Ten = "Hóa đơn điều chỉnh chung", TrangThaiChaId = 4, Level = 1 },
+            new TrangThai(){ TrangThaiId = 6, Ten = "Hóa đơn điều chỉnh tăng", TrangThaiChaId = 4, Level = 1 },
+            new TrangThai(){ TrangThaiId = 7, Ten = "Hóa đơn điều chỉnh giảm", TrangThaiChaId = 4, Level = 1 },
+            new TrangThai(){ TrangThaiId = 8, Ten = "Hóa đơn điều chỉnh thông tin", TrangThaiChaId = 4, Level = 1 },
+            new TrangThai(){ TrangThaiId = 9, Ten = "Hóa đơn bị điều chỉnh", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 10, Ten = "Hóa đơn bị thay thế", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 11, Ten = "Hóa đơn gốc bị thay thế", TrangThaiChaId = 10, Level = 1 },
+            new TrangThai(){ TrangThaiId = 12, Ten = "Hóa đơn thay thế bị thay thế", TrangThaiChaId = 10, Level = 1 },
+            new TrangThai(){ TrangThaiId = 13, Ten = "Hóa đơn hủy", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 14, Ten = "Hóa đơn gốc bị hủy", TrangThaiChaId = 13, Level = 1 },
+            new TrangThai(){ TrangThaiId = 15, Ten = "Hóa đơn thay thế bị hủy", TrangThaiChaId = 13, Level = 1 },
+            new TrangThai(){ TrangThaiId = 16, Ten = "Hóa đơn hủy CQT không tiếp nhận", TrangThaiChaId = 13, Level = 1 },
             new TrangThai(){ TrangThaiId = -1, Ten = "Tất cả", TrangThaiChaId = null, Level = 0 },
         };
 
@@ -956,19 +957,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             if (pagingParams.TrangThaiHoaDonDienTus != null && !pagingParams.TrangThaiHoaDonDienTus.Any(x => x == -1))
             {
                 query = query.Where(x => (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 2) && x.TrangThai == 2 && x.IsLapHoaDonThayThe != true && (x.HinhThucXoabo == 2 || x.HinhThucXoabo == 5)) ||
-                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 1) && x.TrangThai == 1) || ((pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 3) && x.TrangThai == 3)) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 1) && x.TrangThai == 1) || 
+                                        ((pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 3) && x.TrangThai == 3)) ||
                                         (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 4) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh) ||
-                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 5) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhTang) ||
-                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 6) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam) ||
-                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 7) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin) ||
-                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 8) && x.HoaDonDieuChinhDaDuocCapMa == true) ||
-                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 9) && x.HoaDonThayTheDaDuocCapMa == true) ||
-                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 10) && x.HoaDonThayTheDaDuocCapMa == true && string.IsNullOrEmpty(x.ThayTheChoHoaDonId)) ||
-                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 11) && x.HoaDonThayTheDaDuocCapMa == true && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId)) ||
-                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 12) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4)) ||
-                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 13) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && string.IsNullOrEmpty(x.ThayTheChoHoaDonId)) ||
-                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 14) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId)) ||
-                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 15) && x.IsTBaoHuyKhongDuocChapNhan == true));
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 5) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhChung) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 6) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhTang) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 7) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 8) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 9) && x.DaBiDieuChinh == true) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 10) && x.IsLapHoaDonThayThe == true) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 11) && x.IsLapHoaDonThayThe == true && string.IsNullOrEmpty(x.ThayTheChoHoaDonId)) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 12) && x.IsLapHoaDonThayThe == true && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId)) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 13) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4)) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 14) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && string.IsNullOrEmpty(x.ThayTheChoHoaDonId)) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 15) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId)) ||
+                                        (pagingParams.TrangThaiHoaDonDienTus.Any(y => y == 16) && x.IsTBaoHuyKhongDuocChapNhan == true));
             }
 
             var result = PagedList<HoaDonDienTuViewModel>.Create(query, pagingParams.PageNumber, pagingParams.PageSize);
@@ -11605,10 +11608,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else
                     {
-                        listHoaDonBDC = listHoaDonBDC.Where(x => x.Children.Any(o => o.LoaiDieuChinh == (int)@params.LoaiTrangThaiHoaDonDieuChinh));
+                        listHoaDonBDC = listHoaDonBDC.Where(x => x.Children.Any(o => o.LoaiDieuChinh == (int)@params.LoaiTrangThaiHoaDonDieuChinh - 1));
                         foreach (var item in listHoaDonBDC)
                         {
-                            item.Children = item.Children.Where(x => x.LoaiDieuChinh == (int)@params.LoaiTrangThaiHoaDonDieuChinh).ToList();
+                            item.Children = item.Children.Where(x => x.LoaiDieuChinh == (int)@params.LoaiTrangThaiHoaDonDieuChinh - 1).ToList();
                         }
                     }
                 }
@@ -12019,9 +12022,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 new TrangThaiHoaDonDieuChinh { Key = -1, Name = "Tất cả", ParentId = null, Level = 0 },
                 new TrangThaiHoaDonDieuChinh { Key = 0, Name = "Hóa đơn chưa lập điều chỉnh", ParentId = null, Level = 0 },
                 new TrangThaiHoaDonDieuChinh { Key = -2, Name = "Hóa đơn đã lập điều chỉnh", ParentId = null, IsParent = true, Level = 0 },
-                new TrangThaiHoaDonDieuChinh { Key = 1, Name = "Hóa đơn điều chỉnh tăng", ParentId = -2, Level = 1 },
-                new TrangThaiHoaDonDieuChinh { Key = 2, Name = "Hóa đơn điều chỉnh giảm", ParentId = -2, Level = 1 },
-                new TrangThaiHoaDonDieuChinh { Key = 3, Name = "Hóa đơn điều chỉnh thông tin", ParentId = -2, Level = 1 },
+                new TrangThaiHoaDonDieuChinh { Key = 1, Name = "Hóa đơn điều chỉnh chung", ParentId = -2, Level = 1 },
+                new TrangThaiHoaDonDieuChinh { Key = 2, Name = "Hóa đơn điều chỉnh tăng", ParentId = -2, Level = 1 },
+                new TrangThaiHoaDonDieuChinh { Key = 3, Name = "Hóa đơn điều chỉnh giảm", ParentId = -2, Level = 1 },
+                new TrangThaiHoaDonDieuChinh { Key = 4, Name = "Hóa đơn điều chỉnh thông tin", ParentId = -2, Level = 1 },
             };
         }
 
